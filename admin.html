@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbit Tech Admin Panel</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            padding-top: 100px; /* Space for fixed nav */
+        }
+        .admin-nav {
+            background: rgba(10, 10, 10, 0.9);
+            padding: 20px;
+            border-bottom: 1px solid var(--glass-border);
+            text-align: center;
+        }
+        .admin-nav h1 {
+            color: var(--color-gold);
+            font-size: 1.8rem;
+        }
+        .admin-section {
+            padding: 40px 0;
+        }
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        .admin-card {
+            padding: 2rem;
+        }
+        .post-list {
+            list-style: none;
+            padding: 0;
+        }
+        .post-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 1rem;
+            background: rgba(0,0,0,0.5);
+            border-radius: 8px;
+        }
+        .post-item-title {
+            font-weight: 600;
+        }
+        .delete-btn {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .delete-btn:hover {
+            background: #e60000;
+        }
+        .login-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60vh;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-darker text-main">
+
+    <div class="admin-nav">
+        <h1>Orbit Tech Blog Administrator</h1>
+        <p class="text-muted">Create, track, and manage Tech Insight posts directly from this dashboard.</p>
+        <a href="index.html" class="text-gold mt-2 block"><i class="fas fa-arrow-left"></i> Return to Live Site</a>
+    </div>
+
+    <div class="container admin-section">
+        <!-- LOGIN SECTION -->
+        <div id="loginSection" class="login-section">
+            <div class="admin-card glass-card login-card">
+                <h3 class="mb-4 text-gold"><i class="fas fa-lock"></i> Admin Login</h3>
+                <form id="loginForm" class="quote-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" required placeholder="Enter admin username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required placeholder="Enter password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login <i class="fas fa-sign-in-alt"></i></button>
+                    <p id="loginStatus" class="form-status mt-3 text-gold"></p>
+                </form>
+            </div>
+        </div>
+
+        <!-- MAIN ADMIN UI (Hidden by default) -->
+        <div class="admin-grid" id="adminGrid" style="display: none;">
+            
+            <!-- CREATE NEW POST -->
+            <div class="admin-card glass-card hover-lift">
+                <h3 class="mb-4 text-gold"><i class="fas fa-edit"></i> Draft New Insight</h3>
+                <form id="createPostForm" class="quote-form">
+                    <div class="form-group">
+                        <label for="title">Blog Title</label>
+                        <input type="text" id="title" required placeholder="e.g. Future of React...">
+                    </div>
+                    <div class="form-group">
+                        <label for="tag">Category Tag</label>
+                        <input type="text" id="tag" required placeholder="Technology, AI, Insights...">
+                    </div>
+                    <div class="form-group">
+                        <label for="image">Blog Image</label>
+                        <input type="file" id="image" accept="image/*">
+                    </div>
+                    <div class="form-group">
+                        <label for="snippet">Content Snippet</label>
+                        <textarea id="snippet" rows="5" required placeholder="Write the introductory body paragraph..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Publish Post <i class="fas fa-paper-plane"></i></button>
+                    <p id="publishStatus" class="form-status mt-3 text-gold"></p>
+                </form>
+            </div>
+
+            <!-- EXISTING POSTS -->
+            <div class="admin-card glass-card">
+                <h3 class="mb-4 text-gold"><i class="fas fa-list"></i> Live Posts Manager</h3>
+                <ul class="post-list" id="postList">
+                    <!-- Posts will populate here dynamically -->
+                </ul>
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        const loginSection = document.getElementById('loginSection');
+        const adminGrid = document.getElementById('adminGrid');
+        const loginForm = document.getElementById('loginForm');
+        const loginStatus = document.getElementById('loginStatus');
+
+        const postList = document.getElementById('postList');
+        const createPostForm = document.getElementById('createPostForm');
+        const publishStatus = document.getElementById('publishStatus');
+
+        // Check if token already exists in localStorage
+        const checkAuthStatus = () => {
+            const token = localStorage.getItem('orbitAdminToken');
+            if (token) {
+                loginSection.style.display = 'none';
+                adminGrid.style.display = 'grid';
+                fetchPosts();
+            } else {
+                loginSection.style.display = 'flex';
+                adminGrid.style.display = 'none';
+            }
+        };
+
+        // Login Submit
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            loginStatus.innerHTML = 'Authenticating...';
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('orbitAdminToken', data.token);
+                    loginStatus.innerHTML = 'Success!';
+                    setTimeout(() => {
+                        checkAuthStatus();
+                    }, 500);
+                } else {
+                    loginStatus.innerHTML = 'Invalid credentials';
+                }
+            } catch (err) {
+                console.error('Login error', err);
+                loginStatus.innerHTML = 'Server error';
+            }
+        });
+
+        // Logout specific function if needed later, or clear token upon 401:
+        const handleAuthError = (res) => {
+            if (res.status === 401 || res.status === 403) {
+                localStorage.removeItem('orbitAdminToken');
+                checkAuthStatus();
+                return true;
+            }
+            return false;
+        };
+
+        // Fetch Posts on Load
+        async function fetchPosts() {
+            try {
+                const res = await fetch('/api/posts', { cache: 'no-store' });
+                const posts = await res.json();
+                
+                postList.innerHTML = '';
+                posts.forEach(post => {
+                    const li = document.createElement('li');
+                    li.className = 'post-item';
+                    li.innerHTML = `
+                        <div>
+                            <div class="post-item-title">${post.title}</div>
+                            <div class="text-muted" style="font-size: 0.8rem;">${new Date(post.timestamp).toLocaleDateString()}</div>
+                        </div>
+                        <button class="delete-btn" onclick="deletePost('${post.id}')"><i class="fas fa-trash"></i></button>
+                    `;
+                    postList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Fetch post error:', error);
+                postList.innerHTML = '<p class="text-muted">Error loading posts from server. Is server.js running?</p>';
+            }
+        }
+
+        // Add Post Form handler
+        createPostForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            publishStatus.innerHTML = 'Publishing... <i class="fas fa-spinner fa-spin"></i>';
+
+            const formData = new FormData();
+            formData.append('title', document.getElementById('title').value);
+            formData.append('tag', document.getElementById('tag').value);
+            formData.append('snippet', document.getElementById('snippet').value);
+            
+            const imageFile = document.getElementById('image').files[0];
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
+
+            try {
+                const token = localStorage.getItem('orbitAdminToken');
+                const res = await fetch('/api/posts', {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: formData
+                });
+                
+                if (handleAuthError(res)) return;
+
+                if (res.ok) {
+                    publishStatus.innerHTML = 'Post Published Live!';
+                    createPostForm.reset();
+                    fetchPosts(); // Reload list
+                    setTimeout(() => publishStatus.innerHTML = '', 3000);
+                } else {
+                    publishStatus.innerHTML = 'Failed to publish.';
+                }
+            } catch (err) {
+                console.error(err);
+                publishStatus.innerHTML = 'Server error.';
+            }
+        });
+
+        // Delete post function
+        window.deletePost = async function(id) {
+            if(!confirm("Are you sure you want to permanently delete this post?")) return;
+            
+            try {
+                const token = localStorage.getItem('orbitAdminToken');
+                const res = await fetch(`/api/posts/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+                
+                if (handleAuthError(res)) return;
+
+                if(res.ok) {
+                    fetchPosts(); // Reload List
+                }
+            } catch (err) {
+                console.error('Delete error', err);
+            }
+        };
+
+        // Initialize Call
+        checkAuthStatus();
+    </script>
+</body>
+</html>
