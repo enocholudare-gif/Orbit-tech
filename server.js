@@ -15,9 +15,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'super-secure-orbit-client-key';
 const upload = multer({
     storage: multer.diskStorage({
         destination: function (req, file, cb) {
-            const uploadDir = path.join(__dirname, 'uploads');
+            const uploadDir = process.env.VERCEL ? '/tmp/uploads' : path.join(__dirname, 'uploads');
             if (!fs.existsSync(uploadDir)) {
-                fs.mkdirSync(uploadDir);
+                fs.mkdirSync(uploadDir, { recursive: true });
             }
             cb(null, uploadDir);
         },
@@ -31,11 +31,12 @@ let authToken = null;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const dataFile = path.join(__dirname, 'data', 'posts.json');
-const projectsFile = path.join(__dirname, 'data', 'projects.json');
-const clientsFile = path.join(__dirname, 'data', 'clients.json');
-const clientProjectsFile = path.join(__dirname, 'data', 'client_projects.json');
-const pricingFile = path.join(__dirname, 'data', 'pricing.json');
+const dataDir = process.env.VERCEL ? '/tmp/data' : path.join(__dirname, 'data');
+const dataFile = path.join(dataDir, 'posts.json');
+const projectsFile = path.join(dataDir, 'projects.json');
+const clientsFile = path.join(dataDir, 'clients.json');
+const clientProjectsFile = path.join(dataDir, 'client_projects.json');
+const pricingFile = path.join(dataDir, 'pricing.json');
 
 // Middleware
 app.use(cors());
@@ -47,8 +48,20 @@ app.use(express.static(__dirname));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Ensure data directory and posts.json exist
-if (!fs.existsSync(path.join(__dirname, 'data'))) {
-    fs.mkdirSync(path.join(__dirname, 'data'));
+if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+}
+
+// Copy default files to /tmp/data if on Vercel
+if (process.env.VERCEL) {
+    const staticDataDir = path.join(__dirname, 'data');
+    ['posts.json', 'projects.json', 'clients.json', 'client_projects.json', 'pricing.json'].forEach(file => {
+        const tempPath = path.join(dataDir, file);
+        const staticPath = path.join(staticDataDir, file);
+        if (!fs.existsSync(tempPath) && fs.existsSync(staticPath)) {
+            fs.copyFileSync(staticPath, tempPath);
+        }
+    });
 }
 if (!fs.existsSync(dataFile)) {
     // Write 2 default posts corresponding to existing frontend ones
@@ -934,6 +947,10 @@ app.post('/api/ask-ai', (req, res) => {
 });
 
 // Start Server
-app.listen(PORT, () => {
-    console.log(`Orbit Tech Server running at http://localhost:${PORT}`);
-});
+if (process.env.VERCEL) {
+    module.exports = app;
+} else {
+    app.listen(PORT, () => {
+        console.log(`Orbit Tech Server running at http://localhost:${PORT}`);
+    });
+}
