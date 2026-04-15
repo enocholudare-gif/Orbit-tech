@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbit Tech Admin Panel</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            padding-top: 100px; /* Space for fixed nav */
+        }
+        .admin-nav {
+            background: rgba(10, 10, 10, 0.9);
+            padding: 20px;
+            border-bottom: 1px solid var(--glass-border);
+            text-align: center;
+        }
+        .admin-nav h1 {
+            color: var(--color-gold);
+            font-size: 1.8rem;
+        }
+        .admin-section {
+            padding: 40px 0;
+        }
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        .admin-card {
+            padding: 2rem;
+        }
+        .post-list {
+            list-style: none;
+            padding: 0;
+        }
+        .post-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 1rem;
+            background: rgba(0,0,0,0.5);
+            border-radius: 8px;
+        }
+        .post-item-title {
+            font-weight: 600;
+        }
+        .delete-btn {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .delete-btn:hover {
+            background: #e60000;
+        }
+        .login-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60vh;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-darker text-main">
+
+    <div class="admin-nav">
+        <h1>Orbit Tech Client Administrator</h1>
+        <p class="text-muted">Register clients, assign tracking projects, and upload secure deliverables.</p>
+        <div style="margin-top: 15px; display: flex; justify-content: center; gap: 20px;">
+            <a href="index.html" class="text-gold block"><i class="fas fa-arrow-left"></i> Return to Live Site</a>
+            <span style="color: #555;">|</span>
+            <a href="admin.html" class="text-gold block"><i class="fas fa-pen"></i> Blog Admin</a>
+            <span style="color: #555;">|</span>
+            <a href="admin-projects.html" class="text-gold block"><i class="fas fa-briefcase"></i> Portfolio Admin</a>
+        </div>
+    </div>
+
+    <div class="container admin-section">
+        <!-- LOGIN SECTION -->
+        <div id="loginSection" class="login-section">
+            <div class="admin-card glass-card login-card">
+                <h3 class="mb-4 text-gold"><i class="fas fa-lock"></i> Admin Login</h3>
+                <form id="loginForm" class="quote-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" required placeholder="Enter admin username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required placeholder="Enter password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login <i class="fas fa-sign-in-alt"></i></button>
+                    <p id="loginStatus" class="form-status mt-3 text-gold"></p>
+                </form>
+            </div>
+        </div>
+
+        <!-- MAIN ADMIN UI (Hidden by default) -->
+        <div class="admin-grid" id="adminGrid" style="display: none; grid-template-columns: 1fr 1fr;">
+            
+            <!-- REGISTER NEW CLIENT -->
+            <div class="admin-card glass-card hover-lift">
+                <h3 class="mb-4 text-gold"><i class="fas fa-user-plus"></i> Register New Client</h3>
+                <form id="createClientForm" class="quote-form">
+                    <div class="form-group">
+                        <label for="clientUsername">Username</label>
+                        <input type="text" id="clientUsername" required placeholder="e.g. johndoe">
+                    </div>
+                    <div class="form-group">
+                        <label for="clientPassword">Temporary Password</label>
+                        <input type="text" id="clientPassword" required placeholder="supersecret123">
+                    </div>
+                    <div class="form-group">
+                        <label for="clientEmail">Email (Optional)</label>
+                        <input type="email" id="clientEmail" placeholder="client@company.com">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block mt-3">Register Client <i class="fas fa-check"></i></button>
+                    <p id="clientStatus" class="form-status mt-3 text-gold"></p>
+                </form>
+            </div>
+
+            <!-- ASSIGN NEW PROJECT -->
+            <div class="admin-card glass-card hover-lift">
+                <h3 class="mb-4 text-gold"><i class="fas fa-project-diagram"></i> Assign Project to Client</h3>
+                <form id="assignProjectForm" class="quote-form">
+                    <div class="form-group">
+                        <label for="selectClient">Select Client</label>
+                        <select id="selectClient" required style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: #fff; border-radius: 5px;">
+                            <option value="">Loading clients...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="projName">Project Name</label>
+                        <input type="text" id="projName" required placeholder="e.g. Website Overhaul Phase 1">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label for="projStatus">Current Status</label>
+                            <select id="projStatus" required style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: #fff; border-radius: 5px;">
+                                <option value="Pending">Pending</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="projProgress">Progress (%)</label>
+                            <input type="number" id="projProgress" required min="0" max="100" value="0">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block mt-3">Assign Project <i class="fas fa-plus"></i></button>
+                    <p id="assignStatus" class="form-status mt-3 text-gold"></p>
+                </form>
+            </div>
+
+            <!-- EXISTING PROJECTS MANAGER -->
+            <div class="admin-card glass-card" style="grid-column: 1 / -1;">
+                <h3 class="mb-4 text-gold"><i class="fas fa-list"></i> Live Client Projects Manager</h3>
+                <ul class="post-list" id="clientProjectsList">
+                    <!-- Projects will populate here dynamically -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const loginSection = document.getElementById('loginSection');
+        const adminGrid = document.getElementById('adminGrid');
+        const loginForm = document.getElementById('loginForm');
+        const loginStatus = document.getElementById('loginStatus');
+
+        const createClientForm = document.getElementById('createClientForm');
+        const clientStatus = document.getElementById('clientStatus');
+        
+        const selectClient = document.getElementById('selectClient');
+        const assignProjectForm = document.getElementById('assignProjectForm');
+        const assignStatus = document.getElementById('assignStatus');
+
+        const clientProjectsList = document.getElementById('clientProjectsList');
+        
+        let allClients = [];
+
+        // Check auth status
+        const checkAuthStatus = () => {
+            const token = localStorage.getItem('orbitAdminToken');
+            if (token) {
+                loginSection.style.display = 'none';
+                adminGrid.style.display = 'grid';
+                fetchAdminData();
+            } else {
+                loginSection.style.display = 'flex';
+                adminGrid.style.display = 'none';
+            }
+        };
+
+        const handleAuthError = (res) => {
+            if (res.status === 401 || res.status === 403) {
+                localStorage.removeItem('orbitAdminToken');
+                checkAuthStatus();
+                return true;
+            }
+            return false;
+        };
+
+        // Login Submit
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            loginStatus.innerHTML = 'Authenticating...';
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('orbitAdminToken', data.token);
+                    loginStatus.innerHTML = 'Success!';
+                    setTimeout(() => {
+                        checkAuthStatus();
+                    }, 500);
+                } else {
+                    loginStatus.innerHTML = 'Invalid credentials';
+                }
+            } catch (err) {
+                loginStatus.innerHTML = 'Server error';
+            }
+        });
+
+        async function fetchAdminData() {
+            try {
+                const token = localStorage.getItem('orbitAdminToken');
+                const headers = { 'Authorization': 'Bearer ' + token };
+                
+                // Fetch Clients
+                const resClients = await fetch('/api/admin/clients', { headers });
+                if(handleAuthError(resClients)) return;
+                
+                allClients = await resClients.json();
+                
+                // Populate Dropdown
+                selectClient.innerHTML = '<option value="">Select a client...</option>';
+                allClients.forEach(c => {
+                    selectClient.innerHTML += `<option value="${c.id}">${c.username}</option>`;
+                });
+
+                // Fetch Project Assignments
+                const resProj = await fetch('/api/admin/client-projects', { headers });
+                const assignedProjects = await resProj.json();
+
+                renderProjectsList(assignedProjects);
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function renderProjectsList(projects) {
+            clientProjectsList.innerHTML = '';
+            projects.forEach(p => {
+                const clientName = allClients.find(c => c.id === p.clientId)?.username || 'Unknown';
+                
+                const li = document.createElement('li');
+                li.className = 'post-item';
+                li.style.flexDirection = 'column';
+                li.style.alignItems = 'flex-start';
+                li.style.gap = '15px';
+
+                let filesHtml = p.files.map(f => `<a href="${f.url}" target="_blank" style="color:var(--color-gold); font-size: 0.8rem; margin-right: 10px;"><i class="fas fa-file"></i> ${f.name}</a>`).join('');
+
+                li.innerHTML = `
+                    <div style="width: 100%; display: flex; justify-content: space-between;">
+                        <div>
+                            <div class="post-item-title">${p.projectName} <span style="font-size: 0.8rem; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; margin-left: 10px;">Client: ${clientName}</span></div>
+                            <div class="text-muted" style="font-size: 0.8rem; margin-top:5px;">Status: <strong>${p.status}</strong> | Progress: <strong>${p.progress}%</strong></div>
+                        </div>
+                        <div>
+                            <div style="display: flex; gap: 5px; align-items:center;">
+                                <input type="number" id="updProg_${p.id}" value="${p.progress}" style="width: 60px; padding: 5px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--glass-border); border-radius: 4px;"> 
+                                <button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem;" onclick="updateProgress('${p.id}')">Update %</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.3); width: 100%; padding: 10px; border-radius: 5px;">
+                        <strong style="font-size: 0.85rem; display:block; margin-bottom: 5px;">Uploaded Files:</strong>
+                        ${filesHtml || '<span style="font-size: 0.8rem; color:#aaa;">No files yet.</span>'}
+                        <div style="margin-top: 10px; display:flex; gap:10px;">
+                            <input type="file" id="file_${p.id}" style="font-size:0.8rem;">
+                            <button class="btn btn-primary" style="padding: 5px 10px; font-size: 0.8rem;" onclick="uploadFile('${p.id}')">Upload</button>
+                        </div>
+                    </div>
+                `;
+                clientProjectsList.appendChild(li);
+            });
+        }
+
+        // Add Client Handler
+        createClientForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clientStatus.innerHTML = 'Registering... <i class="fas fa-spinner fa-spin"></i>';
+
+            const payload = {
+                username: document.getElementById('clientUsername').value,
+                password: document.getElementById('clientPassword').value,
+                email: document.getElementById('clientEmail').value
+            };
+
+            try {
+                const token = localStorage.getItem('orbitAdminToken');
+                const res = await fetch('/api/admin/clients', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (handleAuthError(res)) return;
+
+                if (res.ok) {
+                    clientStatus.innerHTML = 'Client Registered Successfully!';
+                    createClientForm.reset();
+                    fetchAdminData();
+                    setTimeout(() => clientStatus.innerHTML = '', 4000);
+                } else {
+                    const err = await res.json();
+                    clientStatus.innerHTML = err.error || 'Failed to register';
+                }
+            } catch (err) {
+                clientStatus.innerHTML = 'Server error.';
+            }
+        });
+
+        // Assign Project Handler
+        assignProjectForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            assignStatus.innerHTML = 'Assigning... <i class="fas fa-spinner fa-spin"></i>';
+
+            const payload = {
+                clientId: selectClient.value,
+                projectName: document.getElementById('projName').value,
+                status: document.getElementById('projStatus').value,
+                progress: document.getElementById('projProgress').value
+            };
+
+            try {
+                const token = localStorage.getItem('orbitAdminToken');
+                const res = await fetch('/api/admin/client-projects', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (handleAuthError(res)) return;
+
+                if (res.ok) {
+                    assignStatus.innerHTML = 'Project Assigned Successfully!';
+                    assignProjectForm.reset();
+                    fetchAdminData();
+                    setTimeout(() => assignStatus.innerHTML = '', 4000);
+                } else {
+                    assignStatus.innerHTML = 'Failed to assign';
+                }
+            } catch (err) {
+                assignStatus.innerHTML = 'Server error.';
+            }
+        });
+
+        window.updateProgress = async function(id) {
+            const prog = document.getElementById('updProg_' + id).value;
+            try {
+                const token = localStorage.getItem('orbitAdminToken');
+                await fetch('/api/admin/client-projects/' + id, {
+                    method: 'PUT',
+                    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ progress: prog })
+                });
+                fetchAdminData();
+            } catch(e) { console.error(e) }
+        }
+
+        window.uploadFile = async function(id) {
+            const fileInput = document.getElementById('file_' + id);
+            if(!fileInput.files[0]) {
+                alert("Please select a file first.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const token = localStorage.getItem('orbitAdminToken');
+                const res = await fetch('/api/admin/client-projects/' + id + '/files', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    body: formData
+                });
+                if(res.ok) {
+                    fetchAdminData();
+                } else {
+                    alert("Upload failed.");
+                }
+            } catch(e) { console.error(e) }
+        }
+
+        // Initialize Call
+        checkAuthStatus();
+    </script>
+</body>
+</html>

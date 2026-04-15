@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1",
+    "title": "Fintech Dashboard Redesign",
+    "category": "Website Development",
+    "image": "https://placehold.co/800x500/1a1a1a/FFD700?text=Fintech+Mockup",
+    "description": "A complete overhaul of a legacy financial dashboard enhancing user experience and data visualization.",
+    "problem": "The client struggled with high user drop-off due to poor navigation and overly complex statistical tables.",
+    "solution": "We simplified the architecture, implemented dark mode aesthetics, and integrated interactive Chart.js graphs.",
+    "result": "User retention vastly improved by 40% and daily login durations doubled over the first quarter.",
+    "featured": true,
+    "timestamp": "2026-04-03T19:18:03.590Z"
+  }
+]

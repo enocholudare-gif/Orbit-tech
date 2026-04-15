@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbit Tech | Our Portfolio</title>
+    <meta name="description" content="View our recent projects across Website Development, Graphic Design, Social Media, and Branding at Orbit Tech.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        .portfolio-header {
+            padding: 150px 0 50px;
+            text-align: center;
+        }
+        .filter-menu {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: transparent;
+            border: 1px solid var(--color-gold);
+            color: var(--text-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--color-gold);
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+        .portfolio-page-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        .project-category-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--color-gold);
+            color: #1a1a1a;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 10;
+        }
+        .project-featured-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ff4d4d;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="bg-darker text-main">
+
+    <header id="navbar">
+        <div class="container nav-wrapper">
+            <a href="index.html" class="logo">
+                <img src="Enoch.png" alt="Orbit Tech Logo" onerror="this.src='https://placehold.co/120x40/000000/FFD700?text=Orbit+Tech';">
+            </a>
+            <nav class="nav-links">
+                <a href="index.html#home">Home</a>
+                <a href="index.html#about">About</a>
+                <a href="index.html#services">Services</a>
+                <a href="portfolio.html" class="active" style="color: var(--color-gold);">Work</a>
+                <a href="index.html#faq">FAQ</a>
+                <a href="index.html#contact">Contact</a>
+            </nav>
+            <div class="nav-actions">
+                <a href="index.html#quote" class="btn btn-primary">Get a Quote</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="portfolio-header section">
+        <div class="container">
+            <h1 data-animate="fade-up">Our <span class="text-gold">Creative Engineering</span></h1>
+            <p class="text-muted" data-animate="fade-up">Browse through some of our hand-picked case studies.</p>
+        </div>
+    </div>
+
+    <!-- MAIN PORTFOLIO DISPLAY -->
+    <section class="section pt-0">
+        <div class="container">
+            <!-- Filter Menu -->
+            <div class="filter-menu" data-animate="fade-up">
+                <button class="filter-btn active" data-filter="all">All Projects</button>
+                <button class="filter-btn" data-filter="Website Development">Web Development</button>
+                <button class="filter-btn" data-filter="Graphic Design">Graphic Design</button>
+                <button class="filter-btn" data-filter="Social Media Management">Social Media</button>
+                <button class="filter-btn" data-filter="Ads/Marketing">Ads & Marketing</button>
+            </div>
+
+            <!-- Grid -->
+            <div class="portfolio-page-grid" id="mainPortfolioGrid" data-animate="fade-up">
+                <p class="text-muted text-center" style="grid-column: 1 / -1;">Loading portfolio projects...</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer mt-5">
+        <div class="container footer-top">
+            <div class="footer-brand">
+                <a href="index.html" class="logo-text text-gold">Orbit Tech</a>
+                <p>We build smart, high-converting digital solutions for modern businesses looking to scale their impact online.</p>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            <p>&copy; 2026 Orbit Tech. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let allProjects = [];
+        const grid = document.getElementById('mainPortfolioGrid');
+        
+        async function fetchAndRenderProjects() {
+            try {
+                const res = await fetch('/api/projects');
+                if(!res.ok) throw new Error("Failed to load");
+                allProjects = await res.json();
+                renderProjects('all');
+            } catch (err) {
+                grid.innerHTML = '<p class="text-muted text-center" style="grid-column: 1 / -1;">Could not load projects. Ensure backend is running.</p>';
+                console.error(err);
+            }
+        }
+
+        function renderProjects(filterCategory) {
+            grid.innerHTML = '';
+            
+            const filtered = filterCategory === 'all' 
+                ? allProjects 
+                : allProjects.filter(p => p.category === filterCategory);
+                
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p class="text-muted text-center" style="grid-column: 1 / -1; padding: 40px;">No projects found for this category yet.</p>';
+                return;
+            }
+
+            filtered.forEach((p, index) => {
+                const card = document.createElement('div');
+                card.className = 'portfolio-card glass-card hover-lift';
+                card.style.animation = `fadeUp 0.5s ease forwards ${index * 0.1}s`;
+                card.style.opacity = '0';
+                
+                let tagsStr = `<div class="project-category-tag">${p.category}</div>`;
+                if(p.featured) {
+                    tagsStr += `<div class="project-featured-tag"><i class="fas fa-star"></i> Featured</div>`;
+                }
+
+                card.innerHTML = `
+                    ${tagsStr}
+                    <div class="portfolio-img-wrap" style="height: 220px;">
+                        <img src="${p.image}" alt="${p.title}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div class="portfolio-overlay">
+                            <a href="case-study.html?id=${p.id}" class="btn btn-primary" style="margin-top: 50px;">View Case Study</a>
+                        </div>
+                    </div>
+                    <div class="portfolio-info" style="padding: 20px;">
+                        <h3 class="text-gold" style="font-size: 1.2rem; margin-bottom: 10px;">${p.title}</h3>
+                        <p class="text-muted" style="font-size: 0.9rem;">${p.description}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                renderProjects(e.target.getAttribute('data-filter'));
+            });
+        });
+
+        fetchAndRenderProjects();
+    </script>
+</body>
+</html>

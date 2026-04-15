@@ -255,6 +255,125 @@ document.addEventListener('DOMContentLoaded', () => {
         
         loadBlogPosts();
     }
+
+    // 8.5 Fetch Dynamic Portfolio
+    const homePortfolioGrid = document.getElementById('home-portfolio-grid');
+    if (homePortfolioGrid) {
+        async function loadHomePortfolio() {
+            try {
+                const res = await fetch('/api/projects', { cache: 'no-store' });
+                if (!res.ok) throw new Error('API down');
+                
+                const allProjects = await res.json();
+                
+                // Only Featured or top 6
+                const featuredProjects = allProjects.filter(p => p.featured).slice(0, 6);
+                
+                if (featuredProjects.length === 0) {
+                    homePortfolioGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;">Check back later for our new amazing portfolio features!</p>';
+                    return;
+                }
+
+                homePortfolioGrid.innerHTML = featuredProjects.map((project, index) => {
+                    const delay = index * 100;
+                    return `
+                        <div class="portfolio-card glass-card hover-lift" data-animate="fade-up" style="animation-delay: ${delay}ms;">
+                            <div class="portfolio-img-wrap" style="height: 250px; overflow: hidden; border-radius: 8px;">
+                                <img src="${project.image}" alt="${project.title}" style="width: 100%; height: 100%; object-fit: cover;"
+                                    onerror="this.src='https://placehold.co/600x400/1a1a1a/FFD700?text=Portfolio';">
+                                <div class="portfolio-overlay">
+                                    <a href="case-study.html?id=${project.id}" class="view-btn"><i class="fas fa-eye"></i></a>
+                                </div>
+                            </div>
+                            <div class="portfolio-info glass-card mt-3">
+                                <h3 style="margin-bottom: 5px;">${project.title} <span style="font-size: 0.7rem; background: #FFD700; color: #1a1a1a; padding: 2px 6px; border-radius: 4px; margin-left: 5px;">${project.category}</span></h3>
+                                <p style="font-size: 0.9rem;">${project.description}</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                const newCards = homePortfolioGrid.querySelectorAll('[data-animate]');
+                newCards.forEach(el => {
+                    if (window.scrollObserver) {
+                        window.scrollObserver.observe(el);
+                    } else if (scrollObserver) {
+                        scrollObserver.observe(el);
+                    }
+                });
+                
+            } catch (err) {
+                console.error("Error fetching portfolio:", err);
+                homePortfolioGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;">Could not connect to portfolio server.</p>';
+            }
+        }
+        
+        loadHomePortfolio();
+    }
+    // 10. AI Chat Assistant Logic
+    const aiChatForm = document.getElementById('aiChatForm');
+    const aiChatInput = document.getElementById('aiChatInput');
+    const aiChatMessages = document.getElementById('aiChatMessages');
+
+    if (aiChatForm && aiChatInput && aiChatMessages) {
+        aiChatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userText = aiChatInput.value.trim();
+            if (!userText) return;
+
+            // 1. Add User Message to UI
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.className = 'chat-message user-message';
+            userMsgDiv.innerHTML = `<div class="message-content">${userText}</div>`;
+            aiChatMessages.appendChild(userMsgDiv);
+            
+            aiChatInput.value = '';
+            aiChatMessages.scrollTop = aiChatMessages.scrollHeight; // Scroll to bottom
+
+            // 2. Add Typing Indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chat-message ai-message typing-container';
+            typingDiv.innerHTML = `<div class="message-content typing-indicator"><span></span><span></span><span></span></div>`;
+            aiChatMessages.appendChild(typingDiv);
+            aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+
+            try {
+                // 3. Fetch from backend
+                const res = await fetch('/api/ask-ai', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: userText })
+                });
+
+                const data = await res.json();
+                
+                // Remove typing indicator
+                if (typingDiv.parentNode) aiChatMessages.removeChild(typingDiv);
+
+                // 4. Add AI Response to UI
+                const aiMsgDiv = document.createElement('div');
+                aiMsgDiv.className = 'chat-message ai-message';
+                
+                // Convert simple markdown links or bold to HTML if needed
+                let formattedReply = data.answer.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                formattedReply = formattedReply.replace(/\n/g, '<br>');
+
+                aiMsgDiv.innerHTML = `<div class="message-content">${formattedReply}</div>`;
+                aiChatMessages.appendChild(aiMsgDiv);
+                
+            } catch (err) {
+                console.error("AI Error:", err);
+                if (typingDiv.parentNode) aiChatMessages.removeChild(typingDiv);
+                
+                const errDiv = document.createElement('div');
+                errDiv.className = 'chat-message ai-message';
+                errDiv.innerHTML = `<div class="message-content" style="color: #ff4d4d;">Sorry, I encountered a server error. Please try again later or browse the FAQ below.</div>`;
+                aiChatMessages.appendChild(errDiv);
+            }
+            
+            aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+        });
+    }
 });
 
 // 9. Blog Modal Global Function
@@ -305,5 +424,182 @@ document.addEventListener('DOMContentLoaded', () => {
                 blogModalClose.click();
             }
         });
+    }
+});
+
+// 10. Project Estimator Calculator
+document.addEventListener('DOMContentLoaded', () => {
+    const calcService = document.getElementById('calcService');
+    const calcPackages = document.querySelectorAll('input[name="calcPackage"]');
+    const calcPriceDisplay = document.getElementById('calcPriceDisplay');
+    const btnNGN = document.getElementById('btnNGN');
+    const btnUSD = document.getElementById('btnUSD');
+    const btnStartProject = document.getElementById('btnStartProject');
+    const btnNegotiate = document.getElementById('btnNegotiate');
+    
+    let pricingData = null;
+    let currentCurrency = 'NGN'; // Default to NGN
+    
+    if (calcService && calcPriceDisplay) {
+        const calcOtherServiceGroup = document.getElementById('calcOtherServiceGroup');
+        const calcOtherServiceInput = document.getElementById('calcOtherService');
+        
+        // Fetch pricing from backend
+        async function initCalculator() {
+            try {
+                const res = await fetch('/api/pricing');
+                if (res.ok) {
+                    pricingData = await res.json();
+                    
+                    // Populate Select dynamically
+                    calcService.innerHTML = '';
+                    Object.keys(pricingData.services).forEach(key => {
+                        const opt = document.createElement('option');
+                        opt.value = key;
+                        opt.textContent = pricingData.services[key].name;
+                        calcService.appendChild(opt);
+                    });
+                    
+                    // Add Other Option
+                    const otherOpt = document.createElement('option');
+                    otherOpt.value = 'other';
+                    otherOpt.textContent = 'Other (Please Specify)';
+                    calcService.appendChild(otherOpt);
+                    
+                    updatePrice();
+                }
+            } catch (err) {
+                console.error("Pricing fetch failed", err);
+                calcService.innerHTML = '<option value="">Failed to load.</option>';
+            }
+        }
+        
+        function updatePrice() {
+            if (!pricingData) return;
+            
+            const serviceKey = calcService.value;
+            let packageKey = 'standard';
+            calcPackages.forEach(p => { if(p.checked) packageKey = p.value; });
+            
+            let finalString = '';
+            
+            if (serviceKey === 'other') {
+                calcOtherServiceGroup.style.display = 'block';
+                finalString = 'Custom Pricing';
+            } else {
+                calcOtherServiceGroup.style.display = 'none';
+                
+                // Get base USD price
+                const serviceObj = pricingData.services[serviceKey];
+                if (!serviceObj) return;
+                
+                const baseUsd = serviceObj.packages[packageKey];
+                
+                // Format and display
+                if (currentCurrency === 'USD') {
+                    finalString = `$${baseUsd.toLocaleString()}`;
+                } else {
+                    const ngnPrice = baseUsd * pricingData.exchangeRate;
+                    finalString = `₦${ngnPrice.toLocaleString()}`;
+                }
+            }
+            
+            // Animate number change
+            calcPriceDisplay.style.opacity = '0';
+            setTimeout(() => {
+                calcPriceDisplay.textContent = finalString;
+                calcPriceDisplay.style.opacity = '1';
+                
+                // Adjust font size if custom pricing text is too long
+                if (serviceKey === 'other') calcPriceDisplay.style.fontSize = '2rem';
+                else calcPriceDisplay.style.fontSize = '3rem';
+            }, 200);
+        }
+        
+        // Listeners for changes
+        calcService.addEventListener('change', updatePrice);
+        calcPackages.forEach(p => p.addEventListener('change', updatePrice));
+        
+        btnNGN.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentCurrency = 'NGN';
+            btnNGN.style.background = 'var(--color-gold)';
+            btnNGN.style.color = '#000';
+            btnUSD.style.background = 'transparent';
+            btnUSD.style.color = 'var(--color-text-main)';
+            updatePrice();
+        });
+        
+        btnUSD.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentCurrency = 'USD';
+            btnUSD.style.background = 'var(--color-gold)';
+            btnUSD.style.color = '#000';
+            btnNGN.style.background = 'transparent';
+            btnNGN.style.color = 'var(--color-text-main)';
+            updatePrice();
+        });
+        
+        // Action Buttons
+        const generateWaLink = (isNegotiation) => {
+            if (!pricingData) return '#';
+            
+            const serviceKey = calcService.value;
+            let packageKey = 'standard';
+            calcPackages.forEach(p => { if(p.checked) packageKey = p.value; });
+            
+            let serviceName = '';
+            let priceText = calcPriceDisplay.textContent;
+            
+            if (serviceKey === 'other') {
+                serviceName = calcOtherServiceInput.value.trim() || 'Custom Request';
+                priceText = 'custom pricing';
+            } else {
+                serviceName = pricingData.services[serviceKey].name;
+            }
+            
+            const message = `Hello Orbit Tech, I saw the ${packageKey.toUpperCase()} package for ${serviceName} is estimated at ${priceText}. I am very interested, but I would like to negotiate the price and terms. Can we discuss this?`;
+            return `https://wa.me/2348106932689?text=${encodeURIComponent(message)}`;
+        };
+        
+        btnStartProject.addEventListener('click', () => {
+            if (!pricingData) return;
+            
+            const serviceKey = calcService.value;
+            let packageKey = 'standard';
+            calcPackages.forEach(p => { if(p.checked) packageKey = p.value; });
+            
+            let serviceName = '';
+            let priceText = calcPriceDisplay.textContent;
+            
+            if (serviceKey === 'other') {
+                serviceName = calcOtherServiceInput.value.trim() || 'Custom Request';
+                priceText = 'custom pricing';
+            } else {
+                serviceName = pricingData.services[serviceKey].name;
+            }
+
+            // Scroll to Contact / Quote section
+            const quoteSection = document.getElementById('quote');
+            if (quoteSection) {
+                quoteSection.scrollIntoView({ behavior: 'smooth' });
+                
+                // Pre-fill the project details input
+                const messageInput = document.getElementById('message');
+                if (messageInput) {
+                    messageInput.value = `I am interested in starting my project! \n\nService: ${serviceName}\nPackage: ${packageKey.toUpperCase()}\nEstimated Price: ${priceText}\n\nPlease let me know the next steps.`;
+                    
+                    // Small visual flash to draw attention
+                    messageInput.style.backgroundColor = 'rgba(255,215,0,0.1)';
+                    setTimeout(() => messageInput.style.backgroundColor = '', 2000);
+                }
+            }
+        });
+        
+        btnNegotiate.addEventListener('click', () => {
+            window.open(generateWaLink(true), '_blank');
+        });
+
+        initCalculator();
     }
 });

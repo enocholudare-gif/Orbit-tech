@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbit Tech Admin Panel</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            padding-top: 100px; /* Space for fixed nav */
+        }
+        .admin-nav {
+            background: rgba(10, 10, 10, 0.9);
+            padding: 20px;
+            border-bottom: 1px solid var(--glass-border);
+            text-align: center;
+        }
+        .admin-nav h1 {
+            color: var(--color-gold);
+            font-size: 1.8rem;
+        }
+        .admin-section {
+            padding: 40px 0;
+        }
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        .admin-card {
+            padding: 2rem;
+        }
+        .post-list {
+            list-style: none;
+            padding: 0;
+        }
+        .post-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 1rem;
+            background: rgba(0,0,0,0.5);
+            border-radius: 8px;
+        }
+        .post-item-title {
+            font-weight: 600;
+        }
+        .delete-btn {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .delete-btn:hover {
+            background: #e60000;
+        }
+        .login-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60vh;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-darker text-main">
+
+    <div class="admin-nav">
+        <h1>Orbit Tech Portfolio Administrator</h1>
+        <p class="text-muted">Create, track, and manage amazing Portfolio Projects directly from this dashboard.</p>
+        <div style="margin-top: 15px; display: flex; justify-content: center; gap: 20px;">
+            <a href="index.html" class="text-gold block"><i class="fas fa-arrow-left"></i> Return to Live Site</a>
+            <span style="color: #555;">|</span>
+            <a href="admin.html" class="text-gold block"><i class="fas fa-pen"></i> Blog Admin</a>
+            <span style="color: #555;">|</span>
+            <a href="admin-clients.html" class="text-gold block"><i class="fas fa-users"></i> Client Portal Admin</a>
+        </div>
+    </div>
+
+    <div class="container admin-section">
+        <!-- LOGIN SECTION -->
+        <div id="loginSection" class="login-section">
+            <div class="admin-card glass-card login-card">
+                <h3 class="mb-4 text-gold"><i class="fas fa-lock"></i> Admin Login</h3>
+                <form id="loginForm" class="quote-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" required placeholder="Enter admin username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required placeholder="Enter password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login <i class="fas fa-sign-in-alt"></i></button>
+                    <p id="loginStatus" class="form-status mt-3 text-gold"></p>
+                </form>
+            </div>
+        </div>
+
+        <!-- MAIN ADMIN UI (Hidden by default) -->
+        <div class="admin-grid" id="adminGrid" style="display: none; grid-template-columns: 1fr;">
+            
+            <!-- CREATE NEW PROJECT -->
+            <div class="admin-card glass-card hover-lift">
+                <h3 class="mb-4 text-gold"><i class="fas fa-plus-circle"></i> Add New Case Study/Project</h3>
+                <form id="createProjectForm" class="quote-form">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label for="title">Project Title</label>
+                            <input type="text" id="title" required placeholder="e.g. E-Commerce Redesign">
+                        </div>
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category" required style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: #fff; border-radius: 5px;">
+                                <option value="Website Development">Website Development</option>
+                                <option value="Graphic Design">Graphic Design</option>
+                                <option value="Social Media Management">Social Media Management</option>
+                                <option value="Ads/Marketing">Ads/Marketing</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="image">Project Cover Image</label>
+                        <input type="file" id="image" accept="image/*" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Short Description (Summary)</label>
+                        <textarea id="description" rows="2" required placeholder="Brief summary of the project..."></textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label for="problem">The Problem / Challenge</label>
+                            <textarea id="problem" rows="4" required placeholder="What was the client struggling with?"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="solution">Our Solution</label>
+                            <textarea id="solution" rows="4" required placeholder="What did Orbit Tech do?"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="result">The Result / Impact</label>
+                            <textarea id="result" rows="4" required placeholder="Metrics or improvements achieved."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="featured" style="width: 20px; height: 20px; accent-color: var(--color-gold);">
+                        <label for="featured" style="margin: 0; color: var(--color-gold);">Mark as Featured Project</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block mt-3">Publish Project <i class="fas fa-magic"></i></button>
+                    <p id="publishStatus" class="form-status mt-3 text-gold"></p>
+                </form>
+            </div>
+
+            <!-- EXISTING PROJECTS -->
+            <div class="admin-card glass-card">
+                <h3 class="mb-4 text-gold"><i class="fas fa-list"></i> Live Projects Manager</h3>
+                <ul class="post-list" id="projectList">
+                    <!-- Projects will populate here dynamically -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const loginSection = document.getElementById('loginSection');
+        const adminGrid = document.getElementById('adminGrid');
+        const loginForm = document.getElementById('loginForm');
+        const loginStatus = document.getElementById('loginStatus');
+
+        const projectList = document.getElementById('projectList');
+        const createProjectForm = document.getElementById('createProjectForm');
+        const publishStatus = document.getElementById('publishStatus');
+
+        // Check if token already exists in localStorage
+        const checkAuthStatus = () => {
+            const token = localStorage.getItem('orbitAdminToken');
+            if (token) {
+                loginSection.style.display = 'none';
+                adminGrid.style.display = 'grid';
+                fetchProjects();
+            } else {
+                loginSection.style.display = 'flex';
+                adminGrid.style.display = 'none';
+            }
+        };
+
+        // Login Submit
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            loginStatus.innerHTML = 'Authenticating...';
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('orbitAdminToken', data.token);
+                    loginStatus.innerHTML = 'Success!';
+                    setTimeout(() => {
+                        checkAuthStatus();
+                    }, 500);
+                } else {
+                    loginStatus.innerHTML = 'Invalid credentials';
+                }
+            } catch (err) {
+                console.error('Login error', err);
+                loginStatus.innerHTML = 'Server error';
+            }
+        });
+
+        const handleAuthError = (res) => {
+            if (res.status === 401 || res.status === 403) {
+                localStorage.removeItem('orbitAdminToken');
+                checkAuthStatus();
+                return true;
+            }
+            return false;
+        };
+
+        // Fetch Projects on Load
+        async function fetchProjects() {
+            try {
+                const res = await fetch('/api/projects', { cache: 'no-store' });
+                const projects = await res.json();
+                
+                projectList.innerHTML = '';
+                projects.forEach(project => {
+                    const li = document.createElement('li');
+                    li.className = 'post-item';
+                    li.innerHTML = `
+                        <div>
+                            <div class="post-item-title">${project.title} <span style="font-size: 0.8rem; background: #FFD700; color: #1a1a1a; padding: 2px 6px; border-radius: 4px; margin-left: 10px;">${project.category}</span> ${project.featured ? '<span style="color: #FFD700;"><i class="fas fa-star"></i></span>' : ''}</div>
+                            <div class="text-muted" style="font-size: 0.8rem;">${new Date(project.timestamp).toLocaleDateString()}</div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteProject('${project.id}')"><i class="fas fa-trash"></i></button>
+                    `;
+                    projectList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Fetch error:', error);
+                projectList.innerHTML = '<p class="text-muted">Error loading projects from server. Is server.js running?</p>';
+            }
+        }
+
+        // Add Project Form handler
+        createProjectForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            publishStatus.innerHTML = 'Publishing Project... <i class="fas fa-spinner fa-spin"></i>';
+
+            const formData = new FormData();
+            formData.append('title', document.getElementById('title').value);
+            formData.append('category', document.getElementById('category').value);
+            formData.append('description', document.getElementById('description').value);
+            formData.append('problem', document.getElementById('problem').value);
+            formData.append('solution', document.getElementById('solution').value);
+            formData.append('result', document.getElementById('result').value);
+            formData.append('featured', document.getElementById('featured').checked);
+            
+            const imageFile = document.getElementById('image').files[0];
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
+
+            try {
+                const token = localStorage.getItem('orbitAdminToken');
+                const res = await fetch('/api/projects', {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: formData
+                });
+                
+                if (handleAuthError(res)) return;
+
+                if (res.ok) {
+                    publishStatus.innerHTML = 'Project Published Live!';
+                    createProjectForm.reset();
+                    fetchProjects(); // Reload list
+                    setTimeout(() => publishStatus.innerHTML = '', 3000);
+                } else {
+                    publishStatus.innerHTML = 'Failed to publish.';
+                }
+            } catch (err) {
+                console.error(err);
+                publishStatus.innerHTML = 'Server error.';
+            }
+        });
+
+        // Delete project function
+        window.deleteProject = async function(id) {
+            if(!confirm("Are you sure you want to permanently delete this project?")) return;
+            
+            try {
+                const token = localStorage.getItem('orbitAdminToken');
+                const res = await fetch(`/api/projects/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+                
+                if (handleAuthError(res)) return;
+
+                if(res.ok) {
+                    fetchProjects(); // Reload List
+                }
+            } catch (err) {
+                console.error('Delete error', err);
+            }
+        };
+
+        // Initialize Call
+        checkAuthStatus();
+    </script>
+</body>
+</html>

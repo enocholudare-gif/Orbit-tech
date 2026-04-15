@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbit Tech | Case Study</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        .case-study-hero {
+            padding: 120px 0 60px;
+            background: linear-gradient(180deg, rgba(10,10,10,1) 0%, rgba(20,20,20,1) 100%);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .cs-tag {
+            display: inline-block;
+            background: var(--color-gold);
+            color: #1a1a1a;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .cs-hero-img {
+            width: 100%;
+            height: 50vh;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid var(--glass-border);
+        }
+        .cs-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 40px;
+        }
+        .cs-main h2 {
+            color: var(--color-gold);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .cs-main p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #ccc;
+            margin-bottom: 40px;
+        }
+        .cs-sidebar {
+            position: sticky;
+            top: 100px;
+        }
+        @media (max-width: 900px) {
+            .cs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="bg-darker text-main">
+
+    <header id="navbar">
+        <div class="container nav-wrapper">
+            <a href="index.html" class="logo">
+                <img src="Enoch.png" alt="Orbit Tech Logo" onerror="this.src='https://placehold.co/120x40/000000/FFD700?text=Orbit+Tech';">
+            </a>
+            <nav class="nav-links">
+                <a href="index.html#home">Home</a>
+                <a href="index.html#about">About</a>
+                <a href="index.html#services">Services</a>
+                <a href="portfolio.html" class="active" style="color: var(--color-gold);">Work</a>
+                <a href="index.html#faq">FAQ</a>
+                <a href="index.html#contact">Contact</a>
+            </nav>
+            <div class="nav-actions">
+                <a href="index.html#quote" class="btn btn-primary">Get a Quote</a>
+            </div>
+        </div>
+    </header>
+
+    <div id="csLoader" class="section text-center" style="min-height: 70vh; display: flex; align-items: center; justify-content: center;">
+        <h2 class="text-muted"><i class="fas fa-spinner fa-spin"></i> Loading Case Study...</h2>
+    </div>
+
+    <div id="csContent" style="display: none;">
+        <!-- HERO -->
+        <section class="case-study-hero">
+            <div class="container">
+                <a href="portfolio.html" class="text-gold" style="display: inline-block; margin-bottom: 20px;"><i class="fas fa-arrow-left"></i> Back to Portfolio</a>
+                <div>
+                    <span class="cs-tag" id="csCategory">Category</span>
+                </div>
+                <h1 id="csTitle" style="font-size: 3rem; margin-bottom: 20px; line-height: 1.2;">Project Title</h1>
+                <p id="csDescription" class="text-muted" style="font-size: 1.2rem; max-width: 800px;"></p>
+                <img id="csImage" src="" alt="Project Presentation" class="cs-hero-img">
+            </div>
+        </section>
+
+        <!-- BODY -->
+        <section class="section">
+            <div class="container">
+                <div class="cs-grid">
+                    <!-- Main Content -->
+                    <div class="cs-main">
+                        <h2><i class="fas fa-exclamation-triangle"></i> The Challenge</h2>
+                        <p id="csProblem"></p>
+
+                        <h2><i class="fas fa-lightbulb"></i> Our Solution</h2>
+                        <p id="csSolution"></p>
+
+                        <h2><i class="fas fa-chart-line"></i> The Result</h2>
+                        <p id="csResult"></p>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div>
+                        <div class="cs-sidebar glass-card" style="padding: 30px;">
+                            <h3 class="mb-4 text-gold">Project Details</h3>
+                            <div class="mb-3">
+                                <strong class="text-muted d-block" style="font-size: 0.9rem;">Date Delivered</strong>
+                                <div id="csDate">--</div>
+                            </div>
+                            <div class="mb-4">
+                                <strong class="text-muted d-block" style="font-size: 0.9rem;">Services Provided</strong>
+                                <div id="csServices">--</div>
+                            </div>
+                            <hr style="border-color: var(--glass-border); margin-bottom: 20px;">
+                            <h4 style="font-size: 1.1rem; margin-bottom: 15px;">Want similar results?</h4>
+                            <a href="index.html#quote" class="btn btn-primary btn-block">Start a Project</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer mt-5">
+        <div class="container footer-top">
+            <div class="footer-brand">
+                <a href="index.html" class="logo-text text-gold">Orbit Tech</a>
+                <p>We build smart, high-converting digital solutions for modern businesses looking to scale their impact online.</p>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            <p>&copy; 2026 Orbit Tech. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const params = new URLSearchParams(window.location.search);
+            const projectId = params.get('id');
+
+            if(!projectId) {
+                document.getElementById('csLoader').innerHTML = '<h2 class="text-muted">Project Not Found.</h2><br><a href="portfolio.html" class="btn btn-primary">Return to Portfolio</a>';
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/projects');
+                if(!res.ok) throw new Error("Failed to fetch projects");
+                const projects = await res.json();
+
+                const project = projects.find(p => p.id === projectId);
+                
+                if(!project) {
+                    document.getElementById('csLoader').innerHTML = '<h2 class="text-muted">Project Not Found.</h2><br><a href="portfolio.html" class="btn btn-primary">Return to Portfolio</a>';
+                    return;
+                }
+
+                // Populate Data
+                document.title = `Orbit Tech | ${project.title}`;
+                document.getElementById('csCategory').innerText = project.category;
+                document.getElementById('csTitle').innerText = project.title;
+                document.getElementById('csDescription').innerText = project.description;
+                document.getElementById('csImage').src = project.image;
+                
+                document.getElementById('csProblem').innerText = project.problem;
+                document.getElementById('csSolution').innerText = project.solution;
+                document.getElementById('csResult').innerText = project.result;
+                
+                document.getElementById('csDate').innerText = new Date(project.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+                document.getElementById('csServices').innerText = project.category;
+
+                // Hide Loader, Show Content
+                document.getElementById('csLoader').style.display = 'none';
+                document.getElementById('csContent').style.display = 'block';
+
+            } catch(e) {
+                console.error(e);
+                document.getElementById('csLoader').innerHTML = '<h2 class="text-muted">Error Loading Project Details.</h2>';
+            }
+        });
+    </script>
+</body>
+</html>

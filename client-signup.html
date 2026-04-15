@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbit Tech | Client Portal Signup</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(10,10,10,1) 0%, rgba(30,30,30,1) 100%);
+            padding: 20px;
+        }
+        .client-login-card {
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            text-align: center;
+            border-top: 4px solid var(--color-gold);
+        }
+        .client-login-card img {
+            max-height: 60px;
+            margin-bottom: 20px;
+        }
+        .client-login-card p {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body class="bg-darker text-main">
+
+    <div class="login-page">
+        <div class="glass-card client-login-card hover-lift">
+            <img src="Enoch.png" alt="Orbit Tech Logo" onerror="this.src='https://placehold.co/120x40/000000/FFD700?text=Orbit+Tech';">
+            <h2 class="text-gold">Register Client Account</h2>
+            <p class="text-muted">Create an account to track your development progress and review secure deliverables securely.</p>
+            
+            <form id="clientSignupForm" class="quote-form">
+                <div class="form-group text-left" style="text-align: left;">
+                    <label for="username">Desired Username</label>
+                    <input type="text" id="username" required placeholder="Choose a username">
+                </div>
+                <div class="form-group text-left" style="text-align: left;">
+                    <label for="email">Email Address (Optional)</label>
+                    <input type="email" id="email" placeholder="Enter your email">
+                </div>
+                <div class="form-group text-left" style="text-align: left;">
+                    <label for="password">Create Password</label>
+                    <input type="password" id="password" required placeholder="Choose a strong password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block mt-4" style="padding: 15px; font-size: 1.1rem;">
+                    Create Account <i class="fas fa-user-plus"></i>
+                </button>
+                <p id="signupStatus" class="form-status mt-3 text-gold"></p>
+            </form>
+            
+            <div style="margin-top: 20px; border-top: 1px solid var(--glass-border); padding-top: 15px;">
+                <p class="text-muted" style="margin-bottom: 10px;">Already registered?</p>
+                <a href="client-login.html" class="text-gold" style="font-weight: 600;"><i class="fas fa-sign-in-alt"></i> Back to Login Page</a>
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <a href="index.html" class="text-muted" style="font-size: 0.9rem;"><i class="fas fa-home"></i> Return to Main Website</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const clientSignupForm = document.getElementById('clientSignupForm');
+        const signupStatus = document.getElementById('signupStatus');
+
+        clientSignupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            signupStatus.innerHTML = 'Registering Account... <i class="fas fa-spinner fa-spin"></i>';
+
+            try {
+                const res = await fetch('/api/client/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                if (res.ok) {
+                    signupStatus.innerHTML = '<span style="color:#25D366"><i class="fas fa-check-circle"></i> Account Created! Redirecting to login...</span>';
+                    setTimeout(() => {
+                        window.location.href = 'client-login.html';
+                    }, 2000);
+                } else {
+                    const err = await res.json();
+                    signupStatus.innerHTML = '<span style="color:#ff4d4d">' + (err.error || 'Failed to create account') + '</span>';
+                }
+            } catch (err) {
+                console.error(err);
+                signupStatus.innerHTML = '<span style="color:#ff4d4d">Connection Error.</span>';
+            }
+        });
+    </script>
+</body>
+</html>

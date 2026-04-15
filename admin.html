@@ -83,7 +83,13 @@
     <div class="admin-nav">
         <h1>Orbit Tech Blog Administrator</h1>
         <p class="text-muted">Create, track, and manage Tech Insight posts directly from this dashboard.</p>
-        <a href="index.html" class="text-gold mt-2 block"><i class="fas fa-arrow-left"></i> Return to Live Site</a>
+        <div style="margin-top: 15px; display: flex; justify-content: center; gap: 20px;">
+            <a href="index.html" class="text-gold block"><i class="fas fa-arrow-left"></i> Return to Live Site</a>
+            <span style="color: #555;">|</span>
+            <a href="admin-projects.html" class="text-gold block"><i class="fas fa-briefcase"></i> Portfolio Admin</a>
+            <span style="color: #555;">|</span>
+            <a href="admin-clients.html" class="text-gold block"><i class="fas fa-users"></i> Client Portal Admin</a>
+        </div>
     </div>
 
     <div class="container admin-section">
@@ -142,6 +148,105 @@
                 </ul>
             </div>
             
+            <!-- PROPOSAL GENERATOR -->
+            <div class="admin-card glass-card hover-lift">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <h3 class="mb-4 text-gold"><i class="fas fa-file-invoice"></i> Proposal Generator</h3>
+                    <div style="text-align: right; font-size: 0.85rem;" class="text-gold">
+                        <strong><i class="fas fa-check-circle"></i> Verified Business</strong>
+                    </div>
+                </div>
+                <form id="proposalForm" class="quote-form">
+                    <div class="form-group">
+                        <label for="companyRc">Company Registration Number (CAC RC)</label>
+                        <input type="text" id="companyRc" required placeholder="e.g. 9385842" value="9385842">
+                    </div>
+                    <div class="form-group">
+                        <label for="clientName">Client Name / Company</label>
+                        <input type="text" id="clientName" required placeholder="e.g. John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="clientEmail">Client Email Address</label>
+                        <input type="email" id="clientEmail" required placeholder="client@company.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="projectTitle">Project Title</label>
+                        <input type="text" id="projectTitle" required placeholder="e.g. Website Redesign">
+                    </div>
+                    <div class="form-group">
+                        <label for="budget">Proposed Budget / Amount</label>
+                        <input type="text" id="budget" required placeholder="e.g. $1,500 or ₦1,000,000">
+                    </div>
+                    <div class="form-group">
+                        <label for="projectScope">Scope of Work & Terms</label>
+                        <textarea id="projectScope" rows="4" required placeholder="Detail the services to be provided..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Send Official Proposal &nbsp;<i class="fas fa-paper-plane"></i></button>
+                    <p id="proposalStatus" class="form-status mt-3 text-gold"></p>
+                </form>
+            </div>
+
+            <!-- INVOICE GENERATOR -->
+            <div class="admin-card glass-card hover-lift">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <h3 class="mb-4 text-gold"><i class="fas fa-file-invoice-dollar"></i> Invoice Generator</h3>
+                    <div style="text-align: right; font-size: 0.85rem;" class="text-gold">
+                        <strong><i class="fas fa-check-circle"></i> Verified Business</strong>
+                    </div>
+                </div>
+                <form id="invoiceForm" class="quote-form">
+                    <div class="form-group">
+                        <label for="invoiceCompanyRc">Company Registration Number (CAC RC)</label>
+                        <input type="text" id="invoiceCompanyRc" required placeholder="e.g. 9385842" value="9385842">
+                    </div>
+                    <div class="form-group">
+                        <label for="invoiceClientName">Client Name / Company</label>
+                        <input type="text" id="invoiceClientName" required placeholder="e.g. John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="invoiceClientEmail">Client Email Address</label>
+                        <input type="email" id="invoiceClientEmail" required placeholder="client@company.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="invoiceDescription">Service Description</label>
+                        <input type="text" id="invoiceDescription" required placeholder="e.g. Web Development Phase 1">
+                    </div>
+                    <div class="form-group">
+                        <label for="invoiceAmount">Amount Due</label>
+                        <input type="text" id="invoiceAmount" required placeholder="e.g. $1,500 or ₦1,000,000">
+                    </div>
+                    <div class="form-group">
+                        <label for="invoiceDueDate">Due Date</label>
+                        <input type="date" id="invoiceDueDate" required>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">Email Invoice &nbsp;<i class="fas fa-paper-plane"></i></button>
+                        <button type="button" id="downloadInvoiceBtn" class="btn text-gold" style="flex: 1; background: transparent; border: 1px solid var(--color-gold);">Download PDF &nbsp;<i class="fas fa-file-download"></i></button>
+                    </div>
+                    <p id="invoiceStatus" class="form-status mt-3 text-gold"></p>
+                </form>
+            </div>
+
+            <!-- PRICING MANAGER -->
+            <div class="admin-card glass-card hover-lift" style="grid-column: 1/-1;">
+                <h3 class="mb-4 text-gold"><i class="fas fa-tags"></i> Pricing Engine Manager</h3>
+                <p class="text-muted mb-3" style="font-size: 0.9rem;">Set base prices in USD ($). The system will automatically convert to NGN (₦) for Nigerian clients based on the exchange rate.</p>
+                
+                <form id="pricingForm" class="quote-form">
+                    <div class="form-group" style="max-width: 300px; margin-bottom: 2rem;">
+                        <label for="exchangeRate">NGN Exchange Rate (1 USD = ? NGN)</label>
+                        <input type="number" id="exchangeRate" required placeholder="e.g. 1200">
+                    </div>
+                    
+                    <div id="pricingGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <!-- Service groups will populate here -->
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary mt-4" style="width: 100%; max-width: 300px;">Save Pricing Data <i class="fas fa-save"></i></button>
+                    <p id="pricingStatus" class="form-status mt-3 text-gold"></p>
+                </form>
+            </div>
+
         </div>
     </div>
 
@@ -154,6 +259,12 @@
         const postList = document.getElementById('postList');
         const createPostForm = document.getElementById('createPostForm');
         const publishStatus = document.getElementById('publishStatus');
+
+        const proposalForm = document.getElementById('proposalForm');
+        const proposalStatus = document.getElementById('proposalStatus');
+
+        const invoiceForm = document.getElementById('invoiceForm');
+        const invoiceStatus = document.getElementById('invoiceStatus');
 
         // Check if token already exists in localStorage
         const checkAuthStatus = () => {
@@ -298,8 +409,263 @@
             }
         };
 
+        // Proposal Form Handler
+        proposalForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            proposalStatus.innerHTML = 'Generating & Sending Proposal... <i class="fas fa-spinner fa-spin"></i>';
+
+            const proposalData = {
+                companyRc: document.getElementById('companyRc').value,
+                clientName: document.getElementById('clientName').value,
+                clientEmail: document.getElementById('clientEmail').value,
+                projectTitle: document.getElementById('projectTitle').value,
+                budget: document.getElementById('budget').value,
+                projectScope: document.getElementById('projectScope').value
+            };
+
+            try {
+                const token = localStorage.getItem('orbitAdminToken');
+                const res = await fetch('/api/send-proposal', {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(proposalData)
+                });
+                
+                if (handleAuthError(res)) return;
+
+                if (res.ok) {
+                    proposalStatus.innerHTML = 'Proposal Sent Successfully!';
+                    proposalForm.reset();
+                    setTimeout(() => proposalStatus.innerHTML = '', 4000);
+                } else {
+                    proposalStatus.innerHTML = 'Failed to send proposal. Check server logs.';
+                }
+            } catch (err) {
+                console.error(err);
+                proposalStatus.innerHTML = 'Server error.';
+            }
+        });
+
+        // Invoice Form Handler
+        invoiceForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            invoiceStatus.innerHTML = 'Generating & Sending Invoice... <i class="fas fa-spinner fa-spin"></i>';
+
+            const invoiceData = {
+                companyRc: document.getElementById('invoiceCompanyRc').value,
+                clientName: document.getElementById('invoiceClientName').value,
+                clientEmail: document.getElementById('invoiceClientEmail').value,
+                description: document.getElementById('invoiceDescription').value,
+                amount: document.getElementById('invoiceAmount').value,
+                dueDate: document.getElementById('invoiceDueDate').value
+            };
+
+            try {
+                const token = localStorage.getItem('orbitAdminToken');
+                const res = await fetch('/api/send-invoice', {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(invoiceData)
+                });
+                
+                if (handleAuthError(res)) return;
+
+                if (res.ok) {
+                    invoiceStatus.innerHTML = 'Invoice Sent Successfully!';
+                    invoiceForm.reset();
+                    document.getElementById('invoiceCompanyRc').value = '9385842'; // Reset default
+                    setTimeout(() => invoiceStatus.innerHTML = '', 4000);
+                } else {
+                    invoiceStatus.innerHTML = 'Failed to send via email (Port Blocked). Try "Download PDF" instead.';
+                }
+            } catch (err) {
+                console.error(err);
+                invoiceStatus.innerHTML = 'Server error.';
+            }
+        });
+
+        // Download PDF Handler
+        const downloadInvoiceBtn = document.getElementById('downloadInvoiceBtn');
+        downloadInvoiceBtn.addEventListener('click', async () => {
+            if (!invoiceForm.checkValidity()) {
+                invoiceForm.reportValidity();
+                return;
+            }
+            invoiceStatus.innerHTML = 'Generating PDF... <i class="fas fa-spinner fa-spin"></i>';
+
+            const invoiceData = {
+                companyRc: document.getElementById('invoiceCompanyRc').value,
+                clientName: document.getElementById('invoiceClientName').value,
+                clientEmail: document.getElementById('invoiceClientEmail').value,
+                description: document.getElementById('invoiceDescription').value,
+                amount: document.getElementById('invoiceAmount').value,
+                dueDate: document.getElementById('invoiceDueDate').value
+            };
+
+            try {
+                const token = localStorage.getItem('orbitAdminToken');
+                const res = await fetch('/api/download-invoice-pdf', {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(invoiceData)
+                });
+
+                if (handleAuthError(res)) return;
+
+                if (res.ok) {
+                    const blob = await res.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Invoice_${invoiceData.clientName.replace(/\s+/g, '_')}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    
+                    invoiceStatus.innerHTML = 'PDF Downloaded Successfully!';
+                    setTimeout(() => invoiceStatus.innerHTML = '', 4000);
+                } else {
+                    invoiceStatus.innerHTML = 'Failed to generate PDF.';
+                }
+            } catch (err) {
+                console.error(err);
+                invoiceStatus.innerHTML = 'Server error.';
+            }
+        });
+
+        // ==========================================
+        // PRICING MANAGEMENT SYSTEM
+        // ==========================================
+        const pricingForm = document.getElementById('pricingForm');
+        const pricingGrid = document.getElementById('pricingGrid');
+        const pricingStatus = document.getElementById('pricingStatus');
+        let currentPricingData = null;
+
+        async function fetchPricingData() {
+            try {
+                const res = await fetch('/api/pricing', { cache: 'no-store' });
+                if (res.ok) {
+                    currentPricingData = await res.json();
+                    renderPricingForm();
+                }
+            } catch (err) {
+                console.error('Failed to load pricing:', err);
+            }
+        }
+
+        function renderPricingForm() {
+            if (!currentPricingData) return;
+            
+            document.getElementById('exchangeRate').value = currentPricingData.exchangeRate;
+            pricingGrid.innerHTML = '';
+            
+            // Loop through each service
+            Object.keys(currentPricingData.services).forEach(serviceKey => {
+                const service = currentPricingData.services[serviceKey];
+                
+                const groupDiv = document.createElement('div');
+                groupDiv.style.background = 'rgba(255,255,255,0.02)';
+                groupDiv.style.padding = '15px';
+                groupDiv.style.borderRadius = '8px';
+                groupDiv.style.border = '1px solid var(--glass-border)';
+                
+                groupDiv.innerHTML = `
+                    <h4 class="text-gold mb-3" style="font-size: 1.1rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px;">${service.name}</h4>
+                    
+                    <div class="form-group mb-2">
+                        <label style="font-size: 0.8rem; color: #aaa;">Basic Level ($)</label>
+                        <input type="number" id="${serviceKey}-basic" value="${service.packages.basic}" required style="padding: 8px;">
+                    </div>
+                    
+                    <div class="form-group mb-2">
+                        <label style="font-size: 0.8rem; color: #aaa;">Standard Level ($)</label>
+                        <input type="number" id="${serviceKey}-standard" value="${service.packages.standard}" required style="padding: 8px;">
+                    </div>
+                    
+                    <div class="form-group mb-0">
+                        <label style="font-size: 0.8rem; color: #aaa;">Premium Level ($)</label>
+                        <input type="number" id="${serviceKey}-premium" value="${service.packages.premium}" required style="padding: 8px;">
+                    </div>
+                `;
+                pricingGrid.appendChild(groupDiv);
+            });
+        }
+
+        if (pricingForm) {
+            pricingForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                pricingStatus.innerHTML = 'Saving Pricing... <i class="fas fa-spinner fa-spin"></i>';
+                
+                // Reconstruct data
+                let newData = {
+                    exchangeRate: Number(document.getElementById('exchangeRate').value),
+                    services: {}
+                };
+                
+                Object.keys(currentPricingData.services).forEach(serviceKey => {
+                    newData.services[serviceKey] = {
+                        name: currentPricingData.services[serviceKey].name,
+                        packages: {
+                            basic: Number(document.getElementById(`${serviceKey}-basic`).value),
+                            standard: Number(document.getElementById(`${serviceKey}-standard`).value),
+                            premium: Number(document.getElementById(`${serviceKey}-premium`).value)
+                        }
+                    };
+                });
+                
+                try {
+                    const token = localStorage.getItem('orbitAdminToken');
+                    const res = await fetch('/api/admin/pricing', {
+                        method: 'PUT',
+                        headers: { 
+                            'Authorization': 'Bearer ' + token,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(newData)
+                    });
+                    
+                    if (handleAuthError(res)) return;
+
+                    if (res.ok) {
+                        pricingStatus.innerHTML = 'Pricing successfully updated!';
+                        currentPricingData = newData; // update local cache
+                        setTimeout(() => pricingStatus.innerHTML = '', 3000);
+                    } else {
+                        pricingStatus.innerHTML = 'Failed to save pricing.';
+                    }
+                } catch (err) {
+                    console.error('Pricing save error:', err);
+                    pricingStatus.innerHTML = 'Server error.';
+                }
+            });
+        }
+
+        // Hook pricing fetch into auth success
+        const originalCheckAuthStatus = checkAuthStatus;
+        window.checkAuthStatus = () => {
+            const token = localStorage.getItem('orbitAdminToken');
+            if (token) {
+                loginSection.style.display = 'none';
+                adminGrid.style.display = 'grid';
+                fetchPosts();
+                fetchPricingData(); // Load pricing
+            } else {
+                loginSection.style.display = 'flex';
+                adminGrid.style.display = 'none';
+            }
+        };
+
         // Initialize Call
-        checkAuthStatus();
+        window.checkAuthStatus();
     </script>
 </body>
 </html>

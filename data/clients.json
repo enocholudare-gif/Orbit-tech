@@ -1,0 +1,23 @@
+[
+  {
+    "id": "1775339386324",
+    "username": "admin",
+    "password": "$2b$10$0kpFoh1ChS4ld4ZovM44E.9/jvz0eYr4HGg1wzHjRg9bnWuBmsdJy",
+    "email": "enocholudare@gmail.com",
+    "timestamp": "2026-04-04T21:49:46.324Z"
+  },
+  {
+    "id": "1775642148868",
+    "username": "bada",
+    "password": "$2b$10$MNqKLYc1qfMxKswE.t2RMOQ75faMUgIh8/9lzvbytLdpdedrJYusa",
+    "email": "enocholudare@gmail.com",
+    "timestamp": "2026-04-08T09:55:48.868Z"
+  },
+  {
+    "id": "1776218551660",
+    "username": "bolu",
+    "password": "$2b$10$luZCR1.OGFOlI0/OW.iZ7eT9.rZvHcQqrhKxl6a5Fn04HK.8zdmC.",
+    "email": "bala@gmail.com",
+    "timestamp": "2026-04-15T02:02:31.660Z"
+  }
+]

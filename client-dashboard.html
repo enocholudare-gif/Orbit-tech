@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbit Tech | Client Dashboard</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        .dashboard-header {
+            background: rgba(10, 10, 10, 0.95);
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dashboard-wrapper {
+            padding: 50px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .proj-card {
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--color-gold);
+        }
+        .prog-bar-container {
+            width: 100%;
+            height: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 15px 0 5px;
+        }
+        .prog-bar-fill {
+            height: 100%;
+            background: var(--color-gold);
+            width: 0%;
+            transition: width 1s ease-out;
+        }
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .file-card {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--glass-border);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            text-decoration: none;
+            color: white;
+        }
+        .file-card:hover {
+            border-color: var(--color-gold);
+            transform: translateY(-2px);
+        }
+        .file-icon {
+            font-size: 1.5rem;
+            color: var(--color-gold);
+        }
+    </style>
+</head>
+<body class="bg-darker text-main">
+
+    <div class="dashboard-header">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="Enoch.png" alt="Orbit Tech Logo" onerror="this.src='https://placehold.co/120x40/000000/FFD700?text=Orbit+Tech';" style="height: 35px;">
+            <h2 style="font-size: 1.2rem; margin:0;" class="text-gold">| Client Portal</h2>
+        </div>
+        <div>
+            <span style="margin-right: 20px;">Welcome, <span id="clientNameDisplay" class="text-gold">Client</span></span>
+            <button class="btn btn-outline" style="padding: 8px 15px; font-size: 0.9rem;" onclick="logout()">Logout <i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </div>
+
+    <div class="dashboard-wrapper">
+        <div style="display: flex; justify-content: space-between; align-items:flex-end; margin-bottom: 40px;">
+            <div>
+                <h1 style="font-size: 2.5rem; margin-bottom:10px;">Your Active Projects</h1>
+                <p class="text-muted">Track development progress and access deliverables.</p>
+            </div>
+            <button onclick="fetchDashboardData()" class="btn btn-outline" style="padding: 10px 15px;"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+
+        <div id="projectsContainer">
+            <h3 class="text-muted text-center" style="margin-top: 50px;"><i class="fas fa-spinner fa-spin"></i> Loading Dashboard...</h3>
+        </div>
+    </div>
+
+    <script>
+        const projectsContainer = document.getElementById('projectsContainer');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('orbitClientToken');
+            const username = localStorage.getItem('orbitClientUser');
+            
+            if (!token) {
+                window.location.href = 'client-login.html';
+                return;
+            }
+            
+            if(username) {
+                document.getElementById('clientNameDisplay').textContent = username;
+            }
+
+            fetchDashboardData();
+        });
+
+        async function fetchDashboardData() {
+            try {
+                const token = localStorage.getItem('orbitClientToken');
+                const res = await fetch('/api/client/dashboard', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+
+                if (res.status === 401 || res.status === 403) {
+                    logout();
+                    return;
+                }
+
+                if (res.ok) {
+                    const projects = await res.json();
+                    renderProjects(projects);
+                } else {
+                    projectsContainer.innerHTML = '<p class="text-muted text-center">Failed to load projects. Please try again later.</p>';
+                }
+            } catch (err) {
+                console.error(err);
+                projectsContainer.innerHTML = '<p class="text-muted text-center">Connection error.</p>';
+            }
+        }
+
+        function renderProjects(projects) {
+            if(projects.length === 0) {
+                projectsContainer.innerHTML = `
+                    <div class="glass-card proj-card" style="text-align:center; padding: 60px 20px;">
+                        <i class="fas fa-clipboard-check text-gold" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                        <h3>No Active Projects</h3>
+                        <p class="text-muted mt-2">You currently have no projects assigned to your account. Contact Orbit Tech support if this is a mistake.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            projectsContainer.innerHTML = '';
+
+            projects.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'glass-card proj-card hover-lift';
+                
+                // Set color indicator based on status
+                let statusColor = '#fff';
+                let statusIcon = 'fa-clock';
+                if(p.status === 'Completed') { statusColor = '#28a745'; statusIcon = 'fa-check-circle'; }
+                if(p.status === 'In Progress') { statusColor = '#FFD700'; statusIcon = 'fa-hammer'; }
+
+                let filesHtml = '';
+                if(p.files && p.files.length > 0) {
+                    filesHtml = `
+                        <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                            <h4 style="font-size: 1.1rem; margin-bottom: 10px;"><i class="fas fa-folder-open text-gold"></i> Project Deliverables</h4>
+                            <div class="file-grid">
+                                ${p.files.map(f => `
+                                    <a href="${f.url}" download class="file-card" target="_blank">
+                                        <div class="file-icon"><i class="fas fa-file-download"></i></div>
+                                        <div style="overflow: hidden;">
+                                            <div style="font-weight: 500; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${f.name}</div>
+                                            <div class="text-muted" style="font-size: 0.75rem;">${new Date(f.uploadedAt).toLocaleDateString()}</div>
+                                        </div>
+                                    </a>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    filesHtml = `<p class="text-muted" style="font-size: 0.9rem; margin-top:20px; font-style: italic;"><i class="fas fa-info-circle"></i> No deliverables uploaded for this project yet.</p>`;
+                }
+
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items:flex-start; flex-wrap: wrap; gap: 15px;">
+                        <div>
+                            <h2 style="font-size: 1.8rem; margin-bottom: 5px;">${p.projectName}</h2>
+                            <p class="text-muted" style="font-size: 0.9rem;">Assigned on ${new Date(p.timestamp).toLocaleDateString()}</p>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.5); padding: 8px 15px; border-radius: 20px; border: 1px solid var(--glass-border);">
+                            <span style="color: ${statusColor}; font-weight: 600;"><i class="fas ${statusIcon}"></i> ${p.status}</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 25px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.9rem; font-weight: 600;">Overall Progress</span>
+                            <span class="text-gold" style="font-weight: 700;">${p.progress}%</span>
+                        </div>
+                        <div class="prog-bar-container">
+                            <div class="prog-bar-fill" style="width: ${p.progress}%;"></div>
+                        </div>
+                    </div>
+
+                    ${filesHtml}
+                `;
+                projectsContainer.appendChild(card);
+            });
+        }
+
+        function logout() {
+            localStorage.removeItem('orbitClientToken');
+            localStorage.removeItem('orbitClientUser');
+            window.location.href = 'client-login.html';
+        }
+    </script>
+</body>
+</html>

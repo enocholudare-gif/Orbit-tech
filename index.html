@@ -76,6 +76,9 @@
                 <a href="#portfolio">Work</a>
                 <a href="#faq">FAQ</a>
                 <a href="#contact">Contact</a>
+                <a href="client-login.html" style="color: var(--color-gold);"><i class="fas fa-lock"></i> Client
+                    Portal</a>
+                <a href="admin.html" style="color: #aaa;"><i class="fas fa-user-shield"></i> Admin</a>
             </nav>
 
             <div class="nav-actions">
@@ -101,6 +104,8 @@
             <a href="#blog">Tech Insights</a>
             <a href="#faq">FAQ</a>
             <a href="#contact">Contact Us</a>
+            <a href="client-login.html" style="color: var(--color-gold);"><i class="fas fa-lock"></i> Client Portal</a>
+            <a href="admin.html" style="color: #aaa;"><i class="fas fa-user-shield"></i> Admin</a>
             <a href="#quote" class="btn btn-primary mt-4">Get a Quote</a>
         </nav>
     </div>
@@ -121,6 +126,27 @@
             <div class="hero-graphic" data-animate="fade-left">
                 <img src="home.jpg" alt="Orbit Tech Digital Solutions" class="floating-animation hero-img img-rounded"
                     onerror="this.src='https://placehold.co/600x400/1a1a1a/FFD700?text=Home';">
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. PORTFOLIO SECTION (Moved below Hero) -->
+    <section id="portfolio" class="portfolio section">
+        <div class="container">
+            <div class="section-header text-center" data-animate="fade-up">
+                <h2>Featured <span class="text-gold">Work</span></h2>
+                <p>A selection of recent projects that drive results for our clients.</p>
+            </div>
+
+            <div class="portfolio-grid" id="home-portfolio-grid">
+                <!-- Portfolios will be dynamically loaded here by script.js -->
+                <p class="text-muted text-center" style="grid-column: 1/-1;"><i class="fas fa-spinner fa-spin"></i>
+                    Loading featured projects...</p>
+            </div>
+
+            <div class="text-center mt-5" data-animate="fade-up">
+                <a href="portfolio.html" class="btn btn-outline">View All Projects <i
+                        class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </section>
@@ -299,6 +325,95 @@
         </div>
     </section>
 
+    <!-- 4.5 PRICING CALCULATOR SECTION (NEW) -->
+    <section id="calculator" class="calculator section" style="background: linear-gradient(to bottom, #1a1a1a, #111);">
+        <div class="container">
+            <div class="section-header text-center" data-animate="fade-up">
+                <h2>Project <span class="text-gold">Estimator</span></h2>
+                <p>Select your desired service to instantly see estimated pricing.</p>
+            </div>
+
+            <div class="calculator-wrapper glass-card mx-auto" style="max-width: 800px; padding: 2rem;"
+                data-animate="fade-up">
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+                    <div class="currency-toggle"
+                        style="background: rgba(255,255,255,0.05); padding: 5px; border-radius: 30px; border: 1px solid var(--glass-border); display: inline-flex;">
+                        <button id="btnNGN" class="btn active-currency"
+                            style="padding: 5px 15px; border-radius: 20px; background: var(--color-gold); color: #000; border: none; font-weight: bold; cursor: pointer;">NGN
+                            (₦)</button>
+                        <button id="btnUSD" class="btn"
+                            style="padding: 5px 15px; border-radius: 20px; background: transparent; color: var(--color-text-main); border: none; font-weight: bold; cursor: pointer;">USD
+                            ($)</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="calcService" style="color: var(--color-gold); font-weight: 600;">Select Service</label>
+                    <select id="calcService" class="calculator-select"
+                        style="width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 8px; color: #fff; font-size: 1.1rem; margin-top: 5px;">
+                        <option value="">Loading services...</option>
+                    </select>
+                </div>
+
+                <div class="form-group mt-3" id="calcOtherServiceGroup" style="display: none;">
+                    <label for="calcOtherService" style="color: var(--color-gold); font-weight: 600;">Specify
+                        Service</label>
+                    <input type="text" id="calcOtherService" placeholder="What kind of service do you need?"
+                        style="width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 8px; color: #fff; font-size: 1.1rem; margin-top: 5px;">
+                </div>
+
+                <div class="form-group mt-4">
+                    <label
+                        style="color: var(--color-gold); font-weight: 600; margin-bottom: 10px; display: block;">Package
+                        Level</label>
+                    <div class="package-radio-group"
+                        style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                        <label class="package-radio" style="position: relative; cursor: pointer;">
+                            <input type="radio" name="calcPackage" value="basic"
+                                style="position: absolute; opacity: 0; width: 0; height: 0;">
+                            <div class="radio-card"
+                                style="padding: 15px; text-align: center; border: 2px solid var(--glass-border); border-radius: 8px; transition: 0.3s;">
+                                <h4>Basic</h4>
+                            </div>
+                        </label>
+                        <label class="package-radio" style="position: relative; cursor: pointer;">
+                            <input type="radio" name="calcPackage" value="standard" checked
+                                style="position: absolute; opacity: 0; width: 0; height: 0;">
+                            <div class="radio-card"
+                                style="padding: 15px; text-align: center; border: 2px solid var(--glass-border); border-radius: 8px; transition: 0.3s;">
+                                <h4>Standard</h4>
+                            </div>
+                        </label>
+                        <label class="package-radio" style="position: relative; cursor: pointer;">
+                            <input type="radio" name="calcPackage" value="premium"
+                                style="position: absolute; opacity: 0; width: 0; height: 0;">
+                            <div class="radio-card"
+                                style="padding: 15px; text-align: center; border: 2px solid var(--glass-border); border-radius: 8px; transition: 0.3s;">
+                                <h4>Premium</h4>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="calculated-price mt-5 text-center"
+                    style="padding: 2rem; background: rgba(0,0,0,0.6); border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <h5 class="text-muted mb-2">Estimated Starting Price</h5>
+                    <h2 id="calcPriceDisplay" class="text-gold" style="font-size: 3rem; margin: 0;">--</h2>
+                    <p class="text-muted mt-2" style="font-size: 0.9rem;">*Final cost depends on actual scope of work.
+                    </p>
+                </div>
+
+                <div class="calculator-actions mt-4" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <button id="btnStartProject" class="btn btn-primary" style="padding: 15px; font-size: 1.1rem;"><i
+                            class="fab fa-whatsapp"></i> Start Project</button>
+                    <button id="btnNegotiate" class="btn btn-outline"
+                        style="padding: 15px; font-size: 1.1rem; border-color: var(--color-text-main);"><i
+                            class="fas fa-comments"></i> Negotiate Price</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- 6. PROCESS SECTION -->
     <section id="process" class="process section bg-darker">
         <div class="container">
@@ -347,130 +462,7 @@
         </div>
     </section>
 
-    <!-- 5. PORTFOLIO SECTION -->
-    <section id="portfolio" class="portfolio section">
-        <div class="container">
-            <div class="section-header text-center" data-animate="fade-up">
-                <h2>Our <span class="text-gold">Work</span></h2>
-                <p>A selection of recent projects that drive results for our clients.</p>
-            </div>
-
-            <div class="portfolio-grid">
-                <!-- Port 1 -->
-                <div class="portfolio-card" data-animate="fade-up">
-                    <div class="portfolio-img-wrap">
-                        <img src="assets/portfolio_1.png" alt="Graphic Design Work"
-                            onerror="this.src='https://placehold.co/600x400/1a1a1a/FFD700?text=Graphic+Design';">
-                        <div class="portfolio-overlay">
-                            <a href="#" class="view-btn"><i class="fas fa-eye"></i></a>
-                        </div>
-                    </div>
-                    <div class="portfolio-info glass-card">
-                        <h3>Creative Design Elements</h3>
-                        <p>Graphic design work</p>
-                    </div>
-                </div>
-                <!-- Port 2 -->
-                <div class="portfolio-card" data-animate="fade-up" data-delay="100">
-                    <div class="portfolio-img-wrap">
-                        <img src="assets/portfolio_2.png" alt="Corporate Branding"
-                            onerror="this.src='https://placehold.co/600x400/1a1a1a/FFD700?text=Branding';">
-                        <div class="portfolio-overlay">
-                            <a href="#" class="view-btn"><i class="fas fa-eye"></i></a>
-                        </div>
-                    </div>
-                    <div class="portfolio-info glass-card">
-                        <h3>Corporate Branding</h3>
-                        <p>Social media branding for companies</p>
-                    </div>
-                </div>
-                <!-- Port 3 -->
-                <div class="portfolio-card" data-animate="fade-up" data-delay="200">
-                    <div class="portfolio-img-wrap">
-                        <img src="assets/portfolio_3.png" alt="Medina Hotels System"
-                            onerror="this.src='https://placehold.co/600x400/1a1a1a/FFD700?text=Medina+Hotels';">
-                        <div class="portfolio-overlay">
-                            <a href="#" class="view-btn"><i class="fas fa-eye"></i></a>
-                        </div>
-                    </div>
-                    <div class="portfolio-info glass-card">
-                        <h3>Booking & Management</h3>
-                        <p>Hotel software for medina hotels</p>
-                    </div>
-                </div>
-                <!-- Port 4 -->
-                <div class="portfolio-card" data-animate="fade-up">
-                    <div class="portfolio-img-wrap">
-                        <img src="assets/portfolio_4.png" alt="Millennium Logistics App"
-                            onerror="this.src='https://placehold.co/600x400/1a1a1a/FFD700?text=Logistics+App';">
-                        <div class="portfolio-overlay">
-                            <a href="#" class="view-btn"><i class="fas fa-eye"></i></a>
-                        </div>
-                    </div>
-                    <div class="portfolio-info glass-card">
-                        <h3>Millennium Logistics</h3>
-                        <p>Mobile and web app design</p>
-                    </div>
-                </div>
-                <!-- Port 5 -->
-                <div class="portfolio-card" data-animate="fade-up" data-delay="100">
-                    <div class="portfolio-img-wrap">
-                        <img src="assets/portfolio_5.png" alt="Brandlab Africa Platform"
-                            onerror="this.src='https://placehold.co/600x400/1a1a1a/FFD700?text=Brandlab+Africa';">
-                        <div class="portfolio-overlay">
-                            <a href="#" class="view-btn"><i class="fas fa-eye"></i></a>
-                        </div>
-                    </div>
-                    <div class="portfolio-info glass-card">
-                        <h3>Brandlab Africa Network</h3>
-                        <p>Brand digital identity overhaul</p>
-                    </div>
-                </div>
-                <!-- Port 6 -->
-                <div class="portfolio-card" data-animate="fade-up" data-delay="200">
-                    <div class="portfolio-img-wrap">
-                        <img src="assets/portfolio_6.png" alt="E-Commerce Automation"
-                            onerror="this.src='https://placehold.co/600x400/1a1a1a/FFD700?text=Automation';">
-                        <div class="portfolio-overlay">
-                            <a href="#" class="view-btn"><i class="fas fa-eye"></i></a>
-                        </div>
-                    </div>
-                    <div class="portfolio-info glass-card">
-                        <h3>Automated Sales System</h3>
-                        <p>Sales pipeline automation setup</p>
-                    </div>
-                </div>
-                <!-- Port 7 -->
-                <div class="portfolio-card" data-animate="fade-up">
-                    <div class="portfolio-img-wrap">
-                        <img src="assets/portfolio_7.png" alt="Retail ERP Integration"
-                            onerror="this.src='https://placehold.co/600x400/1a1a1a/FFD700?text=ERP+Systems';">
-                        <div class="portfolio-overlay">
-                            <a href="#" class="view-btn"><i class="fas fa-eye"></i></a>
-                        </div>
-                    </div>
-                    <div class="portfolio-info glass-card">
-                        <h3>Enterprise Management</h3>
-                        <p>Custom ERP Software Installation</p>
-                    </div>
-                </div>
-                <!-- Port 8 -->
-                <div class="portfolio-card" data-animate="fade-up" data-delay="100">
-                    <div class="portfolio-img-wrap">
-                        <img src="assets/portfolio_8.png" alt="Landing Page Conversion"
-                            onerror="this.src='https://placehold.co/600x400/1a1a1a/FFD700?text=Landing+Page';">
-                        <div class="portfolio-overlay">
-                            <a href="#" class="view-btn"><i class="fas fa-eye"></i></a>
-                        </div>
-                    </div>
-                    <div class="portfolio-info glass-card">
-                        <h3>Real Estate Lead Gen</h3>
-                        <p>High-converting Landing Page</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- (Static Portfolio Removed and Moved Up) -->
 
     <!-- 8. TESTIMONIALS SECTION -->
     <section id="testimonials" class="testimonials section bg-darker">
@@ -608,52 +600,121 @@
     <section id="faq" class="faq section bg-darker">
         <div class="container">
             <div class="section-header text-center" data-animate="fade-up">
-                <h2>Client <span class="text-gold">FAQ</span></h2>
-                <p>Common questions from prospective business partners.</p>
+                <h2>Orbit <span class="text-gold">AI Assistant</span> & FAQ</h2>
+                <p>Have a question? Ask our AI assistant or browse common questions below.</p>
+            </div>
+
+            <!-- AI Chat UI -->
+            <div class="ai-chat-container glass-card mb-5" data-animate="fade-up">
+                <div class="ai-chat-header">
+                    <div class="ai-avatar text-gold"><i class="fas fa-robot"></i></div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.1rem;">Orbit Assistant</h3>
+                        <span style="font-size: 0.8rem; color: #25D366;"><i class="fas fa-circle"
+                                style="font-size: 0.5rem; vertical-align: middle;"></i> Online</span>
+                    </div>
+                </div>
+                <div class="ai-chat-messages" id="aiChatMessages">
+                    <div class="chat-message ai-message">
+                        <div class="message-content">
+                            Hello! I am the Orbit Tech Virtual Assistant. You can ask me anything about our business,
+                            CEO, services, project times, or contact details. How can I assist you today?
+                        </div>
+                    </div>
+                </div>
+                <div class="ai-chat-input-area">
+                    <form id="aiChatForm" style="display: flex; gap: 10px; width: 100%;">
+                        <input type="text" id="aiChatInput" placeholder="Ask about Orbit Tech..." required
+                            autocomplete="off">
+                        <button type="submit" class="btn btn-primary" aria-label="Send message"
+                            style="padding: 0 20px;"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="section-header text-center mt-5" data-animate="fade-up">
+                <h3 style="font-size: 1.5rem; color: #aaa;">Or browse standard FAQ</h3>
             </div>
 
             <div class="faq-accordion" data-animate="fade-up">
                 <div class="faq-item glass-card">
                     <button class="faq-toggle" aria-expanded="false">
-                        <span class="faq-title">How long does a standard web development project take?</span>
+                        <span class="faq-title">How long does a project take?</span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="faq-content">
-                        <p>On average, a standard professional agency website takes between 2 to 4 weeks from the
-                            initial consultation to final delivery depending on the complexity of functionality.</p>
+                        <p>Project timelines depend on the type and complexity of the service. Smaller tasks are
+                            completed
+                            faster, while larger projects require more time to ensure quality results</p>
                     </div>
                 </div>
 
                 <div class="faq-item glass-card mt-3">
                     <button class="faq-toggle" aria-expanded="false">
-                        <span class="faq-title">Do you offer post-launch technical support?</span>
+                        <span class="faq-title">How do i get started?</span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="faq-content">
-                        <p>Absolutely. We provide dedicated support packages for server management, continuous updates,
-                            and SEO tweaking after deployment.</p>
+                        <p>Click on the "Start a Project" button or contact me via Whatsapp/email.
+                            I'll guide you step-by-step</p>
                     </div>
                 </div>
 
                 <div class="faq-item glass-card mt-3">
                     <button class="faq-toggle" aria-expanded="false">
-                        <span class="faq-title">What exactly does your AI Automation service entail?</span>
+                        <span class="faq-title">Can you build and manage my website?</span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="faq-content">
-                        <p>We connect APIs natively or via Zapier/Pabbly to automate redundant backend works: CRM data
-                            entry, automatic client email follow ups, schedule boarding, etc.</p>
+                        <p>Yes, i create fully responsive websites and can also help you manage it.</p>
                     </div>
                 </div>
 
                 <div class="faq-item glass-card mt-3">
                     <button class="faq-toggle" aria-expanded="false">
-                        <span class="faq-title">Do you do complete branding or just logos?</span>
+                        <span class="faq-title">Do you offer revisions and source files?</span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="faq-content">
-                        <p>We offer full brand alignment including logo conception, typography rule creation, color
-                            palette picking, and brand messaging guidelines.</p>
+                        <p>Yes, revisions are included, and you'll receive high-quality files and
+                            source files based on your package</p>
+                    </div>
+                </div>
+
+
+                <div class="faq-item glass-card mt-3">
+                    <button class="faq-toggle" aria-expanded="false">
+                        <span class="faq-title">Do you handle social media and ads</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-content">
+                        <p>Yes, i manage social media pages, create content, and run targeted ad
+                            campaigns to grow your brand and reach more customers
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item glass-card mt-3">
+                    <button class="faq-toggle" aria-expanded="false">
+                        <span class="faq-title">How does pricing and payment work?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-content">
+                        <p>Pricing depends on the project. You can use the pricing calculator or request a custom quote.
+                            A deposit is required to start.
+                        </p>
+                    </div>
+                </div>
+
+
+                <div class="faq-item glass-card mt-3">
+                    <button class="faq-toggle" aria-expanded="false">
+                        <span class="faq-title">Can i track my project and work withyou remotely?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-content">
+                        <p>Yes. You'll have access to a client dashboard to track progess, and i work
+                            with clients both locally and internationally .</p>
                     </div>
                 </div>
             </div>
@@ -761,7 +822,8 @@
             </div>
             <div class="blog-modal-body">
                 <span class="blog-tag" id="modalTag"></span>
-                <span class="blog-date text-muted" id="modalDate" style="display: block; margin-bottom: 15px; font-weight: 500;"></span>
+                <span class="blog-date text-muted" id="modalDate"
+                    style="display: block; margin-bottom: 15px; font-weight: 500;"></span>
                 <h2 id="modalTitle" class="mb-4"></h2>
                 <div id="modalSnippet" style="white-space: pre-wrap; line-height: 1.8;"></div>
             </div>
@@ -796,6 +858,7 @@
                     <li><a href="#services">Our Services</a></li>
                     <li><a href="#ceo">Meet the CEO</a></li>
                     <li><a href="#faq">FAQ</a></li>
+                    <li><a href="admin.html">Admin Login</a></li>
                 </ul>
             </div>
 
@@ -834,7 +897,7 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="script.js"></script>
+    <script src="script.js?v=2"></script>
 </body>
 
 </html>
