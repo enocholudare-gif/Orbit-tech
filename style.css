@@ -255,6 +255,30 @@ h1, h2, h3, h4, h5, h6 {
     transform: scale(1.1);
 }
 
+/* Floating AI Assistant */
+.floating-ai {
+    position: fixed;
+    bottom: 165px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: var(--color-gold);
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    z-index: 99;
+    box-shadow: 0 4px 15px var(--color-gold-glow);
+    transition: var(--transition-normal);
+}
+
+.floating-ai:hover {
+    transform: scale(1.1);
+    background-color: var(--color-gold-hover);
+}
+
 /* --- SECTIONS --- */
 
 /* 1. Header & Nav */
@@ -1133,13 +1157,34 @@ header.scrolled {
 
 /* 12.5 AI Chat Assistant */
 .ai-chat-container {
-    max-width: 800px;
-    margin: 0 auto;
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 380px;
+    max-width: calc(100vw - 40px);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    height: 400px;
+    height: 550px;
+    max-height: calc(100vh - 120px);
     border: 1px solid var(--glass-border);
+    z-index: 2000 !important;
+    background: var(--color-bg-darker) !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(20px) scale(0.95);
+    transition: all 0.3s ease;
+    border-radius: 16px;
+    padding: 0 !important;
+}
+
+.ai-chat-container.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
 }
 
 .ai-chat-header {

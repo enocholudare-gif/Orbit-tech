@@ -374,6 +374,26 @@ document.addEventListener('DOMContentLoaded', () => {
             aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
         });
     }
+
+    // 11. Floating AI Assistant Toggle
+    const floatingAIBtn = document.getElementById('floatingAIBtn');
+    const floatingAIChat = document.getElementById('floatingAIChat');
+    const closeAIChat = document.getElementById('closeAIChat');
+
+    if (floatingAIBtn && floatingAIChat) {
+        floatingAIBtn.addEventListener('click', () => {
+            floatingAIChat.classList.toggle('active');
+            if (floatingAIChat.classList.contains('active')) {
+                setTimeout(() => document.getElementById('aiChatInput').focus(), 300);
+            }
+        });
+
+        if (closeAIChat) {
+            closeAIChat.addEventListener('click', () => {
+                floatingAIChat.classList.remove('active');
+            });
+        }
+    }
 });
 
 // 9. Blog Modal Global Function
