@@ -158,8 +158,10 @@
             filtered.forEach((p, index) => {
                 const card = document.createElement('div');
                 card.className = 'portfolio-card glass-card hover-lift';
-                card.style.animation = `fadeUp 0.5s ease forwards ${index * 0.1}s`;
-                card.style.opacity = '0';
+                card.style.animation = `fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards ${index * 0.1}s`;
+                // Safety: Ensure visibility even if fadeUp animation is missing in CSS
+                card.style.opacity = '1'; 
+
                 
                 let tagsStr = `<div class="project-category-tag">${p.category}</div>`;
                 if(p.featured) {

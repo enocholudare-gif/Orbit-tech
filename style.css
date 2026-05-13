@@ -1796,7 +1796,7 @@ header.scrolled {
     .admin-sidebar {
         display: none; /* Hide sidebar on mobile unless toggled */
     }
-    
+}
 
 @keyframes fadeUp {
     from {
