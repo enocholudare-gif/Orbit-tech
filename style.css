@@ -1514,6 +1514,12 @@ header.scrolled {
     text-align: center;
 }
 
+.admin-user {
+    margin-left: 30px;
+    display: flex;
+    justify-content: flex-end;
+}
+
 .admin-avatar {
     width: 40px;
     height: 40px;
