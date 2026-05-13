@@ -1526,15 +1526,30 @@ header.scrolled {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
+    margin-bottom: 3.5rem;
+    padding: 2.5rem 0;
     border-bottom: 1px solid var(--glass-border);
 }
 
+
 .admin-page-title h1 {
-    font-size: 1.8rem;
-    margin-bottom: 0.2rem;
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    letter-spacing: -1px;
+    background: linear-gradient(to right, #fff, var(--color-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
+
+.admin-page-title p {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    margin-top: 0.5rem;
+    font-weight: 400;
+}
+
+
 
 .admin-stats-grid {
     display: grid;

@@ -140,10 +140,11 @@ const requireAuth = (req, res, next) => {
 // POST: Login endpoint
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
-    const envUser = (process.env.ADMIN_USER || '').trim();
-    const envPass = (process.env.ADMIN_PASS || '').trim();
+    const envUser = (process.env.ADMIN_USER || 'admin').trim();
+    const envPass = (process.env.ADMIN_PASS || 'orbit2026').trim();
 
     if (username && password && username.trim() === envUser && password.trim() === envPass) {
+
         authToken = Date.now().toString() + Math.random().toString(36).substring(2);
         return res.json({ success: true, token: authToken });
     }

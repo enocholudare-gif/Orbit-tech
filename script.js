@@ -327,44 +327,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (testimonials.length > 0) {
                     testimonialGrid.innerHTML = testimonials.map((t, index) => {
                         const delay = index * 100;
-                        if (t.type === 'video') {
-                            return `
-                                <div class="testimonial-card glass-card hover-lift" data-animate="fade-up" style="animation-delay: ${delay}ms;">
-                                    <div class="video-container" style="position:relative; border-radius:12px; overflow:hidden; margin-bottom:1.5rem; background:#000;">
-                                        <video src="${t.videoUrl}" style="width:100%; aspect-ratio:16/9;" controls></video>
+                        const isVideo = t.type === 'video';
+                        
+                        return `
+                            <div class="testimonial-card glass-card hover-lift" data-animate="fade-up" style="animation-delay: ${delay}ms;">
+                                ${isVideo ? `
+                                    <div class="video-container" style="position:relative; border-radius:12px; overflow:hidden; margin-bottom:1.5rem; background:#000; box-shadow: 0 10px 20px rgba(0,0,0,0.4);">
+                                        <video src="${t.videoUrl}" style="width:100%; aspect-ratio:16/9; display: block;" controls></video>
                                     </div>
-                                    <p class="review-text" style="font-style:italic;">"${t.text}"</p>
-                                    <div class="client-info">
-                                        <div class="client-avatar">
-                                            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=random" alt="${t.name}">
-                                        </div>
-                                        <div>
-                                            <h4>${t.name}</h4>
-                                            <p>${t.role}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        } else {
-                            return `
-                                <div class="testimonial-card glass-card hover-lift" data-animate="fade-up" style="animation-delay: ${delay}ms;">
+                                ` : `
                                     <div class="stars text-gold" style="margin-bottom: 1rem;">
                                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                     </div>
-                                    <p class="review-text">"${t.text}"</p>
-                                    <div class="client-info">
-                                        <div class="client-avatar">
-                                            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=random" alt="${t.name}">
-                                        </div>
-                                        <div>
-                                            <h4>${t.name}</h4>
-                                            <p>${t.role}</p>
-                                        </div>
+                                `}
+                                <p class="review-text" style="${isVideo ? 'font-style:italic; font-size:0.95rem;' : ''}">"${t.text}"</p>
+                                <div class="client-info">
+                                    <div class="client-avatar">
+                                        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=random" alt="${t.name}">
+                                    </div>
+                                    <div>
+                                        <h4>${t.name}</h4>
+                                        <p>${t.role}</p>
                                     </div>
                                 </div>
-                            `;
-                        }
+                            </div>
+                        `;
                     }).join('');
+
 
                     const newCards = testimonialGrid.querySelectorAll('[data-animate]');
                     newCards.forEach(el => {
