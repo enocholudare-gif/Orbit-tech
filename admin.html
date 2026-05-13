@@ -3,288 +3,588 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orbit Tech Admin Panel</title>
+    <title>Orbit Tech | Admin Dashboard</title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main Style -->
     <link rel="stylesheet" href="style.css">
     <style>
-        body {
-            padding-top: 100px; /* Space for fixed nav */
-        }
-        .admin-nav {
-            background: rgba(10, 10, 10, 0.9);
-            padding: 20px;
-            border-bottom: 1px solid var(--glass-border);
-            text-align: center;
-        }
-        .admin-nav h1 {
-            color: var(--color-gold);
-            font-size: 1.8rem;
-        }
-        .admin-section {
-            padding: 40px 0;
-        }
-        .admin-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-        .admin-card {
-            padding: 2rem;
-        }
-        .post-list {
-            list-style: none;
-            padding: 0;
-        }
-        .post-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            border-bottom: 1px solid var(--glass-border);
-            margin-bottom: 1rem;
-            background: rgba(0,0,0,0.5);
-            border-radius: 8px;
-        }
-        .post-item-title {
-            font-weight: 600;
-        }
-        .delete-btn {
-            background: #ff4d4d;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .delete-btn:hover {
-            background: #e60000;
-        }
-        .login-section {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 60vh;
-        }
-        .login-card {
-            width: 100%;
-            max-width: 400px;
-            padding: 2rem;
-            text-align: center;
-        }
+        /* Extra dashboard specific overrides */
+        body { padding-top: 0 !important; }
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+        .nav-link-btn { cursor: pointer; }
     </style>
 </head>
 <body class="bg-darker text-main">
 
-    <div class="admin-nav">
-        <h1>Orbit Tech Blog Administrator</h1>
-        <p class="text-muted">Create, track, and manage Tech Insight posts directly from this dashboard.</p>
-        <div style="margin-top: 15px; display: flex; justify-content: center; gap: 20px;">
-            <a href="index.html" class="text-gold block"><i class="fas fa-arrow-left"></i> Return to Live Site</a>
-            <span style="color: #555;">|</span>
-            <a href="admin-projects.html" class="text-gold block"><i class="fas fa-briefcase"></i> Portfolio Admin</a>
-            <span style="color: #555;">|</span>
-            <a href="admin-clients.html" class="text-gold block"><i class="fas fa-users"></i> Client Portal Admin</a>
+    <!-- LOGIN OVERLAY -->
+    <div id="loginOverlay" class="admin-modal active" style="background: var(--color-bg-main); z-index: 2000;">
+        <div class="glass-card" style="width: 100%; max-width: 400px; text-align: center;">
+            <h2 class="text-gold mb-4"><i class="fas fa-lock"></i> Admin Login</h2>
+            <form id="loginForm">
+                <div class="admin-form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="admin-input" required placeholder="Enter admin username">
+                </div>
+                <div class="admin-form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="admin-input" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Login to Dashboard</button>
+                <p id="loginStatus" class="mt-3 text-gold" style="font-size: 0.9rem;"></p>
+            </form>
         </div>
     </div>
 
-    <div class="container admin-section">
-        <!-- LOGIN SECTION -->
-        <div id="loginSection" class="login-section">
-            <div class="admin-card glass-card login-card">
-                <h3 class="mb-4 text-gold"><i class="fas fa-lock"></i> Admin Login</h3>
-                <form id="loginForm" class="quote-form">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" required placeholder="Enter admin username">
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" required placeholder="Enter password">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">Login <i class="fas fa-sign-in-alt"></i></button>
-                    <p id="loginStatus" class="form-status mt-3 text-gold"></p>
-                </form>
-            </div>
-        </div>
-
-        <!-- MAIN ADMIN UI (Hidden by default) -->
-        <div class="admin-grid" id="adminGrid" style="display: none;">
-            
-            <!-- CREATE NEW POST -->
-            <div class="admin-card glass-card hover-lift">
-                <h3 class="mb-4 text-gold"><i class="fas fa-edit"></i> Draft New Insight</h3>
-                <form id="createPostForm" class="quote-form">
-                    <div class="form-group">
-                        <label for="title">Blog Title</label>
-                        <input type="text" id="title" required placeholder="e.g. Future of React...">
-                    </div>
-                    <div class="form-group">
-                        <label for="tag">Category Tag</label>
-                        <input type="text" id="tag" required placeholder="Technology, AI, Insights...">
-                    </div>
-                    <div class="form-group">
-                        <label for="image">Blog Image</label>
-                        <input type="file" id="image" accept="image/*">
-                    </div>
-                    <div class="form-group">
-                        <label for="snippet">Content Snippet</label>
-                        <textarea id="snippet" rows="5" required placeholder="Write the introductory body paragraph..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">Publish Post <i class="fas fa-paper-plane"></i></button>
-                    <p id="publishStatus" class="form-status mt-3 text-gold"></p>
-                </form>
-            </div>
-
-            <!-- EXISTING POSTS -->
-            <div class="admin-card glass-card">
-                <h3 class="mb-4 text-gold"><i class="fas fa-list"></i> Live Posts Manager</h3>
-                <ul class="post-list" id="postList">
-                    <!-- Posts will populate here dynamically -->
-                </ul>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="logo-text">Orbit Tech</div>
+                <p class="text-muted" style="font-size: 0.75rem;">Admin Control Center</p>
             </div>
             
-            <!-- PROPOSAL GENERATOR -->
-            <div class="admin-card glass-card hover-lift">
-                <div style="display: flex; justify-content: space-between; align-items: start;">
-                    <h3 class="mb-4 text-gold"><i class="fas fa-file-invoice"></i> Proposal Generator</h3>
-                    <div style="text-align: right; font-size: 0.85rem;" class="text-gold">
-                        <strong><i class="fas fa-check-circle"></i> Verified Business</strong>
+            <nav class="admin-nav-list">
+                <div class="admin-nav-item">
+                    <a href="javascript:void(0)" class="admin-nav-link active" data-view="overview">
+                        <i class="fas fa-th-large"></i> Overview
+                    </a>
+                </div>
+                <div class="admin-nav-item">
+                    <a href="javascript:void(0)" class="admin-nav-link" data-view="messages">
+                        <i class="fas fa-envelope"></i> Messages <span id="msgBadge" class="status-badge status-new" style="display: none;">0</span>
+                    </a>
+                </div>
+                <div class="admin-nav-item">
+                    <a href="javascript:void(0)" class="admin-nav-link" data-view="projects">
+                        <i class="fas fa-briefcase"></i> Projects
+                    </a>
+                </div>
+                <div class="admin-nav-item">
+                    <a href="javascript:void(0)" class="admin-nav-link" data-view="blog">
+                        <i class="fas fa-pen-nib"></i> Blog Posts
+                    </a>
+                </div>
+                <div class="admin-nav-item">
+                    <a href="javascript:void(0)" class="admin-nav-link" data-view="client-projects">
+                        <i class="fas fa-tasks"></i> Client Projects
+                    </a>
+                </div>
+                <div class="admin-nav-item">
+                    <a href="javascript:void(0)" class="admin-nav-link" data-view="clients">
+                        <i class="fas fa-users"></i> Clients
+                    </a>
+                </div>
+
+                <div class="admin-nav-item">
+                    <a href="javascript:void(0)" class="admin-nav-link" data-view="billing">
+                        <i class="fas fa-file-invoice-dollar"></i> Billing
+                    </a>
+                </div>
+                <div class="admin-nav-item">
+                    <a href="javascript:void(0)" class="admin-nav-link" data-view="testimonials">
+                        <i class="fas fa-star"></i> Testimonials
+                    </a>
+                </div>
+                <div class="admin-nav-item">
+                    <a href="javascript:void(0)" class="admin-nav-link" data-view="pricing">
+                        <i class="fas fa-tags"></i> Pricing
+                    </a>
+                </div>
+
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <a href="index.html" class="admin-nav-link"><i class="fas fa-external-link-alt"></i> Live Site</a>
+                <a href="javascript:void(0)" id="logoutBtn" class="admin-nav-link text-gold"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-main">
+            <header class="admin-topbar">
+                <div class="admin-page-title">
+                    <h1 id="pageTitle">Dashboard Overview</h1>
+                    <p class="text-muted" id="pageSubtitle">Welcome back, Admin. Here's what's happening.</p>
+                </div>
+                <div class="admin-user">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-weight: 600;">System Admin</span>
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--color-gold); color: #000; display: flex; justify-content: center; align-items: center; font-weight: 800;">A</div>
                     </div>
                 </div>
-                <form id="proposalForm" class="quote-form">
-                    <div class="form-group">
-                        <label for="companyRc">Company Registration Number (CAC RC)</label>
-                        <input type="text" id="companyRc" required placeholder="e.g. 9385842" value="9385842">
-                    </div>
-                    <div class="form-group">
-                        <label for="clientName">Client Name / Company</label>
-                        <input type="text" id="clientName" required placeholder="e.g. John Doe">
-                    </div>
-                    <div class="form-group">
-                        <label for="clientEmail">Client Email Address</label>
-                        <input type="email" id="clientEmail" required placeholder="client@company.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="projectTitle">Project Title</label>
-                        <input type="text" id="projectTitle" required placeholder="e.g. Website Redesign">
-                    </div>
-                    <div class="form-group">
-                        <label for="budget">Proposed Budget / Amount</label>
-                        <input type="text" id="budget" required placeholder="e.g. $1,500 or ₦1,000,000">
-                    </div>
-                    <div class="form-group">
-                        <label for="projectScope">Scope of Work & Terms</label>
-                        <textarea id="projectScope" rows="4" required placeholder="Detail the services to be provided..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">Send Official Proposal &nbsp;<i class="fas fa-paper-plane"></i></button>
-                    <p id="proposalStatus" class="form-status mt-3 text-gold"></p>
-                </form>
-            </div>
+            </header>
 
-            <!-- INVOICE GENERATOR -->
-            <div class="admin-card glass-card hover-lift">
-                <div style="display: flex; justify-content: space-between; align-items: start;">
-                    <h3 class="mb-4 text-gold"><i class="fas fa-file-invoice-dollar"></i> Invoice Generator</h3>
-                    <div style="text-align: right; font-size: 0.85rem;" class="text-gold">
-                        <strong><i class="fas fa-check-circle"></i> Verified Business</strong>
+            <!-- VIEW: OVERVIEW -->
+            <section id="view-overview" class="view-section active">
+                <div class="admin-stats-grid">
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon"><i class="fas fa-envelope"></i></div>
+                        <div class="stat-value" id="stat-messages">0</div>
+                        <div class="stat-label">Total Messages</div>
+                    </div>
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
+                        <div class="stat-value" id="stat-projects">0</div>
+                        <div class="stat-label">Active Projects</div>
+                    </div>
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div class="stat-value" id="stat-clients">0</div>
+                        <div class="stat-label">Total Clients</div>
+                    </div>
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon"><i class="fas fa-pen-nib"></i></div>
+                        <div class="stat-value" id="stat-posts">0</div>
+                        <div class="stat-label">Blog Posts</div>
                     </div>
                 </div>
-                <form id="invoiceForm" class="quote-form">
-                    <div class="form-group">
-                        <label for="invoiceCompanyRc">Company Registration Number (CAC RC)</label>
-                        <input type="text" id="invoiceCompanyRc" required placeholder="e.g. 9385842" value="9385842">
-                    </div>
-                    <div class="form-group">
-                        <label for="invoiceClientName">Client Name / Company</label>
-                        <input type="text" id="invoiceClientName" required placeholder="e.g. John Doe">
-                    </div>
-                    <div class="form-group">
-                        <label for="invoiceClientEmail">Client Email Address</label>
-                        <input type="email" id="invoiceClientEmail" required placeholder="client@company.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="invoiceDescription">Service Description</label>
-                        <input type="text" id="invoiceDescription" required placeholder="e.g. Web Development Phase 1">
-                    </div>
-                    <div class="form-group">
-                        <label for="invoiceAmount">Amount Due</label>
-                        <input type="text" id="invoiceAmount" required placeholder="e.g. $1,500 or ₦1,000,000">
-                    </div>
-                    <div class="form-group">
-                        <label for="invoiceDueDate">Due Date</label>
-                        <input type="date" id="invoiceDueDate" required>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button type="submit" class="btn btn-primary" style="flex: 1;">Email Invoice &nbsp;<i class="fas fa-paper-plane"></i></button>
-                        <button type="button" id="downloadInvoiceBtn" class="btn text-gold" style="flex: 1; background: transparent; border: 1px solid var(--color-gold);">Download PDF &nbsp;<i class="fas fa-file-download"></i></button>
-                    </div>
-                    <p id="invoiceStatus" class="form-status mt-3 text-gold"></p>
-                </form>
-            </div>
 
-            <!-- PRICING MANAGER -->
-            <div class="admin-card glass-card hover-lift" style="grid-column: 1/-1;">
-                <h3 class="mb-4 text-gold"><i class="fas fa-tags"></i> Pricing Engine Manager</h3>
-                <p class="text-muted mb-3" style="font-size: 0.9rem;">Set base prices in USD ($). The system will automatically convert to NGN (₦) for Nigerian clients based on the exchange rate.</p>
-                
-                <form id="pricingForm" class="quote-form">
-                    <div class="form-group" style="max-width: 300px; margin-bottom: 2rem;">
-                        <label for="exchangeRate">NGN Exchange Rate (1 USD = ? NGN)</label>
-                        <input type="number" id="exchangeRate" required placeholder="e.g. 1200">
+                <div class="admin-content-grid">
+                    <div class="glass-card">
+                        <h3 class="mb-4 text-gold">Recent Quote Requests</h3>
+                        <div class="admin-table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Service</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentMessagesTable">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-4">
+                            <a href="javascript:void(0)" onclick="switchView('messages')" class="text-gold" style="font-size: 0.9rem;">View All Messages <i class="fas fa-arrow-right"></i></a>
+                        </div>
                     </div>
-                    
-                    <div id="pricingGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                        <!-- Service groups will populate here -->
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary mt-4" style="width: 100%; max-width: 300px;">Save Pricing Data <i class="fas fa-save"></i></button>
-                    <p id="pricingStatus" class="form-status mt-3 text-gold"></p>
-                </form>
-            </div>
 
+                    <div class="glass-card">
+                        <h3 class="mb-4 text-gold">Quick Actions</h3>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <button onclick="switchView('projects')" class="btn btn-outline btn-block" style="text-align: left; padding: 15px;"><i class="fas fa-plus"></i> Add New Project</button>
+                            <button onclick="switchView('blog')" class="btn btn-outline btn-block" style="text-align: left; padding: 15px;"><i class="fas fa-edit"></i> Draft Blog Post</button>
+                            <button onclick="switchView('billing')" class="btn btn-outline btn-block" style="text-align: left; padding: 15px;"><i class="fas fa-file-invoice"></i> Create Invoice</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: MESSAGES -->
+            <section id="view-messages" class="view-section">
+                <div class="glass-card">
+                    <h3 class="mb-4 text-gold"><i class="fas fa-envelope"></i> All Messages & Quote Requests</h3>
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Client Info</th>
+                                    <th>Service</th>
+                                    <th>Message Snippet</th>
+                                    <th>Received</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allMessagesTable">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: PROJECTS -->
+            <section id="view-projects" class="view-section">
+                <div class="admin-content-grid">
+                    <div class="glass-card">
+                        <h3 class="mb-4 text-gold">Manage Projects</h3>
+                        <div class="admin-table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Project</th>
+                                        <th>Category</th>
+                                        <th>Date</th>
+                                        <th>Featured</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allProjectsTable">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <h3 class="mb-4 text-gold">Add New Project</h3>
+                        <form id="addProjectForm">
+                            <div class="admin-form-group">
+                                <label>Project Title</label>
+                                <input type="text" id="projTitle" class="admin-input" required>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Category</label>
+                                <select id="projCategory" class="admin-select" required>
+                                    <option value="Website Development">Website Development</option>
+                                    <option value="Graphic Design">Graphic Design</option>
+                                    <option value="Social Media Management">Social Media Management</option>
+                                    <option value="Ads/Marketing">Ads/Marketing</option>
+                                </select>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Cover Image</label>
+                                <input type="file" id="projImage" class="admin-input" accept="image/*">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Description</label>
+                                <textarea id="projDesc" class="admin-textarea" rows="3" required></textarea>
+                            </div>
+                            <div class="admin-form-group" style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="projFeatured" style="width: 20px; height: 20px; accent-color: var(--color-gold);">
+                                <label style="margin: 0;">Featured Project</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Publish Project</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: BLOG -->
+            <section id="view-blog" class="view-section">
+                <div class="admin-content-grid">
+                    <div class="glass-card">
+                        <h3 class="mb-4 text-gold">Tech Insights Posts</h3>
+                        <div class="admin-table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Category</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allPostsTable">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <h3 class="mb-4 text-gold">New Post</h3>
+                        <form id="addPostForm">
+                            <div class="admin-form-group">
+                                <label>Title</label>
+                                <input type="text" id="postTitle" class="admin-input" required>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Tag</label>
+                                <input type="text" id="postTag" class="admin-input" required placeholder="e.g. Technology">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Post Image</label>
+                                <input type="file" id="postImage" class="admin-input" accept="image/*">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Snippet</label>
+                                <textarea id="postSnippet" class="admin-textarea" rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Publish Insight</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: CLIENT PROJECTS -->
+            <section id="view-client-projects" class="view-section">
+                <div class="admin-content-grid">
+                    <div class="glass-card">
+                        <h3 class="mb-4 text-gold">Client Project Tracking</h3>
+                        <div class="admin-table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Project / Client</th>
+                                        <th>Status</th>
+                                        <th>Progress</th>
+                                        <th>Files</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allClientProjectsTable">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <h3 class="mb-4 text-gold">Assign New Project</h3>
+                        <form id="assignProjectForm">
+                            <div class="admin-form-group">
+                                <label>Select Client</label>
+                                <select id="assignClientId" class="admin-select" required>
+                                    <option value="">Loading clients...</option>
+                                </select>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Project Name</label>
+                                <input type="text" id="assignProjName" class="admin-input" required placeholder="e.g. Website Overhaul">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Initial Status</label>
+                                <select id="assignStatus" class="admin-select">
+                                    <option value="Pending">Pending</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Review">Review</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Assign Project</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: CLIENTS -->
+
+            <section id="view-clients" class="view-section">
+                <div class="admin-content-grid">
+                    <div class="glass-card">
+                        <h3 class="mb-4 text-gold">Registered Clients</h3>
+                        <div class="admin-table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Joined</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allClientsTable">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <h3 class="mb-4 text-gold">Register Client</h3>
+                        <form id="addClientForm">
+                            <div class="admin-form-group">
+                                <label>Username</label>
+                                <input type="text" id="clientUser" class="admin-input" required>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Email</label>
+                                <input type="email" id="clientEmail" class="admin-input" required>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Initial Password</label>
+                                <input type="text" id="clientPass" class="admin-input" required value="OrbitClient2026">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Create Client Account</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: BILLING -->
+            <section id="view-billing" class="view-section">
+                <div class="admin-content-grid">
+                    <div class="glass-card">
+                        <h3 class="mb-4 text-gold">Proposal / Invoice Generator</h3>
+                        <div class="admin-form-group">
+                            <label>Action Type</label>
+                            <select id="billingType" class="admin-select">
+                                <option value="proposal">Project Proposal</option>
+                                <option value="invoice">Service Invoice</option>
+                            </select>
+                        </div>
+                        <form id="billingForm">
+                            <div class="admin-form-group">
+                                <label>Client Name</label>
+                                <input type="text" id="billClientName" class="admin-input" required>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Client Email</label>
+                                <input type="email" id="billClientEmail" class="admin-input" required>
+                            </div>
+                            <div id="proposalFields">
+                                <div class="admin-form-group">
+                                    <label>Project Title</label>
+                                    <input type="text" id="billProjTitle" class="admin-input">
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Scope of Work</label>
+                                    <textarea id="billProjScope" class="admin-textarea" rows="4"></textarea>
+                                </div>
+                            </div>
+                            <div id="invoiceFields" style="display: none;">
+                                <div class="admin-form-group">
+                                    <label>Description</label>
+                                    <input type="text" id="billDesc" class="admin-input">
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Due Date</label>
+                                    <input type="date" id="billDueDate" class="admin-input">
+                                </div>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Budget / Amount</label>
+                                <input type="text" id="billAmount" class="admin-input" required placeholder="e.g. $1,500">
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button type="submit" class="btn btn-primary" style="flex: 1;">Send via Email</button>
+                                <button type="button" id="previewInvoiceBtn" class="btn btn-outline" style="flex: 1;"><i class="fas fa-print"></i> Professional Invoice</button>
+                            </div>
+
+                            <p id="billingStatus" class="mt-3 text-gold"></p>
+                        </form>
+                    </div>
+                    <div class="glass-card">
+                        <h3 class="mb-4 text-gold">Business Info</h3>
+                        <div class="admin-form-group">
+                            <label>Company CAC RC</label>
+                            <input type="text" id="companyRc" class="admin-input" value="9385842">
+                        </div>
+                        <p class="text-muted" style="font-size: 0.85rem;">This information will appear on all generated documents as a verified business seal.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: TESTIMONIALS -->
+            <section id="view-testimonials" class="view-section">
+                <div class="admin-content-grid">
+                    <div class="glass-card">
+                        <h3 class="mb-4 text-gold">Manage Client Reviews</h3>
+                        <div class="admin-table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Client</th>
+                                        <th>Type</th>
+                                        <th>Review</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allTestimonialsTable">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <h3 class="mb-4 text-gold">Add Testimonial</h3>
+                        <form id="addTestimonialForm">
+                            <div class="admin-form-group">
+                                <label>Client Name</label>
+                                <input type="text" id="testName" class="admin-input" required>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Role/Company</label>
+                                <input type="text" id="testRole" class="admin-input" required placeholder="e.g. CEO, Tech Corp">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Review Type</label>
+                                <select id="testType" class="admin-select">
+                                    <option value="text">Text Review</option>
+                                    <option value="video">Video Review</option>
+                                </select>
+                            </div>
+                            <div class="admin-form-group" id="testVideoGroup" style="display: none;">
+                                <label>Upload Video Review</label>
+                                <input type="file" id="testVideo" class="admin-input" accept="video/*">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Review Content</label>
+                                <textarea id="testText" class="admin-textarea" rows="4" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Publish Review</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: PRICING -->
+
+            <section id="view-pricing" class="view-section">
+                <div class="glass-card">
+                    <h3 class="mb-4 text-gold"><i class="fas fa-tags"></i> Pricing Engine Manager</h3>
+                    <form id="pricingForm">
+                        <div class="admin-form-group" style="max-width: 300px;">
+                            <label>Exchange Rate (1 USD = ? NGN)</label>
+                            <input type="number" id="exchangeRate" class="admin-input" required>
+                        </div>
+                        <div id="pricingGrid" class="admin-stats-grid" style="margin-top: 2rem;">
+                            <!-- Dynamic -->
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-4">Save Global Pricing</button>
+                        <p id="pricingStatus" class="mt-3 text-gold"></p>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MESSAGE DETAIL MODAL -->
+    <div id="messageModal" class="admin-modal">
+        <div class="admin-modal-content glass-card">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 2rem;">
+                <div>
+                    <h2 class="text-gold" id="msgModalName">Message from John</h2>
+                    <p class="text-muted" id="msgModalEmail">john@example.com</p>
+                </div>
+                <button onclick="closeModal('messageModal')" class="text-gold" style="font-size: 1.5rem;"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="admin-form-group">
+                <label>Service Requested</label>
+                <div id="msgModalService" class="text-gold" style="font-weight: 600;">Website Development</div>
+            </div>
+            <div class="admin-form-group">
+                <label>Phone Number</label>
+                <div id="msgModalPhone">+234 123 4567</div>
+            </div>
+            <div class="admin-form-group">
+                <label>Project Details</label>
+                <div id="msgModalContent" style="white-space: pre-wrap; background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px;"></div>
+            </div>
+            <div class="mt-4" style="display: flex; gap: 10px;">
+                <button id="msgModalDelete" class="btn btn-outline" style="border-color: #ff4d4d; color: #ff4d4d;">Delete Message</button>
+                <button onclick="closeModal('messageModal')" class="btn btn-primary">Close Details</button>
+            </div>
         </div>
     </div>
 
     <script>
-        const loginSection = document.getElementById('loginSection');
-        const adminGrid = document.getElementById('adminGrid');
+        // --- AUTH LOGIC ---
+        const loginOverlay = document.getElementById('loginOverlay');
         const loginForm = document.getElementById('loginForm');
         const loginStatus = document.getElementById('loginStatus');
 
-        const postList = document.getElementById('postList');
-        const createPostForm = document.getElementById('createPostForm');
-        const publishStatus = document.getElementById('publishStatus');
-
-        const proposalForm = document.getElementById('proposalForm');
-        const proposalStatus = document.getElementById('proposalStatus');
-
-        const invoiceForm = document.getElementById('invoiceForm');
-        const invoiceStatus = document.getElementById('invoiceStatus');
-
-        // Check if token already exists in localStorage
-        const checkAuthStatus = () => {
+        const checkAuth = () => {
             const token = localStorage.getItem('orbitAdminToken');
             if (token) {
-                loginSection.style.display = 'none';
-                adminGrid.style.display = 'grid';
-                fetchPosts();
+                loginOverlay.classList.remove('active');
+                initDashboard();
             } else {
-                loginSection.style.display = 'flex';
-                adminGrid.style.display = 'none';
+                loginOverlay.classList.add('active');
             }
         };
 
-        // Login Submit
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            loginStatus.innerHTML = 'Authenticating...';
+            loginStatus.textContent = 'Authenticating...';
 
             try {
                 const res = await fetch('/api/login', {
@@ -292,380 +592,744 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
                 });
-
                 if (res.ok) {
                     const data = await res.json();
                     localStorage.setItem('orbitAdminToken', data.token);
-                    loginStatus.innerHTML = 'Success!';
-                    setTimeout(() => {
-                        checkAuthStatus();
-                    }, 500);
+                    loginStatus.textContent = 'Success! Entering dashboard...';
+                    setTimeout(checkAuth, 1000);
                 } else {
-                    loginStatus.innerHTML = 'Invalid credentials';
+                    loginStatus.textContent = 'Invalid credentials. Please try again.';
                 }
             } catch (err) {
-                console.error('Login error', err);
-                loginStatus.innerHTML = 'Server error';
+                loginStatus.textContent = 'Server error. Is the backend running?';
             }
         });
 
-        // Logout specific function if needed later, or clear token upon 401:
-        const handleAuthError = (res) => {
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('orbitAdminToken');
+            location.reload();
+        });
+
+        // --- NAVIGATION ---
+        const sections = document.querySelectorAll('.view-section');
+        const navLinks = document.querySelectorAll('.admin-nav-link[data-view]');
+        const pageTitle = document.getElementById('pageTitle');
+        const pageSubtitle = document.getElementById('pageSubtitle');
+
+        const viewConfig = {
+            overview: { title: 'Dashboard Overview', subtitle: "Welcome back, Admin. Here's what's happening." },
+            messages: { title: 'Messages & Quotes', subtitle: 'View and manage all client inquiries.' },
+            projects: { title: 'Portfolio Management', subtitle: 'Add or remove projects from the live site.' },
+            'client-projects': { title: 'Client Project Tracking', subtitle: 'Monitor progress and share deliverables with clients.' },
+            blog: { title: 'Tech Insights', subtitle: 'Draft and publish articles for your community.' },
+
+            clients: { title: 'Client Accounts', subtitle: 'Manage access for the client portal.' },
+            billing: { title: 'Financial Generator', subtitle: 'Create professional proposals and invoices.' },
+            testimonials: { title: 'Client Testimonials', subtitle: 'Manage text and video reviews for the homepage.' },
+            pricing: { title: 'Pricing Engine', subtitle: 'Control global service costs and exchange rates.' }
+
+        };
+
+        function switchView(viewName) {
+            sections.forEach(s => s.classList.remove('active'));
+            navLinks.forEach(l => l.classList.remove('active'));
+            
+            const targetSection = document.getElementById(`view-${viewName}`);
+            const targetLink = document.querySelector(`.admin-nav-link[data-view="${viewName}"]`);
+            
+            if (targetSection) targetSection.classList.add('active');
+            if (targetLink) targetLink.classList.add('active');
+            
+            if (viewConfig[viewName]) {
+                pageTitle.textContent = viewConfig[viewName].title;
+                pageSubtitle.textContent = viewConfig[viewName].subtitle;
+            }
+
+            // Refresh specific view data
+            if (viewName === 'messages') loadAllMessages();
+            if (viewName === 'projects') loadAllProjects();
+            if (viewName === 'client-projects') loadClientProjects();
+            if (viewName === 'blog') loadAllPosts();
+
+            if (viewName === 'clients') loadAllClients();
+            if (viewName === 'billing') { /* billing init */ }
+            if (viewName === 'testimonials') loadAllTestimonials();
+            if (viewName === 'pricing') loadPricing();
+
+            if (viewName === 'overview') updateStats();
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                const view = link.getAttribute('data-view');
+                switchView(view);
+            });
+        });
+
+        // --- DASHBOARD DATA & LOGIC ---
+        let currentMessages = [];
+        let currentPricing = null;
+
+        async function apiFetch(url, options = {}) {
+            const token = localStorage.getItem('orbitAdminToken');
+            const defaultOptions = {
+                headers: { 'Authorization': `Bearer ${token}` }
+            };
+            if (options.body) {
+                defaultOptions.headers['Content-Type'] = 'application/json';
+            }
+            const res = await fetch(url, { ...defaultOptions, ...options });
             if (res.status === 401 || res.status === 403) {
                 localStorage.removeItem('orbitAdminToken');
-                checkAuthStatus();
-                return true;
+                location.reload();
+                return null;
             }
-            return false;
-        };
-
-        // Fetch Posts on Load
-        async function fetchPosts() {
-            try {
-                const res = await fetch('/api/posts', { cache: 'no-store' });
-                const posts = await res.json();
-                
-                postList.innerHTML = '';
-                posts.forEach(post => {
-                    const li = document.createElement('li');
-                    li.className = 'post-item';
-                    li.innerHTML = `
-                        <div>
-                            <div class="post-item-title">${post.title}</div>
-                            <div class="text-muted" style="font-size: 0.8rem;">${new Date(post.timestamp).toLocaleDateString()}</div>
-                        </div>
-                        <button class="delete-btn" onclick="deletePost('${post.id}')"><i class="fas fa-trash"></i></button>
-                    `;
-                    postList.appendChild(li);
-                });
-            } catch (error) {
-                console.error('Fetch post error:', error);
-                postList.innerHTML = '<p class="text-muted">Error loading posts from server. Is server.js running?</p>';
-            }
+            return res;
         }
 
-        // Add Post Form handler
-        createPostForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        async function updateStats() {
+            try {
+                const [msgRes, projRes, clientRes, postRes] = await Promise.all([
+                    apiFetch('/api/admin/messages'),
+                    apiFetch('/api/projects'),
+                    apiFetch('/api/admin/clients'),
+                    apiFetch('/api/posts')
+                ]);
+
+                const messages = await msgRes.json();
+                const projects = await projRes.json();
+                const clients = await clientRes.json();
+                const posts = await postRes.json();
+
+                document.getElementById('stat-messages').textContent = messages.length;
+                document.getElementById('stat-projects').textContent = projects.length;
+                document.getElementById('stat-clients').textContent = clients.length;
+                document.getElementById('stat-posts').textContent = posts.length;
+
+                // Update recent messages table in overview
+                const recent = messages.slice(0, 5);
+                const tbody = document.getElementById('recentMessagesTable');
+                tbody.innerHTML = recent.map(m => `
+                    <tr>
+                        <td><strong>${m.name}</strong><br><span style="font-size:0.8rem" class="text-muted">${m.email}</span></td>
+                        <td>${m.service}</td>
+                        <td>${new Date(m.timestamp).toLocaleDateString()}</td>
+                        <td><span class="status-badge ${m.read ? 'status-read' : 'status-new'}">${m.read ? 'Read' : 'New'}</span></td>
+                        <td><button onclick="viewMessage('${m.id}')" class="text-gold"><i class="fas fa-eye"></i></button></td>
+                    </tr>
+                `).join('') || '<tr><td colspan="5" class="text-center text-muted">No messages yet.</td></tr>';
+
+                // Update Badge
+                const unread = messages.filter(m => !m.read).length;
+                const badge = document.getElementById('msgBadge');
+                if (unread > 0) {
+                    badge.textContent = unread;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+
+                currentMessages = messages;
+            } catch (err) { console.error(err); }
+        }
+
+        // --- MESSAGE VIEW ---
+        async function loadAllMessages() {
+            const tbody = document.getElementById('allMessagesTable');
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center">Loading...</td></tr>';
             
-            publishStatus.innerHTML = 'Publishing... <i class="fas fa-spinner fa-spin"></i>';
+            const res = await apiFetch('/api/admin/messages');
+            const messages = await res.json();
+            currentMessages = messages;
+
+            tbody.innerHTML = messages.map(m => `
+                <tr>
+                    <td><strong>${m.name}</strong><br><span style="font-size:0.8rem" class="text-muted">${m.email}</span><br><span style="font-size:0.8rem" class="text-muted">${m.phone}</span></td>
+                    <td><span class="text-gold">${m.service}</span></td>
+                    <td title="${m.message}">${m.message.substring(0, 50)}${m.message.length > 50 ? '...' : ''}</td>
+                    <td>${new Date(m.timestamp).toLocaleString()}</td>
+                    <td><span class="status-badge ${m.read ? 'status-read' : 'status-new'}">${m.read ? 'Read' : 'New'}</span></td>
+                    <td style="display: flex; gap: 10px;">
+                        <button onclick="viewMessage('${m.id}')" class="text-gold"><i class="fas fa-eye"></i></button>
+                        <button onclick="deleteMessage('${m.id}')" style="color: #ff4d4d;"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="6" class="text-center text-muted">No inquiries received yet.</td></tr>';
+        }
+
+        window.viewMessage = async (id) => {
+            const msg = currentMessages.find(m => m.id === id);
+            if (!msg) return;
+
+            document.getElementById('msgModalName').textContent = `Message from ${msg.name}`;
+            document.getElementById('msgModalEmail').textContent = msg.email;
+            document.getElementById('msgModalService').textContent = msg.service;
+            document.getElementById('msgModalPhone').textContent = msg.phone;
+            document.getElementById('msgModalContent').textContent = msg.message;
+            
+            document.getElementById('msgModalDelete').onclick = () => {
+                if (confirm('Are you sure you want to delete this message?')) {
+                    deleteMessage(id);
+                    closeModal('messageModal');
+                }
+            };
+
+            document.getElementById('messageModal').classList.add('active');
+
+            if (!msg.read) {
+                await apiFetch(`/api/admin/messages/${id}/read`, { method: 'PUT' });
+                updateStats();
+                if (document.getElementById('view-messages').classList.contains('active')) loadAllMessages();
+            }
+        };
+
+        window.deleteMessage = async (id) => {
+            const res = await apiFetch(`/api/admin/messages/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                updateStats();
+                if (document.getElementById('view-messages').classList.contains('active')) loadAllMessages();
+            }
+        };
+
+        // --- PROJECT VIEW ---
+        async function loadAllProjects() {
+            const tbody = document.getElementById('allProjectsTable');
+            const res = await fetch('/api/projects');
+            const projects = await res.json();
+            
+            tbody.innerHTML = projects.map(p => `
+                <tr>
+                    <td><strong>${p.title}</strong></td>
+                    <td>${p.category}</td>
+                    <td>${new Date(p.timestamp).toLocaleDateString()}</td>
+                    <td>${p.featured ? '<i class="fas fa-star text-gold"></i>' : '-'}</td>
+                    <td><button onclick="deleteProject('${p.id}')" style="color:#ff4d4d;"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('addProjectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('title', document.getElementById('projTitle').value);
+            formData.append('category', document.getElementById('projCategory').value);
+            formData.append('description', document.getElementById('projDesc').value);
+            formData.append('featured', document.getElementById('projFeatured').checked);
+            
+            const file = document.getElementById('projImage').files[0];
+            if (file) formData.append('image', file);
+
+            const token = localStorage.getItem('orbitAdminToken');
+            const res = await fetch('/api/projects', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
+
+            if (res.ok) {
+                alert('Project Published!');
+                e.target.reset();
+                loadAllProjects();
+                updateStats();
+            }
+        });
+
+        window.deleteProject = async (id) => {
+            if (!confirm('Delete this project?')) return;
+            const res = await apiFetch(`/api/projects/${id}`, { method: 'DELETE' });
+            if (res.ok) loadAllProjects();
+        };
+
+        // --- BLOG VIEW ---
+        async function loadAllPosts() {
+            const tbody = document.getElementById('allPostsTable');
+            const res = await fetch('/api/posts');
+            const posts = await res.json();
+            
+            tbody.innerHTML = posts.map(p => `
+                <tr>
+                    <td><strong>${p.title}</strong></td>
+                    <td>${p.tag}</td>
+                    <td>${new Date(p.timestamp).toLocaleDateString()}</td>
+                    <td><button onclick="deletePost('${p.id}')" style="color:#ff4d4d;"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('addPostForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('title', document.getElementById('postTitle').value);
+            formData.append('tag', document.getElementById('postTag').value);
+            formData.append('snippet', document.getElementById('postSnippet').value);
+            
+            const file = document.getElementById('postImage').files[0];
+            if (file) formData.append('image', file);
+
+            const token = localStorage.getItem('orbitAdminToken');
+            const res = await fetch('/api/posts', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
+
+            if (res.ok) {
+                alert('Insight Published!');
+                e.target.reset();
+                loadAllPosts();
+                updateStats();
+            }
+        });
+
+        window.deletePost = async (id) => {
+            if (!confirm('Delete this post?')) return;
+            const res = await apiFetch(`/api/posts/${id}`, { method: 'DELETE' });
+            if (res.ok) loadAllPosts();
+        };
+
+        // --- CLIENT PROJECTS VIEW ---
+        async function loadClientProjects() {
+            const tbody = document.getElementById('allClientProjectsTable');
+            const select = document.getElementById('assignClientId');
+            
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center">Loading...</td></tr>';
+            
+            try {
+                const [projRes, clientRes] = await Promise.all([
+                    apiFetch('/api/admin/client-projects'),
+                    apiFetch('/api/admin/clients')
+                ]);
+                
+                const projects = await projRes.json();
+                const clients = await clientRes.json();
+                
+                // Update dropdown
+                select.innerHTML = '<option value="">Select a client...</option>';
+                clients.forEach(c => {
+                    select.innerHTML += `<option value="${c.id}">${c.username}</option>`;
+                });
+
+                tbody.innerHTML = projects.map(p => {
+                    const client = clients.find(c => c.id === p.clientId);
+                    const filesHtml = p.files.map(f => `<a href="${f.url}" target="_blank" class="text-gold" style="font-size:0.7rem; display:block;"><i class="fas fa-file"></i> ${f.name}</a>`).join('');
+                    
+                    return `
+                        <tr>
+                            <td><strong>${p.projectName}</strong><br><span class="text-muted" style="font-size:0.8rem">Client: ${client ? client.username : 'Unknown'}</span></td>
+                            <td><span class="status-badge status-new">${p.status}</span></td>
+                            <td>
+                                <div style="display:flex; align-items:center; gap:5px;">
+                                    <input type="number" value="${p.progress}" onchange="updateClientProjProgress('${p.id}', this.value)" style="width:50px; background:transparent; border:1px solid var(--glass-border); color:#fff; text-align:center;"> %
+                                </div>
+                            </td>
+                            <td>
+                                ${filesHtml || '<span class="text-muted" style="font-size:0.7rem">No files</span>'}
+                                <div class="mt-2">
+                                    <input type="file" id="fileInput_${p.id}" style="display:none" onchange="uploadClientFile('${p.id}')">
+                                    <button onclick="document.getElementById('fileInput_${p.id}').click()" class="text-gold" style="font-size:0.7rem"><i class="fas fa-upload"></i> Upload</button>
+                                </div>
+                            </td>
+                            <td>
+                                <button onclick="deleteClientProject('${p.id}')" style="color:#ff4d4d;"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('') || '<tr><td colspan="5" class="text-center text-muted">No client projects assigned yet.</td></tr>';
+            } catch (err) { console.error(err); }
+        }
+
+        document.getElementById('assignProjectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                clientId: document.getElementById('assignClientId').value,
+                projectName: document.getElementById('assignProjName').value,
+                status: document.getElementById('assignStatus').value,
+                progress: 0
+            };
+
+            const res = await apiFetch('/api/admin/client-projects', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                alert('Project Assigned!');
+                e.target.reset();
+                loadClientProjects();
+            }
+        });
+
+        window.updateClientProjProgress = async (id, val) => {
+            await apiFetch(`/api/admin/client-projects/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify({ progress: val })
+            });
+        };
+
+        window.uploadClientFile = async (id) => {
+            const fileInput = document.getElementById(`fileInput_${id}`);
+            if (!fileInput.files[0]) return;
 
             const formData = new FormData();
-            formData.append('title', document.getElementById('title').value);
-            formData.append('tag', document.getElementById('tag').value);
-            formData.append('snippet', document.getElementById('snippet').value);
-            
-            const imageFile = document.getElementById('image').files[0];
-            if (imageFile) {
-                formData.append('image', imageFile);
-            }
+            formData.append('file', fileInput.files[0]);
 
-            try {
-                const token = localStorage.getItem('orbitAdminToken');
-                const res = await fetch('/api/posts', {
-                    method: 'POST',
-                    headers: { 
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: formData
-                });
-                
-                if (handleAuthError(res)) return;
+            const token = localStorage.getItem('orbitAdminToken');
+            const res = await fetch(`/api/admin/client-projects/${id}/files`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
 
-                if (res.ok) {
-                    publishStatus.innerHTML = 'Post Published Live!';
-                    createPostForm.reset();
-                    fetchPosts(); // Reload list
-                    setTimeout(() => publishStatus.innerHTML = '', 3000);
-                } else {
-                    publishStatus.innerHTML = 'Failed to publish.';
-                }
-            } catch (err) {
-                console.error(err);
-                publishStatus.innerHTML = 'Server error.';
-            }
-        });
-
-        // Delete post function
-        window.deletePost = async function(id) {
-            if(!confirm("Are you sure you want to permanently delete this post?")) return;
-            
-            try {
-                const token = localStorage.getItem('orbitAdminToken');
-                const res = await fetch(`/api/posts/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': 'Bearer ' + token
-                    }
-                });
-                
-                if (handleAuthError(res)) return;
-
-                if(res.ok) {
-                    fetchPosts(); // Reload List
-                }
-            } catch (err) {
-                console.error('Delete error', err);
+            if (res.ok) {
+                alert('File Uploaded!');
+                loadClientProjects();
             }
         };
 
-        // Proposal Form Handler
-        proposalForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            proposalStatus.innerHTML = 'Generating & Sending Proposal... <i class="fas fa-spinner fa-spin"></i>';
+        window.deleteClientProject = async (id) => {
+            if (!confirm('Delete this client project?')) return;
+            const res = await apiFetch(`/api/admin/client-projects/${id}`, { method: 'DELETE' });
+            if (res.ok) loadClientProjects();
+        };
 
-            const proposalData = {
-                companyRc: document.getElementById('companyRc').value,
-                clientName: document.getElementById('clientName').value,
-                clientEmail: document.getElementById('clientEmail').value,
-                projectTitle: document.getElementById('projectTitle').value,
-                budget: document.getElementById('budget').value,
-                projectScope: document.getElementById('projectScope').value
-            };
+        // --- TESTIMONIALS VIEW ---
+        async function loadAllTestimonials() {
+            const tbody = document.getElementById('allTestimonialsTable');
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center">Loading...</td></tr>';
+            
+            const res = await apiFetch('/api/testimonials');
+            const data = await res.json();
+            
+            tbody.innerHTML = data.map(t => `
+                <tr>
+                    <td><strong>${t.name}</strong><br><span class="text-muted" style="font-size:0.8rem">${t.role}</span></td>
+                    <td><span class="status-badge ${t.type === 'video' ? 'status-new' : 'status-read'}">${t.type.toUpperCase()}</span></td>
+                    <td title="${t.text}">${t.text.substring(0, 40)}...</td>
+                    <td><button onclick="deleteTestimonial('${t.id}')" style="color:#ff4d4d;"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `).join('') || '<tr><td colspan="4" class="text-center text-muted">No testimonials found.</td></tr>';
+        }
 
-            try {
-                const token = localStorage.getItem('orbitAdminToken');
-                const res = await fetch('/api/send-proposal', {
-                    method: 'POST',
-                    headers: { 
-                        'Authorization': 'Bearer ' + token,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(proposalData)
-                });
-                
-                if (handleAuthError(res)) return;
-
-                if (res.ok) {
-                    proposalStatus.innerHTML = 'Proposal Sent Successfully!';
-                    proposalForm.reset();
-                    setTimeout(() => proposalStatus.innerHTML = '', 4000);
-                } else {
-                    proposalStatus.innerHTML = 'Failed to send proposal. Check server logs.';
-                }
-            } catch (err) {
-                console.error(err);
-                proposalStatus.innerHTML = 'Server error.';
-            }
+        document.getElementById('billingType').addEventListener('change', (e) => {
+            document.getElementById('proposalFields').style.display = e.target.value === 'proposal' ? 'block' : 'none';
+            document.getElementById('invoiceFields').style.display = e.target.value === 'invoice' ? 'block' : 'none';
         });
 
-        // Invoice Form Handler
-        invoiceForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            invoiceStatus.innerHTML = 'Generating & Sending Invoice... <i class="fas fa-spinner fa-spin"></i>';
-
-            const invoiceData = {
-                companyRc: document.getElementById('invoiceCompanyRc').value,
-                clientName: document.getElementById('invoiceClientName').value,
-                clientEmail: document.getElementById('invoiceClientEmail').value,
-                description: document.getElementById('invoiceDescription').value,
-                amount: document.getElementById('invoiceAmount').value,
-                dueDate: document.getElementById('invoiceDueDate').value
+        document.getElementById('previewInvoiceBtn').addEventListener('click', () => {
+            const data = {
+                clientName: document.getElementById('billClientName').value,
+                clientEmail: document.getElementById('billClientEmail').value,
+                description: document.getElementById('billDesc').value || document.getElementById('billProjTitle').value || 'Service Provided',
+                amount: document.getElementById('billAmount').value,
+                dueDate: document.getElementById('billDueDate').value
             };
-
-            try {
-                const token = localStorage.getItem('orbitAdminToken');
-                const res = await fetch('/api/send-invoice', {
-                    method: 'POST',
-                    headers: { 
-                        'Authorization': 'Bearer ' + token,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(invoiceData)
-                });
-                
-                if (handleAuthError(res)) return;
-
-                if (res.ok) {
-                    invoiceStatus.innerHTML = 'Invoice Sent Successfully!';
-                    invoiceForm.reset();
-                    document.getElementById('invoiceCompanyRc').value = '9385842'; // Reset default
-                    setTimeout(() => invoiceStatus.innerHTML = '', 4000);
-                } else {
-                    invoiceStatus.innerHTML = 'Failed to send via email (Port Blocked). Try "Download PDF" instead.';
-                }
-            } catch (err) {
-                console.error(err);
-                invoiceStatus.innerHTML = 'Server error.';
-            }
-        });
-
-        // Download PDF Handler
-        const downloadInvoiceBtn = document.getElementById('downloadInvoiceBtn');
-        downloadInvoiceBtn.addEventListener('click', async () => {
-            if (!invoiceForm.checkValidity()) {
-                invoiceForm.reportValidity();
+            
+            if (!data.clientName || !data.amount) {
+                alert("Please fill in Client Name and Amount first.");
                 return;
             }
-            invoiceStatus.innerHTML = 'Generating PDF... <i class="fas fa-spinner fa-spin"></i>';
 
-            const invoiceData = {
-                companyRc: document.getElementById('invoiceCompanyRc').value,
-                clientName: document.getElementById('invoiceClientName').value,
-                clientEmail: document.getElementById('invoiceClientEmail').value,
-                description: document.getElementById('invoiceDescription').value,
-                amount: document.getElementById('invoiceAmount').value,
-                dueDate: document.getElementById('invoiceDueDate').value
-            };
+            const html = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Invoice - ${data.clientName}</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+                    <style>
+                        body { font-family: 'Inter', sans-serif; color: #1a1a1a; padding: 50px; background: #fff; line-height: 1.5; }
+                        .container { max-width: 800px; margin: 0 auto; border: 1px solid #eee; padding: 40px; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+                        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #FFD700; padding-bottom: 30px; margin-bottom: 40px; }
+                        .brand .logo { font-size: 28px; font-weight: 800; color: #000; letter-spacing: -1px; }
+                        .brand p { margin: 0; color: #666; font-size: 14px; }
+                        .invoice-meta { text-align: right; }
+                        .invoice-meta h1 { margin: 0; color: #FFD700; font-size: 36px; }
+                        .invoice-meta p { margin: 5px 0 0; color: #888; font-size: 13px; }
+                        .billing-info { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-bottom: 50px; }
+                        .info-label { font-size: 12px; text-transform: uppercase; color: #999; font-weight: 700; margin-bottom: 10px; display: block; letter-spacing: 1px; }
+                        .info-content { font-size: 15px; color: #333; }
+                        .table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+                        .table th { background: #f8f8f8; text-align: left; padding: 15px; font-size: 13px; border-bottom: 2px solid #eee; }
+                        .table td { padding: 20px 15px; border-bottom: 1px solid #eee; }
+                        .total-section { display: flex; justify-content: flex-end; }
+                        .total-box { background: #fcfcfc; padding: 20px 40px; border-radius: 8px; border: 1px solid #eee; }
+                        .total-label { font-size: 14px; color: #666; margin-right: 20px; }
+                        .total-amount { font-size: 24px; font-weight: 700; color: #000; }
+                        .footer { margin-top: 80px; text-align: center; font-size: 12px; color: #aaa; border-top: 1px solid #eee; padding-top: 30px; }
+                        @media print {
+                            body { padding: 0; background: #fff; }
+                            .container { border: none; box-shadow: none; width: 100%; max-width: 100%; }
+                            #printBtn { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <button id="printBtn" onclick="window.print()" style="position:fixed; top:20px; right:20px; padding:10px 20px; background:#FFD700; border:none; cursor:pointer; font-weight:700; border-radius:5px;">Print / Save PDF</button>
+                    <div class="container">
+                        <div class="header">
+                            <div class="brand">
+                                <div class="logo">ORBIT TECH</div>
+                                <p>Digital Transformation & Software Engineering</p>
+                            </div>
+                            <div class="invoice-meta">
+                                <h1>INVOICE</h1>
+                                <p>#INV-${Date.now().toString().slice(-6)}</p>
+                            </div>
+                        </div>
+                        <div class="billing-info">
+                            <div>
+                                <span class="info-label">Billed To:</span>
+                                <div class="info-content">
+                                    <strong>${data.clientName}</strong><br>
+                                    ${data.clientEmail}
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span class="info-label">Invoice Details:</span>
+                                <div class="info-content">
+                                    Date Issued: ${new Date().toLocaleDateString()}<br>
+                                    Due Date: ${data.dueDate || 'On Receipt'}<br>
+                                    Business RC: 9385842
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Description of Service</th>
+                                    <th style="text-align: right;">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="font-weight: 600;">${data.description}</td>
+                                    <td style="text-align: right; font-weight: 700;">${data.amount}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="total-section">
+                            <div class="total-box">
+                                <span class="total-label">Total Amount Due</span>
+                                <span class="total-amount">${data.amount}</span>
+                            </div>
+                        </div>
+                        <div class="footer">
+                            <p>This is a verified document from Orbit Tech. Please make payments to the provided company accounts.</p>
+                            <p>Orbit Tech | Lagos & Ekiti, Nigeria | hello@orbittech.com.ng | +234 810 693 2689</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+            const win = window.open('', '_blank');
+            win.document.write(html);
+            win.document.close();
+        });
 
-            try {
-                const token = localStorage.getItem('orbitAdminToken');
-                const res = await fetch('/api/download-invoice-pdf', {
-                    method: 'POST',
-                    headers: { 
-                        'Authorization': 'Bearer ' + token,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(invoiceData)
-                });
+        document.getElementById('testType').addEventListener('change', (e) => {
+            document.getElementById('testVideoGroup').style.display = e.target.value === 'video' ? 'block' : 'none';
+        });
 
-                if (handleAuthError(res)) return;
+        document.getElementById('addTestimonialForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('name', document.getElementById('testName').value);
+            formData.append('role', document.getElementById('testRole').value);
+            formData.append('type', document.getElementById('testType').value);
+            formData.append('text', document.getElementById('testText').value);
+            
+            const file = document.getElementById('testVideo').files[0];
+            if (file) formData.append('video', file);
 
-                if (res.ok) {
-                    const blob = await res.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `Invoice_${invoiceData.clientName.replace(/\s+/g, '_')}.pdf`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    
-                    invoiceStatus.innerHTML = 'PDF Downloaded Successfully!';
-                    setTimeout(() => invoiceStatus.innerHTML = '', 4000);
-                } else {
-                    invoiceStatus.innerHTML = 'Failed to generate PDF.';
-                }
-            } catch (err) {
-                console.error(err);
-                invoiceStatus.innerHTML = 'Server error.';
+            const token = localStorage.getItem('orbitAdminToken');
+            const res = await fetch('/api/admin/testimonials', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
+
+            if (res.ok) {
+                alert('Testimonial Added!');
+                e.target.reset();
+                loadAllTestimonials();
             }
         });
 
-        // ==========================================
-        // PRICING MANAGEMENT SYSTEM
-        // ==========================================
-        const pricingForm = document.getElementById('pricingForm');
-        const pricingGrid = document.getElementById('pricingGrid');
-        const pricingStatus = document.getElementById('pricingStatus');
-        let currentPricingData = null;
-
-        async function fetchPricingData() {
-            try {
-                const res = await fetch('/api/pricing', { cache: 'no-store' });
-                if (res.ok) {
-                    currentPricingData = await res.json();
-                    renderPricingForm();
-                }
-            } catch (err) {
-                console.error('Failed to load pricing:', err);
-            }
-        }
-
-        function renderPricingForm() {
-            if (!currentPricingData) return;
-            
-            document.getElementById('exchangeRate').value = currentPricingData.exchangeRate;
-            pricingGrid.innerHTML = '';
-            
-            // Loop through each service
-            Object.keys(currentPricingData.services).forEach(serviceKey => {
-                const service = currentPricingData.services[serviceKey];
-                
-                const groupDiv = document.createElement('div');
-                groupDiv.style.background = 'rgba(255,255,255,0.02)';
-                groupDiv.style.padding = '15px';
-                groupDiv.style.borderRadius = '8px';
-                groupDiv.style.border = '1px solid var(--glass-border)';
-                
-                groupDiv.innerHTML = `
-                    <h4 class="text-gold mb-3" style="font-size: 1.1rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px;">${service.name}</h4>
-                    
-                    <div class="form-group mb-2">
-                        <label style="font-size: 0.8rem; color: #aaa;">Basic Level ($)</label>
-                        <input type="number" id="${serviceKey}-basic" value="${service.packages.basic}" required style="padding: 8px;">
-                    </div>
-                    
-                    <div class="form-group mb-2">
-                        <label style="font-size: 0.8rem; color: #aaa;">Standard Level ($)</label>
-                        <input type="number" id="${serviceKey}-standard" value="${service.packages.standard}" required style="padding: 8px;">
-                    </div>
-                    
-                    <div class="form-group mb-0">
-                        <label style="font-size: 0.8rem; color: #aaa;">Premium Level ($)</label>
-                        <input type="number" id="${serviceKey}-premium" value="${service.packages.premium}" required style="padding: 8px;">
-                    </div>
-                `;
-                pricingGrid.appendChild(groupDiv);
-            });
-        }
-
-        if (pricingForm) {
-            pricingForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                pricingStatus.innerHTML = 'Saving Pricing... <i class="fas fa-spinner fa-spin"></i>';
-                
-                // Reconstruct data
-                let newData = {
-                    exchangeRate: Number(document.getElementById('exchangeRate').value),
-                    services: {}
-                };
-                
-                Object.keys(currentPricingData.services).forEach(serviceKey => {
-                    newData.services[serviceKey] = {
-                        name: currentPricingData.services[serviceKey].name,
-                        packages: {
-                            basic: Number(document.getElementById(`${serviceKey}-basic`).value),
-                            standard: Number(document.getElementById(`${serviceKey}-standard`).value),
-                            premium: Number(document.getElementById(`${serviceKey}-premium`).value)
-                        }
-                    };
-                });
-                
-                try {
-                    const token = localStorage.getItem('orbitAdminToken');
-                    const res = await fetch('/api/admin/pricing', {
-                        method: 'PUT',
-                        headers: { 
-                            'Authorization': 'Bearer ' + token,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(newData)
-                    });
-                    
-                    if (handleAuthError(res)) return;
-
-                    if (res.ok) {
-                        pricingStatus.innerHTML = 'Pricing successfully updated!';
-                        currentPricingData = newData; // update local cache
-                        setTimeout(() => pricingStatus.innerHTML = '', 3000);
-                    } else {
-                        pricingStatus.innerHTML = 'Failed to save pricing.';
-                    }
-                } catch (err) {
-                    console.error('Pricing save error:', err);
-                    pricingStatus.innerHTML = 'Server error.';
-                }
-            });
-        }
-
-        // Hook pricing fetch into auth success
-        const originalCheckAuthStatus = checkAuthStatus;
-        window.checkAuthStatus = () => {
-            const token = localStorage.getItem('orbitAdminToken');
-            if (token) {
-                loginSection.style.display = 'none';
-                adminGrid.style.display = 'grid';
-                fetchPosts();
-                fetchPricingData(); // Load pricing
-            } else {
-                loginSection.style.display = 'flex';
-                adminGrid.style.display = 'none';
-            }
+        window.deleteTestimonial = async (id) => {
+            if (!confirm('Delete this testimonial?')) return;
+            const res = await apiFetch(`/api/admin/testimonials/${id}`, { method: 'DELETE' });
+            if (res.ok) loadAllTestimonials();
         };
 
-        // Initialize Call
-        window.checkAuthStatus();
+        // --- CLIENTS VIEW ---
+
+
+        async function loadAllClients() {
+            const tbody = document.getElementById('allClientsTable');
+            const res = await apiFetch('/api/admin/clients');
+            const clients = await res.json();
+            
+            tbody.innerHTML = clients.map(c => `
+                <tr>
+                    <td><strong>${c.username}</strong></td>
+                    <td>${c.email}</td>
+                    <td>${new Date(c.timestamp).toLocaleDateString()}</td>
+                    <td><button class="text-gold"><i class="fas fa-cog"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('addClientForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                username: document.getElementById('clientUser').value,
+                email: document.getElementById('clientEmail').value,
+                password: document.getElementById('clientPass').value
+            };
+
+            const res = await apiFetch('/api/admin/clients', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                alert('Client Account Created!');
+                e.target.reset();
+                document.getElementById('clientPass').value = 'OrbitClient2026';
+                loadAllClients();
+                updateStats();
+            }
+        });
+
+        // --- PRICING VIEW ---
+        async function loadPricing() {
+            const res = await fetch('/api/pricing');
+            currentPricing = await res.json();
+            
+            document.getElementById('exchangeRate').value = currentPricing.exchangeRate;
+            const grid = document.getElementById('pricingGrid');
+            grid.innerHTML = '';
+
+            Object.keys(currentPricing.services).forEach(key => {
+                const s = currentPricing.services[key];
+                const card = document.createElement('div');
+                card.className = 'glass-card';
+                card.innerHTML = `
+                    <h4 class="text-gold mb-3">${s.name}</h4>
+                    <div class="admin-form-group">
+                        <label>Basic ($)</label>
+                        <input type="number" id="price-${key}-basic" class="admin-input" value="${s.packages.basic}">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Standard ($)</label>
+                        <input type="number" id="price-${key}-standard" class="admin-input" value="${s.packages.standard}">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Premium ($)</label>
+                        <input type="number" id="price-${key}-premium" class="admin-input" value="${s.packages.premium}">
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        document.getElementById('pricingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const status = document.getElementById('pricingStatus');
+            status.textContent = 'Saving...';
+
+            const newPricing = {
+                exchangeRate: Number(document.getElementById('exchangeRate').value),
+                services: {}
+            };
+
+            Object.keys(currentPricing.services).forEach(key => {
+                newPricing.services[key] = {
+                    name: currentPricing.services[key].name,
+                    packages: {
+                        basic: Number(document.getElementById(`price-${key}-basic`).value),
+                        standard: Number(document.getElementById(`price-${key}-standard`).value),
+                        premium: Number(document.getElementById(`price-${key}-premium`).value)
+                    }
+                };
+            });
+
+            const res = await apiFetch('/api/admin/pricing', {
+                method: 'PUT',
+                body: JSON.stringify(newPricing)
+            });
+
+            if (res.ok) {
+                status.textContent = 'Global pricing updated successfully!';
+                currentPricing = newPricing;
+                setTimeout(() => status.textContent = '', 3000);
+            }
+        });
+
+        // --- BILLING VIEW ---
+        const billingType = document.getElementById('billingType');
+        const proposalFields = document.getElementById('proposalFields');
+        const invoiceFields = document.getElementById('invoiceFields');
+
+        billingType.addEventListener('change', () => {
+            if (billingType.value === 'proposal') {
+                proposalFields.style.display = 'block';
+                invoiceFields.style.display = 'none';
+            } else {
+                proposalFields.style.display = 'none';
+                invoiceFields.style.display = 'block';
+            }
+        });
+
+        document.getElementById('billingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const status = document.getElementById('billingStatus');
+            status.textContent = 'Processing...';
+
+            const type = billingType.value;
+            const url = type === 'proposal' ? '/api/send-proposal' : '/api/send-invoice';
+            
+            const data = {
+                companyRc: document.getElementById('companyRc').value,
+                clientName: document.getElementById('billClientName').value,
+                clientEmail: document.getElementById('billClientEmail').value,
+                budget: document.getElementById('billAmount').value,
+                amount: document.getElementById('billAmount').value // for invoice
+            };
+
+            if (type === 'proposal') {
+                data.projectTitle = document.getElementById('billProjTitle').value;
+                data.projectScope = document.getElementById('billProjScope').value;
+            } else {
+                data.description = document.getElementById('billDesc').value;
+                data.dueDate = document.getElementById('billDueDate').value;
+            }
+
+            const res = await apiFetch(url, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                status.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} sent successfully!`;
+                e.target.reset();
+                setTimeout(() => status.textContent = '', 4000);
+            } else {
+                status.textContent = 'Failed to send. Check server logs.';
+            }
+        });
+
+        // --- HELPERS ---
+        window.closeModal = (id) => {
+            document.getElementById(id).classList.remove('active');
+        };
+
+        function initDashboard() {
+            updateStats();
+            // Default view overview already active
+        }
+
+        // --- INIT ---
+        checkAuth();
     </script>
 </body>
 </html>

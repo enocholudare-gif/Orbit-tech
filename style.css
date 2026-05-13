@@ -638,28 +638,31 @@ header.scrolled {
     color: var(--color-gold);
 }
 
-/* 7. Portfolio Section */
+/* 7. Portfolio Section - REDESIGN */
 .portfolio-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 3rem;
 }
 
 .portfolio-card {
     position: relative;
-    border-radius: 16px;
+    border-radius: 20px;
     overflow: hidden;
+    background: var(--color-bg-darker);
+    border: 1px solid var(--glass-border);
+    transition: var(--transition-slow);
 }
 
 .portfolio-img-wrap {
     position: relative;
+    height: 280px;
     overflow: hidden;
-    border-radius: 16px;
 }
 
 .portfolio-img-wrap img {
     width: 100%;
-    aspect-ratio: 4/3;
+    height: 100%;
     object-fit: cover;
     transition: var(--transition-slow);
 }
@@ -670,26 +673,19 @@ header.scrolled {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.6);
+    background: linear-gradient(to top, rgba(10, 10, 10, 0.9) 0%, rgba(10, 10, 10, 0.2) 60%, transparent 100%);
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2rem;
     opacity: 0;
     transition: var(--transition-normal);
 }
 
-.view-btn {
-    width: 60px;
-    height: 60px;
-    background: var(--color-gold);
-    color: #000;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.5rem;
-    transform: translateY(20px);
-    transition: var(--transition-normal);
+.portfolio-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--color-gold-hover);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
 }
 
 .portfolio-card:hover .portfolio-img-wrap img {
@@ -700,25 +696,77 @@ header.scrolled {
     opacity: 1;
 }
 
-.portfolio-card:hover .view-btn {
-    transform: translateY(0);
+.project-category-tag {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: var(--color-gold);
+    color: #000;
+    padding: 5px 15px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    z-index: 10;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.project-featured-tag {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    color: #fff;
+    padding: 5px 12px;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    z-index: 10;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 .portfolio-info {
-    position: absolute;
-    bottom: -10px;
-    left: 5%;
-    width: 90%;
-    padding: 1.5rem;
-    transform: translateY(50%);
-    opacity: 0;
-    background: rgba(10,10,10,0.85);
+    padding: 1.8rem;
 }
 
-.portfolio-card:hover .portfolio-info {
-    transform: translateY(-20px);
-    opacity: 1;
+.portfolio-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+    color: var(--color-text-main);
+    transition: var(--transition-normal);
 }
+
+.portfolio-card:hover .portfolio-info h3 {
+    color: var(--color-gold);
+}
+
+.portfolio-info p {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.project-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--color-gold);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.project-link i {
+    transition: var(--transition-normal);
+}
+
+.project-link:hover i {
+    transform: translateX(5px);
+}
+
 
 /* 8. Testimonials Section */
 .testimonial-grid {
@@ -1408,4 +1456,236 @@ header.scrolled {
     .hero-buttons { flex-direction: column; }
     .section-header h2 { font-size: 2rem; }
     .step-number { font-size: 3rem; }
+}
+/* --- ADMIN DASHBOARD STYLES --- */
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    width: 260px;
+    background: var(--color-bg-darker);
+    border-right: 1px solid var(--glass-border);
+    padding: 2rem;
+    position: fixed;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.admin-sidebar-header {
+    margin-bottom: 3rem;
+}
+
+.admin-sidebar-header .logo-text {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-gold);
+}
+
+.admin-nav-list {
+    flex: 1;
+}
+
+.admin-nav-item {
+    margin-bottom: 0.5rem;
+}
+
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: var(--color-text-muted);
+    font-weight: 500;
+    transition: var(--transition-normal);
+}
+
+.admin-nav-link:hover, .admin-nav-link.active {
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--color-gold);
+}
+
+.admin-nav-link i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.admin-main {
+    flex: 1;
+    margin-left: 260px;
+    padding: 2rem;
+    background: #080808;
+}
+
+.admin-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.admin-page-title h1 {
+    font-size: 1.8rem;
+    margin-bottom: 0.2rem;
+}
+
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.stat-card {
+    padding: 1.5rem;
+}
+
+.stat-card .stat-icon {
+    font-size: 1.5rem;
+    color: var(--color-gold);
+    margin-bottom: 1rem;
+}
+
+.stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.2rem;
+}
+
+.stat-card .stat-label {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.admin-content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+    .admin-content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Admin Tables & Lists */
+.admin-table-container {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th {
+    text-align: left;
+    padding: 1rem;
+    border-bottom: 2px solid var(--glass-border);
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.admin-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--glass-border);
+    vertical-align: middle;
+}
+
+.admin-table tr:hover {
+    background: rgba(255,255,255,0.02);
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.status-new { background: rgba(37, 211, 102, 0.2); color: #25D366; }
+.status-read { background: rgba(160, 160, 160, 0.2); color: #a0a0a0; }
+
+/* Admin Forms */
+.admin-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.admin-form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+}
+
+.admin-input, .admin-select, .admin-textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--color-text-main);
+    font-family: inherit;
+    transition: var(--transition-normal);
+}
+
+.admin-input:focus, .admin-select:focus, .admin-textarea:focus {
+    outline: none;
+    border-color: var(--color-gold);
+    background: rgba(255,255,255,0.08);
+}
+
+/* Modal Styling */
+.admin-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(8px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.admin-modal.active {
+    display: flex;
+}
+
+.admin-modal-content {
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Mobile Sidebar */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .admin-sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .admin-main {
+        margin-left: 0;
+    }
 }

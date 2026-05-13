@@ -278,20 +278,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     const delay = index * 100;
                     return `
                         <div class="portfolio-card glass-card hover-lift" data-animate="fade-up" style="animation-delay: ${delay}ms;">
-                            <div class="portfolio-img-wrap" style="height: 250px; overflow: hidden; border-radius: 8px;">
-                                <img src="${project.image}" alt="${project.title}" style="width: 100%; height: 100%; object-fit: cover;"
+                            <div class="project-category-tag">${project.category}</div>
+                            ${project.featured ? '<div class="project-featured-tag"><i class="fas fa-star"></i> Featured</div>' : ''}
+                            <div class="portfolio-img-wrap">
+                                <img src="${project.image}" alt="${project.title}"
                                     onerror="this.src='https://placehold.co/600x400/1a1a1a/FFD700?text=Portfolio';">
                                 <div class="portfolio-overlay">
-                                    <a href="case-study.html?id=${project.id}" class="view-btn"><i class="fas fa-eye"></i></a>
+                                    <a href="case-study.html?id=${project.id}" class="btn btn-primary">View Project Details</a>
                                 </div>
                             </div>
-                            <div class="portfolio-info glass-card mt-3">
-                                <h3 style="margin-bottom: 5px;">${project.title} <span style="font-size: 0.7rem; background: #FFD700; color: #1a1a1a; padding: 2px 6px; border-radius: 4px; margin-left: 5px;">${project.category}</span></h3>
-                                <p style="font-size: 0.9rem;">${project.description}</p>
+                            <div class="portfolio-info">
+                                <h3>${project.title}</h3>
+                                <p>${project.description}</p>
+                                <a href="case-study.html?id=${project.id}" class="project-link">Learn More <i class="fas fa-arrow-right"></i></a>
                             </div>
                         </div>
                     `;
                 }).join('');
+
 
                 const newCards = homePortfolioGrid.querySelectorAll('[data-animate]');
                 newCards.forEach(el => {
@@ -310,6 +314,74 @@ document.addEventListener('DOMContentLoaded', () => {
         
         loadHomePortfolio();
     }
+
+    // 8.6 Fetch Dynamic Testimonials
+    const testimonialGrid = document.querySelector('.testimonial-grid');
+    if (testimonialGrid) {
+        async function loadTestimonials() {
+            try {
+                const res = await fetch('/api/testimonials');
+                if (!res.ok) throw new Error('API down');
+                const testimonials = await res.json();
+                
+                if (testimonials.length > 0) {
+                    testimonialGrid.innerHTML = testimonials.map((t, index) => {
+                        const delay = index * 100;
+                        if (t.type === 'video') {
+                            return `
+                                <div class="testimonial-card glass-card hover-lift" data-animate="fade-up" style="animation-delay: ${delay}ms;">
+                                    <div class="video-container" style="position:relative; border-radius:12px; overflow:hidden; margin-bottom:1.5rem; background:#000;">
+                                        <video src="${t.videoUrl}" style="width:100%; aspect-ratio:16/9;" controls></video>
+                                    </div>
+                                    <p class="review-text" style="font-style:italic;">"${t.text}"</p>
+                                    <div class="client-info">
+                                        <div class="client-avatar">
+                                            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=random" alt="${t.name}">
+                                        </div>
+                                        <div>
+                                            <h4>${t.name}</h4>
+                                            <p>${t.role}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            return `
+                                <div class="testimonial-card glass-card hover-lift" data-animate="fade-up" style="animation-delay: ${delay}ms;">
+                                    <div class="stars text-gold" style="margin-bottom: 1rem;">
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                    </div>
+                                    <p class="review-text">"${t.text}"</p>
+                                    <div class="client-info">
+                                        <div class="client-avatar">
+                                            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=random" alt="${t.name}">
+                                        </div>
+                                        <div>
+                                            <h4>${t.name}</h4>
+                                            <p>${t.role}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }).join('');
+
+                    const newCards = testimonialGrid.querySelectorAll('[data-animate]');
+                    newCards.forEach(el => {
+                        if (window.scrollObserver) {
+                            window.scrollObserver.observe(el);
+                        } else if (scrollObserver) {
+                            scrollObserver.observe(el);
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error("Error fetching testimonials:", err);
+            }
+        }
+        loadTestimonials();
+    }
+
     // 10. AI Chat Assistant Logic
     const aiChatForm = document.getElementById('aiChatForm');
     const aiChatInput = document.getElementById('aiChatInput');
@@ -615,6 +687,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+
         
         btnNegotiate.addEventListener('click', () => {
             window.open(generateWaLink(true), '_blank');

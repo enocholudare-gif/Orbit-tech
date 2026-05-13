@@ -37,6 +37,10 @@ const projectsFile = path.join(dataDir, 'projects.json');
 const clientsFile = path.join(dataDir, 'clients.json');
 const clientProjectsFile = path.join(dataDir, 'client_projects.json');
 const pricingFile = path.join(dataDir, 'pricing.json');
+const messagesFile = path.join(dataDir, 'messages.json');
+const testimonialsFile = path.join(dataDir, 'testimonials.json');
+
+
 
 // Middleware
 app.use(cors());
@@ -55,7 +59,7 @@ if (!fs.existsSync(dataDir)) {
 // Copy default files to /tmp/data if on Vercel
 if (process.env.VERCEL) {
     const staticDataDir = path.join(__dirname, 'data');
-    ['posts.json', 'projects.json', 'clients.json', 'client_projects.json', 'pricing.json'].forEach(file => {
+    ['posts.json', 'projects.json', 'clients.json', 'client_projects.json', 'pricing.json', 'messages.json', 'testimonials.json'].forEach(file => {
         const tempPath = path.join(dataDir, file);
         const staticPath = path.join(staticDataDir, file);
         if (!fs.existsSync(tempPath) && fs.existsSync(staticPath)) {
@@ -112,6 +116,16 @@ if (!fs.existsSync(clientProjectsFile)) {
     fs.writeFileSync(clientProjectsFile, JSON.stringify([], null, 2));
 }
 
+if (!fs.existsSync(messagesFile)) {
+    fs.writeFileSync(messagesFile, JSON.stringify([], null, 2));
+}
+
+if (!fs.existsSync(testimonialsFile)) {
+    fs.writeFileSync(testimonialsFile, JSON.stringify([], null, 2));
+}
+
+
+
 // API Routes
 
 // Middleware to protect routes
@@ -163,6 +177,26 @@ app.post('/api/contact', async (req, res) => {
             text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone || 'N/A'}\nService Needed: ${service || 'N/A'}\n\nMessage:\n${message}`
         };
 
+        // Save message to JSON file
+        const newMessage = {
+            id: Date.now().toString(),
+            name,
+            email,
+            phone: phone || 'N/A',
+            service: service || 'N/A',
+            message,
+            timestamp: new Date().toISOString(),
+            read: false
+        };
+
+        fs.readFile(messagesFile, 'utf8', (err, data) => {
+            if (!err) {
+                const messages = JSON.parse(data || '[]');
+                messages.unshift(newMessage);
+                fs.writeFile(messagesFile, JSON.stringify(messages, null, 2), () => {});
+            }
+        });
+
         await transporter.sendMail(mailOptions);
         res.status(200).json({ success: true, message: 'Message sent successfully' });
     } catch (error) {
@@ -170,6 +204,7 @@ app.post('/api/contact', async (req, res) => {
         res.status(500).json({ error: 'Failed to send message' });
     }
 });
+
 
 // POST: Send Proposal endpoint
 app.post('/api/send-proposal', requireAuth, async (req, res) => {
@@ -653,8 +688,112 @@ app.delete('/api/projects/:id', requireAuth, (req, res) => {
 });
 
 // ==========================================
+// MESSAGES API ENDPOINTS (Admin)
+// ==========================================
+
+// GET: Fetch all messages
+app.get('/api/admin/messages', requireAuth, (req, res) => {
+    fs.readFile(messagesFile, 'utf8', (err, data) => {
+        if (err) return res.status(500).json({ error: 'Failed to read messages' });
+        res.json(JSON.parse(data || '[]'));
+    });
+});
+
+// DELETE: Remove a message by ID
+app.delete('/api/admin/messages/:id', requireAuth, (req, res) => {
+    const messageId = req.params.id;
+
+    fs.readFile(messagesFile, 'utf8', (err, data) => {
+        if (err) return res.status(500).json({ error: 'Failed' });
+
+        let messages = JSON.parse(data || '[]');
+        messages = messages.filter(msg => msg.id !== messageId);
+
+        fs.writeFile(messagesFile, JSON.stringify(messages, null, 2), (writeErr) => {
+            if (writeErr) return res.status(500).json({ error: 'Failed to delete message' });
+            res.status(200).json({ message: 'Message deleted successfully' });
+        });
+    });
+});
+
+// PUT: Mark message as read
+app.put('/api/admin/messages/:id/read', requireAuth, (req, res) => {
+    const messageId = req.params.id;
+
+    fs.readFile(messagesFile, 'utf8', (err, data) => {
+        if (err) return res.status(500).json({ error: 'Failed' });
+
+        let messages = JSON.parse(data || '[]');
+        const index = messages.findIndex(msg => msg.id === messageId);
+        if (index !== -1) {
+            messages[index].read = true;
+            fs.writeFile(messagesFile, JSON.stringify(messages, null, 2), (writeErr) => {
+                if (writeErr) return res.status(500).json({ error: 'Failed' });
+                res.status(200).json({ message: 'Message marked as read' });
+            });
+        } else {
+            res.status(404).json({ error: 'Message not found' });
+        }
+    });
+});
+
+
+// ==========================================
+// TESTIMONIALS API ENDPOINTS
+// ==========================================
+
+// GET: Fetch all testimonials
+app.get('/api/testimonials', (req, res) => {
+    fs.readFile(testimonialsFile, 'utf8', (err, data) => {
+        if (err) return res.status(500).json({ error: 'Failed' });
+        res.json(JSON.parse(data || '[]'));
+    });
+});
+
+// POST: Add new testimonial (Admin)
+app.post('/api/admin/testimonials', requireAuth, upload.single('video'), (req, res) => {
+    const { name, role, text, type, videoUrl } = req.body;
+    
+    fs.readFile(testimonialsFile, 'utf8', (err, data) => {
+        if (err) return res.status(500).json({ error: 'Failed' });
+        const testimonials = JSON.parse(data || '[]');
+        
+        const newTestimonial = {
+            id: Date.now().toString(),
+            name,
+            role,
+            text,
+            type, // 'text' or 'video'
+            videoUrl: req.file ? `/uploads/${req.file.filename}` : (videoUrl || ''),
+            timestamp: new Date().toISOString()
+        };
+        
+        testimonials.unshift(newTestimonial);
+        fs.writeFile(testimonialsFile, JSON.stringify(testimonials, null, 2), writeErr => {
+            if (writeErr) return res.status(500).json({ error: 'Failed' });
+            res.status(201).json(newTestimonial);
+        });
+    });
+});
+
+// DELETE: Remove testimonial (Admin)
+app.delete('/api/admin/testimonials/:id', requireAuth, (req, res) => {
+    const id = req.params.id;
+    fs.readFile(testimonialsFile, 'utf8', (err, data) => {
+        if (err) return res.status(500).json({ error: 'Failed' });
+        let testimonials = JSON.parse(data || '[]');
+        testimonials = testimonials.filter(t => t.id !== id);
+        fs.writeFile(testimonialsFile, JSON.stringify(testimonials, null, 2), writeErr => {
+            if (writeErr) return res.status(500).json({ error: 'Failed' });
+            res.json({ success: true });
+        });
+    });
+});
+
+// ==========================================
 // CLIENT PORTAL & DASHBOARD SYSTEM
 // ==========================================
+
 
 // Middleware for Client JWT
 const requireClientAuth = (req, res, next) => {
@@ -774,6 +913,21 @@ app.put('/api/admin/client-projects/:id', requireAuth, (req, res) => {
         });
     });
 });
+
+// DELETE: Remove a client project assignment
+app.delete('/api/admin/client-projects/:id', requireAuth, (req, res) => {
+    const id = req.params.id;
+    fs.readFile(clientProjectsFile, 'utf8', (err, data) => {
+        if (err) return res.status(500).json({ error: 'Failed' });
+        let projects = JSON.parse(data || '[]');
+        projects = projects.filter(p => p.id !== id);
+        fs.writeFile(clientProjectsFile, JSON.stringify(projects, null, 2), writeErr => {
+            if (writeErr) return res.status(500).json({ error: 'Failed' });
+            res.json({ success: true });
+        });
+    });
+});
+
 
 // POST: Upload file to client project
 app.post('/api/admin/client-projects/:id/files', requireAuth, upload.single('file'), (req, res) => {
