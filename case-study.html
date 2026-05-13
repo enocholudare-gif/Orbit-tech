@@ -80,8 +80,8 @@
                 <a href="index.html#contact">Contact</a>
             </nav>
             <div class="nav-actions">
-                <a href="index.html#quote" class="btn btn-primary">Get a Quote</a>
             </div>
+
         </div>
     </header>
 
@@ -183,12 +183,13 @@
                 document.getElementById('csDescription').innerText = project.description;
                 document.getElementById('csImage').src = project.image;
                 
-                document.getElementById('csProblem').innerText = project.problem;
-                document.getElementById('csSolution').innerText = project.solution;
-                document.getElementById('csResult').innerText = project.result;
+                document.getElementById('csProblem').innerText = project.problem || "Information about the project challenge will be available soon. We focus on identifying core business bottlenecks and engineering specific technical solutions to overcome them.";
+                document.getElementById('csSolution').innerText = project.solution || "Our tailored approach involved a comprehensive analysis of the project requirements, followed by the implementation of a high-performance, scalable solution designed for longevity and impact.";
+                document.getElementById('csResult').innerText = project.result || "The final delivery exceeded client expectations, resulting in significant improvements in performance metrics and overall digital presence. Contact us for a deeper dive into this project's success.";
                 
-                document.getElementById('csDate').innerText = new Date(project.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+                document.getElementById('csDate').innerText = project.timestamp ? new Date(project.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : "Delivered in 2026";
                 document.getElementById('csServices').innerText = project.category;
+
 
                 // Hide Loader, Show Content
                 document.getElementById('csLoader').style.display = 'none';

@@ -248,10 +248,23 @@
                                 <label>Description</label>
                                 <textarea id="projDesc" class="admin-textarea" rows="3" required></textarea>
                             </div>
+                            <div class="admin-form-group">
+                                <label>The Challenge (Case Study)</label>
+                                <textarea id="projProblem" class="admin-textarea" rows="3" placeholder="What was the client's problem?"></textarea>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Our Solution (Case Study)</label>
+                                <textarea id="projSolution" class="admin-textarea" rows="3" placeholder="How did we solve it?"></textarea>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>The Result (Case Study)</label>
+                                <textarea id="projResult" class="admin-textarea" rows="3" placeholder="What was the final outcome?"></textarea>
+                            </div>
                             <div class="admin-form-group" style="display: flex; align-items: center; gap: 10px;">
                                 <input type="checkbox" id="projFeatured" style="width: 20px; height: 20px; accent-color: var(--color-gold);">
                                 <label style="margin: 0;">Featured Project</label>
                             </div>
+
                             <button type="submit" class="btn btn-primary btn-block">Publish Project</button>
                         </form>
                     </div>
@@ -814,7 +827,11 @@
             formData.append('title', document.getElementById('projTitle').value);
             formData.append('category', document.getElementById('projCategory').value);
             formData.append('description', document.getElementById('projDesc').value);
+            formData.append('problem', document.getElementById('projProblem').value);
+            formData.append('solution', document.getElementById('projSolution').value);
+            formData.append('result', document.getElementById('projResult').value);
             formData.append('featured', document.getElementById('projFeatured').checked);
+
             
             const file = document.getElementById('projImage').files[0];
             if (file) formData.append('image', file);
