@@ -1468,19 +1468,71 @@ header.scrolled {
 
 .admin-global-header {
     background: var(--color-bg-darker);
-    padding: 1.5rem 3.5rem;
-    display: flex;
-    justify-content: space-between;
+    padding: 1rem 3.5rem;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
     border-bottom: 1px solid var(--glass-border);
     z-index: 1000;
 }
+
+.admin-logo-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.admin-header-logo {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+}
+
+.admin-logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-name {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--color-gold);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.brand-motto {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+.header-center {
+    text-align: center;
+}
+
+.admin-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-gold);
+    color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 800;
+}
+
 
 .admin-body {
     display: grid;
     grid-template-columns: 280px 1fr;
     flex: 1;
 }
+
 
 
 

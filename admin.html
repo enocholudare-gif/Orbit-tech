@@ -42,26 +42,39 @@
     <div class="admin-layout">
         <!-- TOPBAR: New global header -->
         <header class="admin-global-header">
-            <div class="admin-page-title">
-                <h1 id="pageTitle">Dashboard Overview</h1>
-                <p class="text-muted" id="pageSubtitle">Welcome back, Admin. Here's what's happening.</p>
+            <div class="header-left">
+                <div class="admin-logo-group">
+                    <img src="Enoch.png" alt="Logo" class="admin-header-logo" onerror="this.src='https://placehold.co/40x40/000000/FFD700?text=O';">
+                    <div class="admin-logo-text">
+                        <span class="brand-name">Orbit Tech</span>
+                        <span class="brand-motto">Agent of Revolution</span>
+                    </div>
+                </div>
             </div>
-            <div class="admin-user">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-weight: 600;">System Admin</span>
-                    <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--color-gold); color: #000; display: flex; justify-content: center; align-items: center; font-weight: 800;">A</div>
+            
+            <div class="header-center">
+                <div class="admin-page-title">
+                    <h1 id="pageTitle">Dashboard Overview</h1>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <div class="admin-user">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="admin-user-name">System Admin</span>
+                        <div class="admin-avatar">A</div>
+                    </div>
                 </div>
             </div>
         </header>
 
+
         <div class="admin-body">
             <!-- SIDEBAR -->
             <aside class="admin-sidebar">
+            
+            <nav class="admin-nav-list">
 
-            <div class="admin-sidebar-header">
-                <div class="logo-text">Orbit Tech</div>
-                <p class="text-muted" style="font-size: 0.75rem;">Admin Control Center</p>
-            </div>
             
             <nav class="admin-nav-list">
                 <div class="admin-nav-item">
