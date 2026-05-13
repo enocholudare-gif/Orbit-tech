@@ -1468,15 +1468,15 @@ header.scrolled {
     width: 280px;
     background: var(--color-bg-darker);
     border-right: 1px solid var(--glass-border);
-    padding: 2rem;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
+    padding: 2.5rem;
     display: flex;
     flex-direction: column;
-    z-index: 1000;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
+
 
 
 .admin-sidebar-header {
@@ -1521,13 +1521,12 @@ header.scrolled {
 
 .admin-main {
     flex: 1;
-    margin-left: 280px;
-    padding: 3rem;
+    padding: 3.5rem;
     background: #080808;
     min-height: 100vh;
-    position: relative;
-    z-index: 1;
+    overflow-x: hidden;
 }
+
 
 .admin-topbar {
     display: flex;

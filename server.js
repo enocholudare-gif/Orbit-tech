@@ -27,7 +27,8 @@ const upload = multer({
     })
 });
 
-let authToken = null;
+let authToken = process.env.ADMIN_TOKEN || 'orbit-master-key-2026';
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -144,10 +145,10 @@ app.post('/api/login', (req, res) => {
     const envPass = (process.env.ADMIN_PASS || 'orbit2026').trim();
 
     if (username && password && username.trim() === envUser && password.trim() === envPass) {
-
-        authToken = Date.now().toString() + Math.random().toString(36).substring(2);
+        // Use a stable token if not provided in env to prevent logout on restart
         return res.json({ success: true, token: authToken });
     }
+
     return res.status(401).json({ error: 'Invalid credentials' });
 });
 
