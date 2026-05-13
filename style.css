@@ -1460,21 +1460,42 @@ header.scrolled {
 }
 /* --- ADMIN DASHBOARD STYLES --- */
 .admin-layout {
-    display: grid;
-    grid-template-columns: 280px 1fr;
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
     background: #000;
 }
 
+.admin-global-header {
+    background: var(--color-bg-darker);
+    padding: 1.5rem 3.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--glass-border);
+    z-index: 1000;
+}
+
+.admin-body {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    flex: 1;
+}
+
+
 
 .admin-sidebar {
-    background: var(--color-bg-darker);
+    background: rgba(10, 10, 10, 0.8);
     border-right: 1px solid var(--glass-border);
     padding: 2.5rem;
     display: flex;
     flex-direction: column;
     z-index: 100;
+    min-height: calc(100vh - 85px);
+    position: sticky;
+    top: 85px;
 }
+
 
 
 
@@ -1528,35 +1549,26 @@ header.scrolled {
 }
 
 
-.admin-topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 2rem;
-    margin-bottom: 4rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid var(--glass-border);
-    gap: 30px;
-}
+
+
 
 
 .admin-page-title h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 800;
     margin: 0;
     letter-spacing: -1px;
     background: linear-gradient(to right, #fff, var(--color-gold));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    line-height: 1.2;
 }
 
 .admin-page-title p {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: var(--color-text-muted);
-    margin-top: 5px;
-    font-weight: 400;
+    margin: 5px 0 0 0;
 }
+
 
 
 @media (max-width: 768px) {

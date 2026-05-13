@@ -40,8 +40,24 @@
     </div>
 
     <div class="admin-layout">
-        <!-- SIDEBAR -->
-        <aside class="admin-sidebar">
+        <!-- TOPBAR: New global header -->
+        <header class="admin-global-header">
+            <div class="admin-page-title">
+                <h1 id="pageTitle">Dashboard Overview</h1>
+                <p class="text-muted" id="pageSubtitle">Welcome back, Admin. Here's what's happening.</p>
+            </div>
+            <div class="admin-user">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-weight: 600;">System Admin</span>
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--color-gold); color: #000; display: flex; justify-content: center; align-items: center; font-weight: 800;">A</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="admin-body">
+            <!-- SIDEBAR -->
+            <aside class="admin-sidebar">
+
             <div class="admin-sidebar-header">
                 <div class="logo-text">Orbit Tech</div>
                 <p class="text-muted" style="font-size: 0.75rem;">Admin Control Center</p>
@@ -105,18 +121,7 @@
 
         <!-- MAIN CONTENT -->
         <main class="admin-main">
-            <header class="admin-topbar">
-                <div class="admin-page-title">
-                    <h1 id="pageTitle">Dashboard Overview</h1>
-                    <p class="text-muted" id="pageSubtitle">Welcome back, Admin. Here's what's happening.</p>
-                </div>
-                <div class="admin-user">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-weight: 600;">System Admin</span>
-                        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--color-gold); color: #000; display: flex; justify-content: center; align-items: center; font-weight: 800;">A</div>
-                    </div>
-                </div>
-            </header>
+
 
             <!-- VIEW: OVERVIEW -->
             <section id="view-overview" class="view-section active">
@@ -548,6 +553,8 @@
             </section>
         </main>
     </div>
+</div>
+
 
     <!-- MESSAGE DETAIL MODAL -->
     <div id="messageModal" class="admin-modal">
