@@ -771,8 +771,9 @@ header.scrolled {
 /* 8. Testimonials Section */
 .testimonial-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 3rem;
+    align-items: flex-start;
 }
 
 .stars {
@@ -1517,37 +1518,53 @@ header.scrolled {
 
 .admin-main {
     flex: 1;
-    margin-left: 260px;
-    padding: 2rem;
+    margin-left: 280px;
+    padding: 6rem;
     background: #080808;
+    min-height: 100vh;
 }
+
 
 .admin-topbar {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 3.5rem;
-    padding: 2.5rem 0;
+    align-items: flex-start;
+    margin-bottom: 4rem;
+    padding: 3rem 0;
     border-bottom: 1px solid var(--glass-border);
+    gap: 20px;
 }
 
+.admin-page-title {
+    flex: 1;
+}
 
 .admin-page-title h1 {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: 800;
-    margin-bottom: 0.5rem;
-    letter-spacing: -1px;
+    margin: 0 0 0.8rem 0;
+    letter-spacing: -1.5px;
     background: linear-gradient(to right, #fff, var(--color-gold));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    line-height: 1.1;
 }
 
 .admin-page-title p {
     font-size: 1.1rem;
     color: var(--color-text-muted);
-    margin-top: 0.5rem;
+    margin: 0;
     font-weight: 400;
 }
+
+@media (max-width: 768px) {
+    .admin-topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 2rem 0;
+    }
+}
+
 
 
 

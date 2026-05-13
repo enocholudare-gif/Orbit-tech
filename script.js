@@ -265,14 +265,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!res.ok) throw new Error('API down');
                 
                 const allProjects = await res.json();
+                console.log("All projects fetched:", allProjects);
                 
-                // Only Featured or top 6
-                const featuredProjects = allProjects.filter(p => p.featured).slice(0, 6);
+                // Use featured or just take the latest 6 if none are featured
+                let featuredProjects = allProjects.filter(p => p.featured).slice(0, 6);
+                if (featuredProjects.length === 0) {
+                    featuredProjects = allProjects.slice(0, 6);
+                }
+                
+                console.log("Featured/Display projects:", featuredProjects);
                 
                 if (featuredProjects.length === 0) {
-                    homePortfolioGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;">Check back later for our new amazing portfolio features!</p>';
+                    homePortfolioGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;">Our portfolio is being updated with new case studies. Check back soon!</p>';
                     return;
                 }
+
+
 
                 homePortfolioGrid.innerHTML = featuredProjects.map((project, index) => {
                     const delay = index * 100;
@@ -325,22 +333,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 const testimonials = await res.json();
                 
                 if (testimonials.length > 0) {
-                    testimonialGrid.innerHTML = testimonials.map((t, index) => {
+                    const dynamicHtml = testimonials.map((t, index) => {
                         const delay = index * 100;
                         const isVideo = t.type === 'video';
                         
                         return `
-                            <div class="testimonial-card glass-card hover-lift" data-animate="fade-up" style="animation-delay: ${delay}ms;">
+                            <div class="testimonial-card dynamic-review glass-card hover-lift" data-animate="fade-up" style="animation-delay: ${delay}ms; display: none;">
                                 ${isVideo ? `
-                                    <div class="video-container" style="position:relative; border-radius:12px; overflow:hidden; margin-bottom:1.5rem; background:#000; box-shadow: 0 10px 20px rgba(0,0,0,0.4);">
+                                    <div class="video-container" style="position:relative; border-radius:12px; overflow:hidden; margin-bottom:1.5rem; background:#000;">
                                         <video src="${t.videoUrl}" style="width:100%; aspect-ratio:16/9; display: block;" controls></video>
                                     </div>
-                                ` : `
-                                    <div class="stars text-gold" style="margin-bottom: 1rem;">
-                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                    </div>
-                                `}
-                                <p class="review-text" style="${isVideo ? 'font-style:italic; font-size:0.95rem;' : ''}">"${t.text}"</p>
+                                ` : ''}
+                                <p class="review-text">"${t.text}"</p>
                                 <div class="client-info">
                                     <div class="client-avatar">
                                         <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=random" alt="${t.name}">
@@ -353,16 +357,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         `;
                     }).join('');
+                    
+                    testimonialGrid.insertAdjacentHTML('beforeend', dynamicHtml);
 
-
-                    const newCards = testimonialGrid.querySelectorAll('[data-animate]');
-                    newCards.forEach(el => {
-                        if (window.scrollObserver) {
-                            window.scrollObserver.observe(el);
-                        } else if (scrollObserver) {
-                            scrollObserver.observe(el);
-                        }
-                    });
+                    // Add Show More Logic
+                    const viewAllBtn = document.getElementById('viewAllReviews');
+                    if (viewAllBtn) {
+                        viewAllBtn.addEventListener('click', () => {
+                            const hiddenReviews = document.querySelectorAll('.dynamic-review, .hidden-review');
+                            hiddenReviews.forEach(r => r.style.display = 'block');
+                            viewAllBtn.style.display = 'none';
+                        });
+                    }
                 }
             } catch (err) {
                 console.error("Error fetching testimonials:", err);
@@ -370,6 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         loadTestimonials();
     }
+
 
     // 10. AI Chat Assistant Logic
     const aiChatForm = document.getElementById('aiChatForm');
