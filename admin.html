@@ -507,12 +507,13 @@
                                 <input type="text" id="testRole" class="admin-input" required placeholder="e.g. CEO, Tech Corp">
                             </div>
                             <div class="admin-form-group">
-                                <label>Review Type</label>
-                                <select id="testType" class="admin-select">
-                                    <option value="text">Text Review</option>
-                                    <option value="video">Video Review</option>
+                                <label>Review Type (Standard Text or Premium Video)</label>
+                                <select id="testType" class="admin-select" style="border: 2px solid var(--color-gold); background: rgba(212,175,55,0.05);">
+                                    <option value="text">Text Review (Classic)</option>
+                                    <option value="video">Video Review (Premium Upload)</option>
                                 </select>
                             </div>
+
                             <div class="admin-form-group" id="testVideoGroup" style="display: none;">
                                 <label>Upload Video Review</label>
                                 <input type="file" id="testVideo" class="admin-input" accept="video/*">

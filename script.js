@@ -359,17 +359,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     }).join('');
                     
                     testimonialGrid.insertAdjacentHTML('beforeend', dynamicHtml);
-
-                    // Add Show More Logic
-                    const viewAllBtn = document.getElementById('viewAllReviews');
-                    if (viewAllBtn) {
-                        viewAllBtn.addEventListener('click', () => {
-                            const hiddenReviews = document.querySelectorAll('.dynamic-review, .hidden-review');
-                            hiddenReviews.forEach(r => r.style.display = 'block');
-                            viewAllBtn.style.display = 'none';
-                        });
-                    }
                 }
+
+                // Add Show More Logic (Moved outside if testimonials check)
+                const viewAllBtn = document.getElementById('viewAllReviews');
+                if (viewAllBtn) {
+                    viewAllBtn.addEventListener('click', () => {
+                        const hiddenReviews = document.querySelectorAll('.dynamic-review, .hidden-review');
+                        if (hiddenReviews.length > 0) {
+                            hiddenReviews.forEach(r => {
+                                r.style.display = 'block';
+                                r.classList.add('fade-in-visible');
+                            });
+                            viewAllBtn.style.display = 'none';
+                        } else {
+                            alert('No more reviews to show at the moment.');
+                        }
+                    });
+                }
+
             } catch (err) {
                 console.error("Error fetching testimonials:", err);
             }

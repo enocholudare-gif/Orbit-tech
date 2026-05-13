@@ -104,7 +104,20 @@ if (!fs.existsSync(projectsFile)) {
             result: 'User retention vastly improved by 40% and daily login durations doubled over the first quarter.',
             featured: true,
             timestamp: new Date().toISOString()
+        },
+        {
+            id: '2',
+            title: 'E-commerce Brand Identity',
+            category: 'Graphic Design',
+            image: 'https://placehold.co/800x500/1a1a1a/FFD700?text=Brand+Identity',
+            description: 'Modern branding for a sustainable fashion house.',
+            problem: 'The client needed a logo that communicated both luxury and environmental responsibility.',
+            solution: 'We created a minimalist organic leaf motif with premium gold accents.',
+            result: 'The brand successfully launched with 10k pre-orders in the first week.',
+            featured: true,
+            timestamp: new Date().toISOString()
         }
+
     ];
     fs.writeFileSync(projectsFile, JSON.stringify(defaultProjects, null, 2));
 }
