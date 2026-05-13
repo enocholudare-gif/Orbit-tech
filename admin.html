@@ -609,10 +609,15 @@
                     const data = await res.json();
                     localStorage.setItem('orbitAdminToken', data.token);
                     loginStatus.textContent = 'Success! Entering dashboard...';
-                    setTimeout(checkAuth, 1000);
+                    // Trigger checkAuth immediately but with a tiny delay for visual feedback
+                    setTimeout(() => {
+                        loginOverlay.classList.remove('active');
+                        initDashboard();
+                    }, 800);
                 } else {
                     loginStatus.textContent = 'Invalid credentials. Please try again.';
                 }
+
             } catch (err) {
                 loginStatus.textContent = 'Server error. Is the backend running?';
             }
