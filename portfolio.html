@@ -73,6 +73,44 @@
             margin-top: 18px;
             align-items: center;
         }
+        .portfolio-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        .portfolio-card-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+        }
+        .portfolio-card-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        .portfolio-card-body p {
+            margin-top: 12px;
+        }
+        .portfolio-case-study {
+            margin-top: 18px;
+            display: grid;
+            gap: 12px;
+        }
+        .portfolio-case-study div {
+            padding: 14px;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .portfolio-case-study strong {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--color-gold);
+        }
     </style>
 </head>
 <body class="bg-darker text-main">
@@ -139,11 +177,47 @@
         const grid = document.getElementById('mainPortfolioGrid');
         
         async function fetchAndRenderProjects() {
-            grid.innerHTML = '<p class="text-muted text-center" style="grid-column: 1 / -1; padding: 40px;">Project showcase is currently blank for redesign.</p>';
+            try {
+                const res = await fetch('/api/projects');
+                allProjects = await res.json();
+                renderProjects('all');
+            } catch (error) {
+                grid.innerHTML = '<p class="text-muted text-center" style="grid-column: 1 / -1; padding: 40px;">Unable to load projects right now. Please check back soon.</p>';
+            }
         }
 
-        function renderProjects() {
-            grid.innerHTML = '<p class="text-muted text-center" style="grid-column: 1 / -1; padding: 40px;">Project showcase is currently blank for redesign.</p>';
+        function renderProjects(filter = 'all') {
+            const filtered = filter === 'all'
+                ? allProjects
+                : allProjects.filter(project => project.category === filter);
+
+            if (!filtered.length) {
+                grid.innerHTML = '<p class="text-muted text-center" style="grid-column: 1 / -1; padding: 40px;">No projects published in this category yet.</p>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(project => {
+                const image = project.imageUrl || project.image || 'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project';
+                const link = project.link || project.projectLink || project.url || '';
+                const challenge = project.problem ? '<div><strong>The Challenge</strong><span>' + project.problem + '</span></div>' : '';
+                const solution = project.solution ? '<div><strong>Our Solution</strong><span>' + project.solution + '</span></div>' : '';
+                const result = project.result ? '<div><strong>The Result</strong><span>' + project.result + '</span></div>' : '';
+
+                return '<article class="portfolio-card glass-card hover-lift" data-category="' + project.category + '">' +
+                    '<span class="project-category-tag">' + project.category + '</span>' +
+                    (project.featured ? '<span class="project-featured-tag">Featured</span>' : '') +
+                    '<img src="' + image + '" alt="' + project.title + '" class="portfolio-card-img">' +
+                    '<div class="portfolio-card-body">' +
+                        '<h3>' + project.title + '</h3>' +
+                        '<p class="text-muted">' + (project.description || 'A recent project delivered by Orbit Tech.') + '</p>' +
+                        ((challenge || solution || result) ? '<div class="portfolio-case-study">' + challenge + solution + result + '</div>' : '') +
+                        '<div class="portfolio-card-actions">' +
+                            (link ? '<a href="' + link + '" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Visit Project <i class="fas fa-external-link-alt"></i></a>' : '') +
+                            '<a href="index.html#quote" class="btn btn-outline">Start Similar Project</a>' +
+                        '</div>' +
+                    '</div>' +
+                '</article>';
+            }).join('');
         }
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {

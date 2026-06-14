@@ -173,6 +173,33 @@ app.post('/api/contact', async (req, res) => {
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
+    const newMessage = {
+        id: Date.now().toString(),
+        name,
+        email,
+        phone: phone || 'N/A',
+        service: service || 'N/A',
+        message,
+        timestamp: new Date().toISOString(),
+        read: false
+    };
+
+    try {
+        const messages = fs.existsSync(messagesFile)
+            ? JSON.parse(fs.readFileSync(messagesFile, 'utf8') || '[]')
+            : [];
+        messages.unshift(newMessage);
+        fs.writeFileSync(messagesFile, JSON.stringify(messages, null, 2));
+    } catch (saveError) {
+        console.error('Message save error:', saveError);
+        return res.status(500).json({ error: 'Failed to save message' });
+    }
+
+    const hasEmailConfig = process.env.EMAIL_USER && process.env.EMAIL_PASS;
+    if (!hasEmailConfig) {
+        return res.status(200).json({ success: true, message: 'Request received successfully' });
+    }
+
     try {
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
@@ -188,35 +215,24 @@ app.post('/api/contact', async (req, res) => {
             from: process.env.EMAIL_USER,
             to: process.env.EMAIL_USER,
             replyTo: email,
-            subject: `New Quote Request from ${name}`,
-            text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone || 'N/A'}\nService Needed: ${service || 'N/A'}\n\nMessage:\n${message}`
-        };
+            subject:         `New Quote Request from ${name}`,
+            text:         `Name: ${name}
+Email: ${email}
+Phone: ${phone || 'N/A'}
+Service Needed: ${service || 'N/A'}
 
-        // Save message to JSON file
-        const newMessage = {
-            id: Date.now().toString(),
-            name,
-            email,
-            phone: phone || 'N/A',
-            service: service || 'N/A',
-            message,
-            timestamp: new Date().toISOString(),
-            read: false
+Message:
+${message}`
         };
-
-        fs.readFile(messagesFile, 'utf8', (err, data) => {
-            if (!err) {
-                const messages = JSON.parse(data || '[]');
-                messages.unshift(newMessage);
-                fs.writeFile(messagesFile, JSON.stringify(messages, null, 2), () => {});
-            }
-        });
 
         await transporter.sendMail(mailOptions);
-        res.status(200).json({ success: true, message: 'Message sent successfully' });
+        return res.status(200).json({ success: true, message: 'Message sent successfully' });
     } catch (error) {
         console.error('Email error:', error);
-        res.status(500).json({ error: 'Failed to send message' });
+        return res.status(200).json({
+            success: true,
+            message: 'Request received successfully. Email delivery is temporarily unavailable.'
+        });
     }
 });
 
@@ -581,7 +597,11 @@ app.get('/api/posts', (req, res) => {
             console.error('Error reading posts:', err);
             return res.status(500).json({ error: 'Failed to read posts data' });
         }
-        res.json(JSON.parse(data));
+        const posts = JSON.parse(data || '[]').map(post => ({
+            ...post,
+            content: post.content || post.snippet || ''
+        }));
+        res.json(posts);
     });
 });
 
@@ -600,6 +620,7 @@ app.post('/api/posts', requireAuth, upload.single('image'), (req, res) => {
         tag: req.body.tag,
         image: imageUrl,
         snippet: req.body.snippet,
+        content: req.body.content || req.body.snippet,
         timestamp: new Date().toISOString()
     };
 
@@ -664,7 +685,7 @@ app.post('/api/projects', requireAuth, upload.single('image'), (req, res) => {
         title: req.body.title,
         category: req.body.category,
         image: imageUrl,
-        liveUrl: req.body.liveUrl || '',
+        liveUrl: req.body.liveUrl || req.body.link || '',
         description: req.body.description,
         problem: req.body.problem,
         solution: req.body.solution,
@@ -886,7 +907,7 @@ app.get('/api/admin/client-projects', requireAuth, (req, res) => {
 
 // POST: Assign project to client
 app.post('/api/admin/client-projects', requireAuth, (req, res) => {
-    const { clientId, projectName, status, progress } = req.body;
+    const { clientId, projectName, status, progress, startDate, dueDate, projectSummary, nextStep, milestones } = req.body;
 
     const newProject = {
         id: Date.now().toString(),
@@ -894,8 +915,14 @@ app.post('/api/admin/client-projects', requireAuth, (req, res) => {
         projectName,
         status: status || 'Pending',
         progress: progress || 0,
+        startDate: startDate || '',
+        dueDate: dueDate || '',
+        projectSummary: projectSummary || '',
+        nextStep: nextStep || '',
+        milestones: Array.isArray(milestones) ? milestones : [],
         files: [],
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        lastUpdated: new Date().toISOString()
     };
 
     fs.readFile(clientProjectsFile, 'utf8', (err, data) => {
@@ -912,16 +939,22 @@ app.post('/api/admin/client-projects', requireAuth, (req, res) => {
 // PUT: Update client project status/progress
 app.put('/api/admin/client-projects/:id', requireAuth, (req, res) => {
     const projectId = req.params.id;
-    const { status, progress } = req.body;
+    const { status, progress, startDate, dueDate, projectSummary, nextStep, milestones } = req.body;
 
     fs.readFile(clientProjectsFile, 'utf8', (err, data) => {
         if (err) return res.status(500).json({ error: 'Failed' });
-        let projects = JSON.parse(data);
+        let projects = JSON.parse(data || '[]');
         const index = projects.findIndex(p => p.id === projectId);
         if (index === -1) return res.status(404).json({ error: 'Project not found' });
 
         if (status) projects[index].status = status;
         if (progress !== undefined) projects[index].progress = Number(progress);
+        if (startDate !== undefined) projects[index].startDate = startDate;
+        if (dueDate !== undefined) projects[index].dueDate = dueDate;
+        if (projectSummary !== undefined) projects[index].projectSummary = projectSummary;
+        if (nextStep !== undefined) projects[index].nextStep = nextStep;
+        if (milestones !== undefined) projects[index].milestones = Array.isArray(milestones) ? milestones : [];
+        projects[index].lastUpdated = new Date().toISOString();
 
         fs.writeFile(clientProjectsFile, JSON.stringify(projects, null, 2), err => {
             if (err) return res.status(500).json({ error: 'Failed' });
@@ -1042,18 +1075,34 @@ app.get('/api/pricing', (req, res) => {
 // PUT: Update Pricing Info (Admin only)
 app.put('/api/admin/pricing', requireAuth, (req, res) => {
     const newPricing = req.body;
-    
-    fs.writeFile(pricingFile, JSON.stringify(newPricing, null, 2), err => {
-        if (err) return res.status(500).json({ error: 'Failed' });
-        res.json({ success: true, message: 'Pricing updated successfully' });
-    });
+
+    if (!newPricing || typeof newPricing !== 'object' || !newPricing.services || typeof newPricing.exchangeRate !== 'number') {
+        return res.status(400).json({ error: 'Invalid pricing payload' });
+    }
+
+    try {
+        fs.writeFileSync(pricingFile, JSON.stringify(newPricing, null, 2));
+        return res.json({ success: true, message: 'Pricing updated successfully' });
+    } catch (err) {
+        console.error('Pricing save error:', err);
+        return res.status(500).json({ error: 'Failed to save pricing' });
+    }
 });
 
 // GET: Client Dashboard Projects (Only returns their assigned projects)
 app.get('/api/client/dashboard', requireClientAuth, (req, res) => {
     fs.readFile(clientProjectsFile, 'utf8', (err, data) => {
         if (err) return res.status(500).json({ error: 'Server error' });
-        const projects = JSON.parse(data);
+        const projects = JSON.parse(data || '[]').map(project => ({
+            ...project,
+            projectSummary: project.projectSummary || '',
+            nextStep: project.nextStep || '',
+            startDate: project.startDate || '',
+            dueDate: project.dueDate || '',
+            milestones: Array.isArray(project.milestones) ? project.milestones : [],
+            files: Array.isArray(project.files) ? project.files : [],
+            lastUpdated: project.lastUpdated || project.timestamp
+        }));
         const myProjects = projects.filter(p => p.clientId === req.client.id);
         res.json(myProjects);
     });

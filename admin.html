@@ -13,6 +13,15 @@
     <style>
         /* Extra dashboard specific overrides */
         body { padding-top: 0 !important; }
+        .admin-layout { min-height: 100vh; }
+        .admin-global-header { position: sticky; top: 0; z-index: 1000; }
+        .admin-body { display: grid; grid-template-columns: 280px 1fr; align-items: start; }
+        .admin-sidebar { position: sticky; top: 92px; height: calc(100vh - 110px); overflow-y: auto; padding-right: 10px; }
+        .admin-main { min-width: 0; }
+        @media (max-width: 980px) {
+            .admin-body { grid-template-columns: 1fr; }
+            .admin-sidebar { position: static; height: auto; }
+        }
         .view-section { display: none; }
         .view-section.active { display: block; }
         .nav-link-btn { cursor: pointer; }
@@ -72,10 +81,6 @@
         <div class="admin-body">
             <!-- SIDEBAR -->
             <aside class="admin-sidebar">
-            
-            <nav class="admin-nav-list">
-
-            
             <nav class="admin-nav-list">
                 <div class="admin-nav-item">
                     <a href="javascript:void(0)" class="admin-nav-link active" data-view="overview">
@@ -267,6 +272,10 @@
                                 <textarea id="projDesc" class="admin-textarea" rows="3" required></textarea>
                             </div>
                             <div class="admin-form-group">
+                                <label>Project Link</label>
+                                <input type="url" id="projLink" class="admin-input" placeholder="https://example.com">
+                            </div>
+                            <div class="admin-form-group">
                                 <label>The Challenge (Case Study)</label>
                                 <textarea id="projProblem" class="admin-textarea" rows="3" placeholder="What was the client's problem?"></textarea>
                             </div>
@@ -326,8 +335,12 @@
                                 <input type="file" id="postImage" class="admin-input" accept="image/*">
                             </div>
                             <div class="admin-form-group">
-                                <label>Snippet</label>
-                                <textarea id="postSnippet" class="admin-textarea" rows="5" required></textarea>
+                                <label>Short Preview</label>
+                                <textarea id="postSnippet" class="admin-textarea" rows="3" required placeholder="This short preview will appear on the blog card."></textarea>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Full Post Content</label>
+                                <textarea id="postContent" class="admin-textarea" rows="10" required placeholder="Write the full article here. This will open when users click Learn More."></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary btn-block">Publish Insight</button>
                         </form>
@@ -378,6 +391,32 @@
                                     <option value="Review">Review</option>
                                     <option value="Completed">Completed</option>
                                 </select>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Starting Progress (%)</label>
+                                <input type="number" id="assignProgress" class="admin-input" min="0" max="100" value="0">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Start Date</label>
+                                <input type="date" id="assignStartDate" class="admin-input">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Due Date</label>
+                                <input type="date" id="assignDueDate" class="admin-input">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Project Summary</label>
+                                <textarea id="assignProjectSummary" class="admin-textarea" rows="3" placeholder="Brief the client on the project scope and current focus."></textarea>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Next Step</label>
+                                <input type="text" id="assignNextStep" class="admin-input" placeholder="e.g. Homepage review and content approval">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Milestones (one per line)</label>
+                                <textarea id="assignMilestones" class="admin-textarea" rows="4" placeholder="Discovery complete
+Design in progress
+Development in progress"></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary btn-block">Assign Project</button>
                         </form>
@@ -776,24 +815,30 @@
         async function loadAllMessages() {
             const tbody = document.getElementById('allMessagesTable');
             tbody.innerHTML = '<tr><td colspan="6" class="text-center">Loading...</td></tr>';
-            
-            const res = await apiFetch('/api/admin/messages');
-            const messages = await res.json();
-            currentMessages = messages;
 
-            tbody.innerHTML = messages.map(m => `
-                <tr>
-                    <td><strong>${m.name}</strong><br><span style="font-size:0.8rem" class="text-muted">${m.email}</span><br><span style="font-size:0.8rem" class="text-muted">${m.phone}</span></td>
-                    <td><span class="text-gold">${m.service}</span></td>
-                    <td title="${m.message}">${m.message.substring(0, 50)}${m.message.length > 50 ? '...' : ''}</td>
-                    <td>${new Date(m.timestamp).toLocaleString()}</td>
-                    <td><span class="status-badge ${m.read ? 'status-read' : 'status-new'}">${m.read ? 'Read' : 'New'}</span></td>
-                    <td style="display: flex; gap: 10px;">
-                        <button onclick="viewMessage('${m.id}')" class="text-gold"><i class="fas fa-eye"></i></button>
-                        <button onclick="deleteMessage('${m.id}')" style="color: #ff4d4d;"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('') || '<tr><td colspan="6" class="text-center text-muted">No inquiries received yet.</td></tr>';
+            const res = await apiFetch('/api/admin/messages');
+            if (!res) return;
+
+            const messages = await res.json();
+            currentMessages = Array.isArray(messages) ? messages : [];
+
+            tbody.innerHTML = currentMessages.map(m => {
+                const fullMessage = m.message || '';
+                const preview = fullMessage.length > 80 ? fullMessage.substring(0, 80) + '...' : fullMessage;
+                return `
+                    <tr>
+                        <td><strong>${m.name || 'Unknown'}</strong><br><span style="font-size:0.8rem" class="text-muted">${m.email || 'No email'}</span><br><span style="font-size:0.8rem" class="text-muted">${m.phone || 'No phone'}</span></td>
+                        <td><span class="text-gold">${m.service || 'General Inquiry'}</span></td>
+                        <td title="${fullMessage.replace(/"/g, '&quot;')}">${preview || 'No message content'}</td>
+                        <td>${m.timestamp ? new Date(m.timestamp).toLocaleString() : 'Unknown date'}</td>
+                        <td><span class="status-badge ${m.read ? 'status-read' : 'status-new'}">${m.read ? 'Read' : 'New'}</span></td>
+                        <td style="display: flex; gap: 10px;">
+                            <button onclick="viewMessage('${m.id}')" class="text-gold"><i class="fas fa-eye"></i></button>
+                            <button onclick="deleteMessage('${m.id}')" style="color: #ff4d4d;"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('') || '<tr><td colspan="6" class="text-center text-muted">No inquiries received yet.</td></tr>';
         }
 
         window.viewMessage = async (id) => {
@@ -853,6 +898,7 @@
             formData.append('title', document.getElementById('projTitle').value);
             formData.append('category', document.getElementById('projCategory').value);
             formData.append('description', document.getElementById('projDesc').value);
+            formData.append('link', document.getElementById('projLink').value);
             formData.append('problem', document.getElementById('projProblem').value);
             formData.append('solution', document.getElementById('projSolution').value);
             formData.append('result', document.getElementById('projResult').value);
@@ -905,6 +951,7 @@
             formData.append('title', document.getElementById('postTitle').value);
             formData.append('tag', document.getElementById('postTag').value);
             formData.append('snippet', document.getElementById('postSnippet').value);
+            formData.append('content', document.getElementById('postContent').value);
             
             const file = document.getElementById('postImage').files[0];
             if (file) formData.append('image', file);
@@ -987,7 +1034,16 @@
                 clientId: document.getElementById('assignClientId').value,
                 projectName: document.getElementById('assignProjName').value,
                 status: document.getElementById('assignStatus').value,
-                progress: 0
+                progress: Number(document.getElementById('assignProgress').value || 0),
+                startDate: document.getElementById('assignStartDate').value,
+                dueDate: document.getElementById('assignDueDate').value,
+                projectSummary: document.getElementById('assignProjectSummary').value,
+                nextStep: document.getElementById('assignNextStep').value,
+                milestones: document.getElementById('assignMilestones').value
+                    .split('
+')
+                    .map(item => item.trim())
+                    .filter(Boolean)
             };
 
             const res = await apiFetch('/api/admin/client-projects', {
@@ -1301,10 +1357,19 @@
                 body: JSON.stringify(newPricing)
             });
 
+            if (!res) {
+                status.textContent = 'Session expired. Please log in again.';
+                return;
+            }
+
             if (res.ok) {
-                status.textContent = 'Global pricing updated successfully!';
+                const data = await res.json();
+                status.textContent = data.message || 'Global pricing updated successfully!';
                 currentPricing = newPricing;
                 setTimeout(() => status.textContent = '', 3000);
+            } else {
+                const err = await res.json().catch(() => ({ error: 'Failed to save pricing' }));
+                status.textContent = err.error || 'Failed to save pricing';
             }
         });
 

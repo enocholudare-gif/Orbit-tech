@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbit Tech | Insight Article</title>
+    <meta name="description" content="Read full Orbit Tech insight articles on technology, design, automation, and business growth.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .article-hero {
+            padding: 140px 0 60px;
+        }
+        .article-shell {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .article-cover img {
+            width: 100%;
+            border-radius: 18px;
+            display: block;
+            object-fit: cover;
+            max-height: 460px;
+        }
+        .article-body {
+            padding: 32px;
+            margin-top: 24px;
+        }
+        .article-body p,
+        .article-body li {
+            line-height: 1.9;
+            color: var(--color-text-main);
+        }
+        .article-body h2,
+        .article-body h3,
+        .article-body h4 {
+            margin: 28px 0 12px;
+            color: var(--color-gold);
+        }
+        .article-meta {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin: 18px 0 8px;
+        }
+        .article-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body class="bg-darker text-main">
+    <header id="navbar">
+        <div class="container nav-wrapper">
+            <a href="index.html" class="logo">
+                <img src="Enoch.png" alt="Orbit Tech Logo" onerror="this.src='https://placehold.co/120x40/000000/FFD700?text=Orbit+Tech';">
+            </a>
+            <nav class="nav-links">
+                <a href="index.html#home">Home</a>
+                <a href="index.html#about">About</a>
+                <a href="index.html#services">Services</a>
+                <a href="portfolio.html">Projects</a>
+                <a href="index.html#blog" style="color: var(--color-gold);">Tech Insights</a>
+                <a href="index.html#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="article-hero">
+        <div class="container article-shell">
+            <a href="index.html#blog" class="btn btn-outline article-back"><i class="fas fa-arrow-left"></i> Back to Insights</a>
+            <div id="articleState" class="glass-card article-body text-center">Loading article...</div>
+            <div id="articleContent" style="display:none;">
+                <div class="article-cover glass-card">
+                    <img id="articleImage" src="" alt="Article cover">
+                </div>
+                <div class="glass-card article-body">
+                    <span id="articleTag" class="blog-tag"></span>
+                    <div class="article-meta text-muted">
+                        <span id="articleDate"></span>
+                    </div>
+                    <h1 id="articleTitle" style="margin-top: 10px;"></h1>
+                    <p id="articlePreview" class="text-muted" style="font-size: 1.05rem; margin-top: 12px;"></p>
+                    <div id="articleBody" style="margin-top: 28px;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function formatArticleContent(content) {
+            return (content || '')
+                .replace(/**(.*?)**/g, '<strong>$1</strong>')
+                .replace(/^### (.*)$/gm, '<h4>$1</h4>')
+                .replace(/^## (.*)$/gm, '<h3>$1</h3>')
+                .replace(/^# (.*)$/gm, '<h2>$1</h2>')
+                .replace(/(?:?
+){2,}/g, '</p><p>')
+                .replace(/?
+/g, '<br>');
+        }
+
+        async function loadArticle() {
+            const params = new URLSearchParams(window.location.search);
+            const postId = params.get('id');
+            const articleState = document.getElementById('articleState');
+            const articleContent = document.getElementById('articleContent');
+
+            if (!postId) {
+                articleState.textContent = 'No article selected.';
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/posts', { cache: 'no-store' });
+                if (!res.ok) throw new Error('Failed to load posts');
+                const posts = await res.json();
+                const post = posts.find(item => item.id === postId);
+
+                if (!post) {
+                    articleState.textContent = 'Article not found.';
+                    return;
+                }
+
+                document.title = 'Orbit Tech | ' + post.title;
+                document.getElementById('articleImage').src = post.image;
+                document.getElementById('articleImage').onerror = function() {
+                    this.src = 'https://placehold.co/1200x700/111111/FFD700?text=Orbit+Tech+Insight';
+                };
+                document.getElementById('articleTag').textContent = post.tag;
+                document.getElementById('articleDate').textContent = new Date(post.timestamp).toLocaleDateString();
+                document.getElementById('articleTitle').textContent = post.title;
+                document.getElementById('articlePreview').textContent = post.snippet || '';
+                document.getElementById('articleBody').innerHTML = '<p>' + formatArticleContent(post.content || post.snippet || '') + '</p>';
+
+                articleState.style.display = 'none';
+                articleContent.style.display = 'block';
+            } catch (error) {
+                articleState.textContent = 'Unable to load this article right now.';
+            }
+        }
+
+        loadArticle();
+    </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+﻿document.addEventListener('DOMContentLoaded', () => {
     
     // 1. Mobile Menu Toggle
     const mobileToggle = document.getElementById('mobileToggle');
@@ -220,7 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 blogGrid.innerHTML = posts.map((post, index) => {
                     const delay = index * 100;
-                    const shortSnippet = post.snippet.length > 120 ? post.snippet.substring(0, 120) + '...' : post.snippet;
+                    const previewText = post.snippet || '';
+                    const plainPreview = previewText.replace(/[#>*_]/g, '').trim();
+                    const shortSnippet = plainPreview.length > 140 ? plainPreview.substring(0, 140) + '...' : plainPreview;
                     return `
                         <article class="blog-card glass-card hover-lift" data-animate="fade-up" style="animation-delay: ${delay}ms;">
                             <div class="blog-img">
@@ -229,9 +231,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                             <div class="blog-content">
                                 <span class="blog-tag">${post.tag}</span>
-                                <h3><a href="javascript:void(0)" onclick="openBlogModal(${index})">${post.title}</a></h3>
+                                <h3><a href="insight.html?id=${post.id}">${post.title}</a></h3>
                                 <p>${shortSnippet}</p>
-                                <a href="javascript:void(0)" class="read-more" onclick="openBlogModal(${index})">Read More <i class="fas fa-arrow-right"></i></a>
+                                <a href="insight.html?id=${post.id}" class="read-more">Learn More <i class="fas fa-arrow-right"></i></a>
                             </div>
                         </article>
                     `;
@@ -260,7 +262,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const homePortfolioGrid = document.getElementById('home-portfolio-grid');
     if (homePortfolioGrid) {
         async function loadHomePortfolio() {
-            homePortfolioGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;">Project showcase is currently blank for redesign.</p>';
+            try {
+                const res = await fetch('/api/projects');
+                const projects = await res.json();
+
+                if (!projects.length) {
+                    homePortfolioGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;">Projects will appear here as they are published by the admin.</p>';
+                    return;
+                }
+
+                const featuredProjects = projects.filter(project => project.featured).slice(0, 4);
+                const visibleProjects = featuredProjects.length ? featuredProjects : projects.slice(0, 6);
+
+                homePortfolioGrid.innerHTML = visibleProjects.map(project => {
+                    const image = project.imageUrl || project.image || 'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project';
+                    const link = project.link || project.projectLink || project.url || '';
+
+                    return '<article class="portfolio-card glass-card hover-lift" data-animate="fade-up">' +
+                        '<span class="project-category-tag">' + project.category + '</span>' +
+                        (project.featured ? '<span class="project-featured-tag">Featured</span>' : '') +
+                        '<img src="' + image + '" alt="' + project.title + '" class="portfolio-card-img">' +
+                        '<div class="portfolio-card-body">' +
+                            '<h3>' + project.title + '</h3>' +
+                            '<p class="text-muted">' + (project.description || 'A recent project delivered by Orbit Tech.') + '</p>' +
+                            '<div class="portfolio-card-actions">' +
+                                (link ? '<a href="' + link + '" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Visit Project <i class="fas fa-external-link-alt"></i></a>' : '') +
+                                '<a href="portfolio.html" class="btn btn-outline">More Details</a>' +
+                            '</div>' +
+                        '</div>' +
+                    '</article>';
+                }).join('');
+
+                const newProjectCards = homePortfolioGrid.querySelectorAll('[data-animate]');
+                newProjectCards.forEach(el => observer.observe(el));
+            } catch (error) {
+                console.error('Error fetching projects:', error);
+                homePortfolioGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;">Unable to load projects right now.</p>';
+            }
         }
                 loadHomePortfolio();
     }
@@ -419,6 +457,15 @@ window.openBlogModal = function(index) {
     if(!window.loadedPosts) return;
     const post = window.loadedPosts[index];
     if(!post) return;
+
+    const fullPostContent = post.content || post.snippet || '';
+    const formattedContent = fullPostContent
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^### (.*)$/gm, '<h4>$1</h4>')
+        .replace(/^## (.*)$/gm, '<h3>$1</h3>')
+        .replace(/^# (.*)$/gm, '<h2>$1</h2>')
+        .replace(/(?:\r?\n){2,}/g, '</p><p>')
+        .replace(/\r?\n/g, '<br>');
     
     document.getElementById('modalTitle').textContent = post.title;
     document.getElementById('modalTag').textContent = post.tag;
@@ -430,11 +477,10 @@ window.openBlogModal = function(index) {
         this.src='https://placehold.co/800x400/1a1a1a/FFD700?text=Tech';
     };
     
-    document.getElementById('modalSnippet').textContent = post.snippet;
+    document.getElementById('modalSnippet').innerHTML = '<p>' + formattedContent + '</p>';
     
     const modal = document.getElementById('blogModal');
     modal.style.display = 'flex';
-    // Small timeout to allow display property to apply before adding class
     setTimeout(() => {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -470,6 +516,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const calcService = document.getElementById('calcService');
     const calcPackages = document.querySelectorAll('input[name="calcPackage"]');
     const calcPriceDisplay = document.getElementById('calcPriceDisplay');
+    const calcPackageTitle = document.getElementById('calcPackageTitle');
+    const calcPackageFeatures = document.getElementById('calcPackageFeatures');
     const btnNGN = document.getElementById('btnNGN');
     const btnUSD = document.getElementById('btnUSD');
     const btnStartProject = document.getElementById('btnStartProject');
@@ -477,6 +525,58 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let pricingData = null;
     let currentCurrency = 'NGN'; // Default to NGN
+    const packageDeliverables = {
+        'web-dev': {
+            basic: ['1-3 page website', 'Responsive layout', 'Contact form setup', 'Basic SEO setup'],
+            standard: ['Up to 6 pages', 'Custom UI sections', 'CMS or dynamic content', 'Speed and on-page SEO optimization'],
+            premium: ['Advanced custom website or web app', 'User dashboard or integrations', 'Automation-ready backend features', 'Premium support and launch assistance']
+        },
+        'mobile-app-development': {
+            basic: ['Single-platform MVP app', 'Core user flows', 'Basic UI design', 'Testing before launch'],
+            standard: ['Cross-platform mobile app', 'API integration', 'Admin or content management support', 'Improved UX and performance tuning'],
+            premium: ['Full-featured production app', 'Authentication and user roles', 'Payments, push notifications, or advanced integrations', 'Deployment support and post-launch assistance']
+        },
+        'ai-automation': {
+            basic: ['1 automation workflow', 'Basic lead or task automation', 'Simple third-party tool connection', 'Setup guidance'],
+            standard: ['Multiple connected workflows', 'CRM or email automation', 'Error handling and testing', 'Performance review'],
+            premium: ['Complex business automation system', 'AI-assisted workflows', 'Multi-platform integrations', 'Optimization and scaling support']
+        },
+        'graphic-design': {
+            basic: ['1 design concept', 'Basic brand-aligned graphics', 'Standard export files', 'Minor revisions'],
+            standard: ['Multiple polished design assets', 'Stronger visual direction', 'Source files included', 'More revision rounds'],
+            premium: ['Full premium design package', 'Campaign-ready creative set', 'Advanced mockups and presentation assets', 'Priority revisions and source files']
+        },
+        'digital-marketing': {
+            basic: ['Basic campaign planning', 'Audience targeting setup', 'Simple content direction', 'Performance check-in'],
+            standard: ['Multi-channel campaign setup', 'Conversion-focused creatives', 'Optimization and reporting', 'Funnel improvement recommendations'],
+            premium: ['Full marketing strategy rollout', 'Advanced ads optimization', 'Retargeting and scaling plan', 'Detailed reporting and strategy calls']
+        },
+        'branding': {
+            basic: ['Logo concept', 'Basic color direction', 'Typography guidance', 'Starter brand usage notes'],
+            standard: ['Logo suite and visual identity', 'Brand color and font system', 'Social/profile assets', 'Brand guideline document'],
+            premium: ['Full brand identity system', 'Brand strategy direction', 'Print and digital brand assets', 'Comprehensive brand guide']
+        },
+        'erp-softwares': {
+            basic: ['Workflow discovery', 'Basic system structure setup', 'Core operational mapping', 'Team onboarding support'],
+            standard: ['Department workflow alignment', 'Role-based process setup', 'Reporting structure', 'Implementation support'],
+            premium: ['Full ERP implementation support', 'Advanced workflow customization', 'Team training and optimization', 'Post-deployment review']
+        },
+        'social-media': {
+            basic: ['Content plan starter', 'Profile optimization', 'Basic posting support', 'Growth recommendations'],
+            standard: ['Monthly content management', 'Branded creatives', 'Engagement support', 'Performance reporting'],
+            premium: ['Advanced social media management', 'Campaign strategy and execution', 'Community growth support', 'Deep analytics and scaling plan']
+        },
+        'page-setup': {
+            basic: ['Single platform setup', 'Bio and profile optimization', 'Basic visual branding', 'Contact/action button setup'],
+            standard: ['Multi-section page setup', 'Improved design consistency', 'Link and conversion optimization', 'Platform best-practice setup'],
+            premium: ['Premium page experience setup', 'Custom branded assets', 'Advanced conversion layout', 'Optimization support after launch']
+        },
+        'tech-consultation': {
+            basic: ['Short strategy session', 'Problem analysis', 'Recommended tools', 'Action summary'],
+            standard: ['In-depth consultation', 'Technical roadmap', 'Priority implementation advice', 'Follow-up support'],
+            premium: ['Comprehensive advisory support', 'Business and tech scaling recommendations', 'Process audit and solution architecture', 'Extended follow-up guidance']
+        }
+    };
     
     if (calcService && calcPriceDisplay) {
         const calcOtherServiceGroup = document.getElementById('calcOtherServiceGroup');
@@ -538,7 +638,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     finalString = `$${baseUsd.toLocaleString()}`;
                 } else {
                     const ngnPrice = baseUsd * pricingData.exchangeRate;
-                    finalString = `₦${ngnPrice.toLocaleString()}`;
+                    finalString = `â‚¦${ngnPrice.toLocaleString()}`;
                 }
             }
             
@@ -642,6 +742,9 @@ document.addEventListener('DOMContentLoaded', () => {
         initCalculator();
     }
 });
+
+
+
 
 
 
