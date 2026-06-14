@@ -260,67 +260,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const homePortfolioGrid = document.getElementById('home-portfolio-grid');
     if (homePortfolioGrid) {
         async function loadHomePortfolio() {
-            try {
-                const res = await fetch('/api/projects', { cache: 'no-store' });
-                if (!res.ok) throw new Error('API down');
-                
-                const allProjects = await res.json();
-                console.log("All projects fetched:", allProjects);
-                
-                // Use featured or just take the latest 6 if none are featured
-                let featuredProjects = allProjects.filter(p => p.featured).slice(0, 6);
-                if (featuredProjects.length === 0) {
-                    featuredProjects = allProjects.slice(0, 6);
-                }
-                
-                console.log("Featured/Display projects:", featuredProjects);
-                
-                if (featuredProjects.length === 0) {
-                    homePortfolioGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;">Our portfolio is being updated with new case studies. Check back soon!</p>';
-                    return;
-                }
-
-
-
-                homePortfolioGrid.innerHTML = featuredProjects.map((project, index) => {
-                    const delay = index * 100;
-                    return `
-                        <div class="portfolio-card glass-card hover-lift" data-animate="fade-up" style="animation-delay: ${delay}ms;">
-                            <div class="project-category-tag">${project.category}</div>
-                            ${project.featured ? '<div class="project-featured-tag"><i class="fas fa-star"></i> Featured</div>' : ''}
-                            <div class="portfolio-img-wrap">
-                                <img src="${project.image}" alt="${project.title}"
-                                    onerror="this.src='https://placehold.co/600x400/1a1a1a/FFD700?text=Portfolio';">
-                                <div class="portfolio-overlay">
-                                    <a href="case-study.html?id=${project.id}" class="btn btn-primary">View Project Details</a>
-                                </div>
-                            </div>
-                            <div class="portfolio-info">
-                                <h3>${project.title}</h3>
-                                <p>${project.description}</p>
-                                <a href="case-study.html?id=${project.id}" class="project-link">Learn More <i class="fas fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-
-                const newCards = homePortfolioGrid.querySelectorAll('[data-animate]');
-                newCards.forEach(el => {
-                    if (window.scrollObserver) {
-                        window.scrollObserver.observe(el);
-                    } else if (scrollObserver) {
-                        scrollObserver.observe(el);
-                    }
-                });
-                
-            } catch (err) {
-                console.error("Error fetching portfolio:", err);
-                homePortfolioGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;">Could not connect to portfolio server.</p>';
-            }
+            homePortfolioGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;">Project showcase is currently blank for redesign.</p>';
         }
-        
-        loadHomePortfolio();
+                loadHomePortfolio();
     }
 
     // 8.6 Fetch Dynamic Testimonials
@@ -700,3 +642,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initCalculator();
     }
 });
+
+
+
+

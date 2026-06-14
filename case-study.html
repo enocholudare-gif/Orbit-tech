@@ -131,6 +131,10 @@
                                 <strong class="text-muted d-block" style="font-size: 0.9rem;">Services Provided</strong>
                                 <div id="csServices">--</div>
                             </div>
+                            <div class="mb-4" id="csLiveLinkWrap" style="display:none;">
+                                <strong class="text-muted d-block" style="font-size: 0.9rem;">Live Project</strong>
+                                <a id="csLiveLink" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-block" style="margin-top: 10px;">Open Live Site</a>
+                            </div>
                             <hr style="border-color: var(--glass-border); margin-bottom: 20px;">
                             <h4 style="font-size: 1.1rem; margin-bottom: 15px;">Want similar results?</h4>
                             <a href="index.html#quote" class="btn btn-primary btn-block">Start a Project</a>
@@ -189,7 +193,10 @@
                 
                 document.getElementById('csDate').innerText = project.timestamp ? new Date(project.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : "Delivered in 2026";
                 document.getElementById('csServices').innerText = project.category;
-
+                if (project.liveUrl) {
+                    document.getElementById('csLiveLink').href = project.liveUrl;
+                    document.getElementById('csLiveLinkWrap').style.display = 'block';
+                }
 
                 // Hide Loader, Show Content
                 document.getElementById('csLoader').style.display = 'none';
@@ -203,3 +210,6 @@
     </script>
 </body>
 </html>
+
+
+

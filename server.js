@@ -664,6 +664,7 @@ app.post('/api/projects', requireAuth, upload.single('image'), (req, res) => {
         title: req.body.title,
         category: req.body.category,
         image: imageUrl,
+        liveUrl: req.body.liveUrl || '',
         description: req.body.description,
         problem: req.body.problem,
         solution: req.body.solution,
@@ -1123,3 +1124,4 @@ if (process.env.VERCEL) {
         console.log(`Orbit Tech Server running at http://localhost:${PORT}`);
     });
 }
+
