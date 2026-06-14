@@ -259,7 +259,7 @@
     }
 
     // 8.5 Fetch Dynamic Portfolio
-    const homePortfolioGrid = document.getElementById('home-portfolio-grid');
+    const homePortfolioGrid = document.getElementById('homePortfolioGrid');
     if (homePortfolioGrid) {
         async function loadHomePortfolio() {
             try {

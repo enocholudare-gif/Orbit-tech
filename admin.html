@@ -1040,8 +1040,7 @@ Development in progress"></textarea>
                 projectSummary: document.getElementById('assignProjectSummary').value,
                 nextStep: document.getElementById('assignNextStep').value,
                 milestones: document.getElementById('assignMilestones').value
-                    .split('
-')
+                    .split('\n')
                     .map(item => item.trim())
                     .filter(Boolean)
             };

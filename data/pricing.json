@@ -1,85 +1,85 @@
-﻿{
-    "exchangeRate":  1300,
-    "services":  {
-                     "web-dev":  {
-                                     "name":  "Web \u0026 Software Development",
-                                     "packages":  {
-                                                      "basic":  45,
-                                                      "standard":  80,
-                                                      "premium":  150
-                                                  }
-                                 },
-                     "ai-automation":  {
-                                           "name":  "AI \u0026 Automation",
-                                           "packages":  {
-                                                            "basic":  50,
-                                                            "standard":  100,
-                                                            "premium":  200
-                                                        }
-                                       },
-                     "graphic-design":  {
-                                            "name":  "Graphics Design",
-                                            "packages":  {
-                                                             "basic":  5,
-                                                             "standard":  30,
-                                                             "premium":  50
-                                                         }
-                                        },
-                     "digital-marketing":  {
-                                               "name":  "Digital Marketing",
-                                               "packages":  {
-                                                                "basic":  50,
-                                                                "standard":  100,
-                                                                "premium":  250
-                                                            }
-                                           },
-                     "branding":  {
-                                      "name":  "Branding",
-                                      "packages":  {
-                                                       "basic":  50,
-                                                       "standard":  100,
-                                                       "premium":  150
-                                                   }
-                                  },
-                     "erp-softwares":  {
-                                           "name":  "ERP Softwares",
-                                           "packages":  {
-                                                            "basic":  100,
-                                                            "standard":  250,
-                                                            "premium":  500
-                                                        }
-                                       },
-                     "social-media":  {
-                                          "name":  "Social Media Management",
-                                          "packages":  {
-                                                           "basic":  150,
-                                                           "standard":  300,
-                                                           "premium":  700
-                                                       }
-                                      },
-                     "page-setup":  {
-                                        "name":  "Page Setup",
-                                        "packages":  {
-                                                         "basic":  50,
-                                                         "standard":  100,
-                                                         "premium":  250
-                                                     }
-                                    },
-                     "tech-consultation":  {
-                                               "name":  "Tech Consultation",
-                                               "packages":  {
-                                                                "basic":  100,
-                                                                "standard":  250,
-                                                                "premium":  600
-                                                            }
-                                           },
-                     "mobile-app-development":  {
-                                                    "name":  "Mobile App Development",
-                                                    "packages":  {
-                                                                     "basic":  250,
-                                                                     "standard":  600,
-                                                                     "premium":  1200
-                                                                 }
-                                                }
-                 }
+{
+  "exchangeRate": 1300,
+  "services": {
+    "web-dev": {
+      "name": "Web & Software Development",
+      "packages": {
+        "basic": 45,
+        "standard": 80,
+        "premium": 150
+      }
+    },
+    "ai-automation": {
+      "name": "AI & Automation",
+      "packages": {
+        "basic": 50,
+        "standard": 100,
+        "premium": 200
+      }
+    },
+    "graphic-design": {
+      "name": "Graphics Design",
+      "packages": {
+        "basic": 5,
+        "standard": 30,
+        "premium": 50
+      }
+    },
+    "digital-marketing": {
+      "name": "Digital Marketing",
+      "packages": {
+        "basic": 50,
+        "standard": 100,
+        "premium": 250
+      }
+    },
+    "branding": {
+      "name": "Branding",
+      "packages": {
+        "basic": 50,
+        "standard": 100,
+        "premium": 150
+      }
+    },
+    "erp-softwares": {
+      "name": "ERP Softwares",
+      "packages": {
+        "basic": 100,
+        "standard": 250,
+        "premium": 500
+      }
+    },
+    "social-media": {
+      "name": "Social Media Management",
+      "packages": {
+        "basic": 150,
+        "standard": 300,
+        "premium": 700
+      }
+    },
+    "page-setup": {
+      "name": "Page Setup",
+      "packages": {
+        "basic": 50,
+        "standard": 100,
+        "premium": 250
+      }
+    },
+    "tech-consultation": {
+      "name": "Tech Consultation",
+      "packages": {
+        "basic": 100,
+        "standard": 250,
+        "premium": 600
+      }
+    },
+    "mobile-app-development": {
+      "name": "Mobile App Development",
+      "packages": {
+        "basic": 250,
+        "standard": 600,
+        "premium": 1200
+      }
+    }
+  }
 }
