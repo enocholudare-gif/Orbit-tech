@@ -19,8 +19,21 @@
         .admin-sidebar { position: sticky; top: 92px; height: calc(100vh - 110px); overflow-y: auto; padding-right: 10px; }
         .admin-main { min-width: 0; }
         @media (max-width: 980px) {
-            .admin-body { grid-template-columns: 1fr; }
-            .admin-sidebar { position: static; height: auto; }
+            body { font-size: 15px; }
+            .admin-layout { display: block; }
+            .admin-global-header { position: static; padding: 16px; }
+            .header-left, .header-center, .header-right { width: 100%; }
+            .admin-page-title h1 { font-size: 1.3rem; }
+            .admin-body { display: block; }
+            .admin-sidebar { position: static; height: auto; top: auto; padding: 0; overflow: visible; margin-bottom: 16px; }
+            .admin-nav-list { display: grid; gap: 10px; }
+            .admin-nav-link { display: block; width: 100%; }
+            .admin-main { width: 100%; min-width: 0; padding-top: 0; }
+            .admin-content-grid, .admin-stats-grid { grid-template-columns: 1fr !important; }
+            .admin-table-container { overflow-x: auto; }
+            .admin-table { min-width: 720px; }
+            .glass-card { padding: 18px; }
+            .btn { width: 100%; }
         }
         .view-section { display: none; }
         .view-section.active { display: block; }
@@ -1333,6 +1346,7 @@ Development in progress"></textarea>
         document.getElementById('pricingForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const status = document.getElementById('pricingStatus');
+            status.style.color = 'var(--color-gold)';
             status.textContent = 'Saving...';
 
             const newPricing = {
@@ -1357,7 +1371,7 @@ Development in progress"></textarea>
             });
 
             if (!res) {
-                status.textContent = 'Session expired. Please log in again.';
+                status.textContent = 'Session expired or server unreachable. Please log in again.';
                 status.style.color = '#ff4d4d';
                 return;
             }
@@ -1371,7 +1385,7 @@ Development in progress"></textarea>
             } else {
                 const err = await res.json().catch(() => ({ error: 'Failed to save pricing' }));
                 status.style.color = '#ff4d4d';
-                status.textContent = err.error || 'Failed to save pricing';
+                status.textContent = (err.error || 'Failed to save pricing') + '. If this persists, restart the server and try again.';
             }
         });
 

@@ -635,7 +635,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Format and display
                 if (currentCurrency === 'USD') {
-                    finalString = `$${baseUsd.toLocaleString()}`;
+                    finalString = `USD ${baseUsd.toLocaleString()}`;
                 } else {
                     const ngnPrice = baseUsd * pricingData.exchangeRate;
                     finalString = `â‚¦${ngnPrice.toLocaleString()}`;
@@ -742,6 +742,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initCalculator();
     }
 });
+
 
 
 
