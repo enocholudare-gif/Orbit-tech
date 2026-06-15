@@ -1077,6 +1077,7 @@ app.put('/api/admin/pricing', requireAuth, (req, res) => {
     const newPricing = req.body;
 
     if (!newPricing || typeof newPricing !== 'object' || !newPricing.services || typeof newPricing.exchangeRate !== 'number') {
+        console.error('Invalid pricing payload received:', newPricing);
         return res.status(400).json({ error: 'Invalid pricing payload' });
     }
 

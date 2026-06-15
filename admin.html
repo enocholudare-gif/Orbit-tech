@@ -1358,16 +1358,19 @@ Development in progress"></textarea>
 
             if (!res) {
                 status.textContent = 'Session expired. Please log in again.';
+                status.style.color = '#ff4d4d';
                 return;
             }
 
             if (res.ok) {
                 const data = await res.json();
+                status.style.color = '#25D366';
                 status.textContent = data.message || 'Global pricing updated successfully!';
                 currentPricing = newPricing;
                 setTimeout(() => status.textContent = '', 3000);
             } else {
                 const err = await res.json().catch(() => ({ error: 'Failed to save pricing' }));
+                status.style.color = '#ff4d4d';
                 status.textContent = err.error || 'Failed to save pricing';
             }
         });
