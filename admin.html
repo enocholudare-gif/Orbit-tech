@@ -732,8 +732,8 @@ Development in progress"></textarea>
             if (targetLink) targetLink.classList.add('active');
             
             if (viewConfig[viewName]) {
-                pageTitle.textContent = viewConfig[viewName].title;
-                pageSubtitle.textContent = viewConfig[viewName].subtitle;
+                if (pageTitle) pageTitle.textContent = viewConfig[viewName].title;
+                if (pageSubtitle) pageSubtitle.textContent = viewConfig[viewName].subtitle;
             }
 
             // Refresh specific view data
@@ -1313,39 +1313,69 @@ Development in progress"></textarea>
 
         // --- PRICING VIEW ---
         async function loadPricing() {
-            const res = await fetch('/api/pricing');
-            currentPricing = await res.json();
-            
-            document.getElementById('exchangeRate').value = currentPricing.exchangeRate;
+            const status = document.getElementById('pricingStatus');
             const grid = document.getElementById('pricingGrid');
+
+            status.textContent = 'Loading pricing...';
+            status.style.color = 'var(--color-gold)';
             grid.innerHTML = '';
 
-            Object.keys(currentPricing.services).forEach(key => {
-                const s = currentPricing.services[key];
-                const card = document.createElement('div');
-                card.className = 'glass-card';
-                card.innerHTML = `
-                    <h4 class="text-gold mb-3">${s.name}</h4>
-                    <div class="admin-form-group">
-                        <label>Basic ($)</label>
-                        <input type="number" id="price-${key}-basic" class="admin-input" value="${s.packages.basic}">
-                    </div>
-                    <div class="admin-form-group">
-                        <label>Standard ($)</label>
-                        <input type="number" id="price-${key}-standard" class="admin-input" value="${s.packages.standard}">
-                    </div>
-                    <div class="admin-form-group">
-                        <label>Premium ($)</label>
-                        <input type="number" id="price-${key}-premium" class="admin-input" value="${s.packages.premium}">
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
+            try {
+                const res = await fetch('/api/pricing', { cache: 'no-store' });
+                if (!res.ok) throw new Error('Failed to load pricing');
+
+                currentPricing = await res.json();
+                if (!currentPricing || !currentPricing.services || typeof currentPricing.exchangeRate !== 'number') {
+                    throw new Error('Invalid pricing data');
+                }
+
+                document.getElementById('exchangeRate').value = currentPricing.exchangeRate;
+
+                Object.keys(currentPricing.services).forEach(key => {
+                    const service = currentPricing.services[key];
+                    const packages = service.packages || {};
+                    const card = document.createElement('div');
+                    card.className = 'glass-card';
+                    card.innerHTML = `
+                        <h4 class="text-gold mb-3">${service.name}</h4>
+                        <div class="admin-form-group">
+                            <label>Basic (USD)</label>
+                            <input type="number" id="price-${key}-basic" class="admin-input" value="${Number(packages.basic || 0)}" min="0">
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Standard (USD)</label>
+                            <input type="number" id="price-${key}-standard" class="admin-input" value="${Number(packages.standard || 0)}" min="0">
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Premium (USD)</label>
+                            <input type="number" id="price-${key}-premium" class="admin-input" value="${Number(packages.premium || 0)}" min="0">
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+                status.textContent = 'Pricing loaded successfully.';
+                setTimeout(() => {
+                    if (status.textContent === 'Pricing loaded successfully.') status.textContent = '';
+                }, 2000);
+            } catch (error) {
+                currentPricing = null;
+                status.style.color = '#ff4d4d';
+                status.textContent = 'Unable to load pricing right now. Refresh and try again.';
+                grid.innerHTML = '<p class="text-muted">Pricing fields will appear here when pricing data is available.</p>';
+            }
         }
 
         document.getElementById('pricingForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const status = document.getElementById('pricingStatus');
+
+            if (!currentPricing || !currentPricing.services) {
+                status.style.color = '#ff4d4d';
+                status.textContent = 'Load pricing first before saving changes.';
+                return;
+            }
+
             status.style.color = 'var(--color-gold)';
             status.textContent = 'Saving...';
 
@@ -1358,9 +1388,9 @@ Development in progress"></textarea>
                 newPricing.services[key] = {
                     name: currentPricing.services[key].name,
                     packages: {
-                        basic: Number(document.getElementById(`price-${key}-basic`).value),
-                        standard: Number(document.getElementById(`price-${key}-standard`).value),
-                        premium: Number(document.getElementById(`price-${key}-premium`).value)
+                        basic: Number(document.getElementById(`price-${key}-basic`)?.value || 0),
+                        standard: Number(document.getElementById(`price-${key}-standard`)?.value || 0),
+                        premium: Number(document.getElementById(`price-${key}-premium`)?.value || 0)
                     }
                 };
             });
@@ -1385,7 +1415,7 @@ Development in progress"></textarea>
             } else {
                 const err = await res.json().catch(() => ({ error: 'Failed to save pricing' }));
                 status.style.color = '#ff4d4d';
-                status.textContent = (err.error || 'Failed to save pricing') + '. If this persists, restart the server and try again.';
+                status.textContent = err.error || 'Failed to save pricing';
             }
         });
 
@@ -1457,3 +1487,6 @@ Development in progress"></textarea>
     </script>
 </body>
 </html>
+
+
+

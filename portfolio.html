@@ -189,7 +189,7 @@
                     allProjects = await fallbackRes.json();
                     renderProjects('all');
                 } catch (fallbackError) {
-                    grid.innerHTML = '<p class="text-muted text-center" style="grid-column: 1 / -1; padding: 40px;">Unable to load projects right now. Please check back soon.</p>';
+                    grid.innerHTML = '<p class="text-muted text-center" style="grid-column: 1 / -1; padding: 40px;">Projects will appear here once they are uploaded by the admin.</p>';
                 }
             }
         }

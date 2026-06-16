@@ -1,4 +1,4 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     
     // 1. Mobile Menu Toggle
     const mobileToggle = document.getElementById('mobileToggle');
@@ -297,7 +297,7 @@
                 newProjectCards.forEach(el => observer.observe(el));
             } catch (error) {
                 console.error('Error fetching projects:', error);
-                homePortfolioGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;">Unable to load projects right now.</p>';
+                homePortfolioGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;">Projects will appear here as they are published by the admin.</p>';
             }
         }
                 loadHomePortfolio();
@@ -638,7 +638,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     finalString = `USD ${baseUsd.toLocaleString()}`;
                 } else {
                     const ngnPrice = baseUsd * pricingData.exchangeRate;
-                    finalString = `â‚¦${ngnPrice.toLocaleString()}`;
+                    finalString = `NGN ${ngnPrice.toLocaleString()}`;
                 }
             }
             
@@ -742,6 +742,8 @@ document.addEventListener('DOMContentLoaded', () => {
         initCalculator();
     }
 });
+
+
 
 
 
