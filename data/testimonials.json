@@ -1,1 +1,57 @@
-[]
+[
+  {
+    "id": "test-1",
+    "name": "Chinedu Eze",
+    "role": "CEO, Nexus Logistics Nigeria",
+    "text": "Enoch and the Orbit Tech team built our shipment tracking and dispatch portal from scratch. What impressed me most was their speed and attention to detail. The backend handles peak volume seamlessly and our clients constantly praise the modern UI.",
+    "type": "text",
+    "rating": 5,
+    "timestamp": "2026-10-18T14:20:00.000Z"
+  },
+  {
+    "id": "test-2",
+    "name": "Tinashe Moyo",
+    "role": "Head of Community, ZamClouds Hub",
+    "text": "The Zambia Cloud Programmers web redesign executed by Orbit Tech was nothing short of exceptional. Page speeds became blazing fast, mobile responsiveness is flawless, and developer registrations increased by 60% within our first month of launch.",
+    "type": "text",
+    "rating": 5,
+    "timestamp": "2026-10-24T09:15:00.000Z"
+  },
+  {
+    "id": "test-3",
+    "name": "Amina Bello",
+    "role": "Creative Director, Kulture Wear",
+    "text": "Orbit Tech helped us rebrand our online store with custom UI and checkout automation. The dark-gold aesthetic elevated our brand perception completely. They are responsive, professional, and genuinely care about business ROI.",
+    "type": "text",
+    "rating": 5,
+    "timestamp": "2026-10-28T16:45:00.000Z"
+  },
+  {
+    "id": "test-4",
+    "name": "Michael Adeleke",
+    "role": "Co-founder, PaySprint Africa",
+    "text": "Watch our founder share how Orbit Tech helped build our merchant verification flows and payment dashboard with top-tier security standards.",
+    "type": "video",
+    "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "rating": 5,
+    "timestamp": "2026-10-30T11:00:00.000Z"
+  },
+  {
+    "id": "test-5",
+    "name": "Dr. Farouk Al-Mansoor",
+    "role": "Medical Director, Al-Mansoor Specialist Clinics",
+    "text": "Our clinic struggled with patient booking backlogs for months. Orbit Tech deployed a custom scheduling system with automated SMS/email reminders. Patient no-shows dropped by over 40% right away.",
+    "type": "text",
+    "rating": 5,
+    "timestamp": "2026-11-01T13:30:00.000Z"
+  },
+  {
+    "id": "test-6",
+    "name": "Sarah Jenkins",
+    "role": "Operations Director, Horizon Peak UK",
+    "text": "Working across time zones with Oludare was seamless. Their team handled our cloud migrations and backend API integrations flawlessly. Clear milestones, clean code, and zero downtime.",
+    "type": "text",
+    "rating": 5,
+    "timestamp": "2026-11-02T15:10:00.000Z"
+  }
+]

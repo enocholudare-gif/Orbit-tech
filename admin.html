@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orbit Tech | Admin Dashboard</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FFD700">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Icons -->
@@ -585,8 +589,11 @@ Development in progress"></textarea>
                             </div>
 
                             <div class="admin-form-group" id="testVideoGroup" style="display: none;">
-                                <label>Upload Video Review</label>
+                                <label>Upload Video Review (MP4, WebM)</label>
                                 <input type="file" id="testVideo" class="admin-input" accept="video/*">
+                                <div class="mt-2 text-muted" style="font-size: 0.8rem; text-align: center;">— OR PROVIDE VIDEO URL —</div>
+                                <label class="mt-2">Video Link (YouTube URL or Direct MP4 Link)</label>
+                                <input type="url" id="testVideoUrl" class="admin-input" placeholder="https://www.youtube.com/watch?v=... or .mp4 link">
                             </div>
                             <div class="admin-form-group">
                                 <label>Review Content</label>
@@ -1016,10 +1023,15 @@ Development in progress"></textarea>
                     const client = clients.find(c => c.id === p.clientId);
                     const filesHtml = p.files.map(f => `<a href="${f.url}" target="_blank" class="text-gold" style="font-size:0.7rem; display:block;"><i class="fas fa-file"></i> ${f.name}</a>`).join('');
                     
+                    const isCancelled = p.status === 'Cancelled by Client' || p.cancelledByClient;
+                    const statusBadge = isCancelled 
+                        ? `<span class="status-badge" style="background:#ff4d4d; color:#fff;"><i class="fas fa-ban"></i> CANCELLED BY CLIENT</span>`
+                        : `<span class="status-badge status-new">${p.status}</span>`;
+
                     return `
-                        <tr>
-                            <td><strong>${p.projectName}</strong><br><span class="text-muted" style="font-size:0.8rem">Client: ${client ? client.username : 'Unknown'}</span></td>
-                            <td><span class="status-badge status-new">${p.status}</span></td>
+                        <tr style="${isCancelled ? 'background: rgba(255, 77, 77, 0.08);' : ''}">
+                            <td><strong>${p.projectName}</strong><br><span class="text-muted" style="font-size:0.8rem">Client: ${client ? client.username : 'Unknown'}</span>${isCancelled && p.cancelledAt ? `<br><small style="color:#ff8080;">Cancelled: ${new Date(p.cancelledAt).toLocaleDateString()}</small>` : ''}</td>
+                            <td>${statusBadge}</td>
                             <td>
                                 <div style="display:flex; align-items:center; gap:5px;">
                                     <input type="number" value="${p.progress}" onchange="updateClientProjProgress('${p.id}', this.value)" style="width:50px; background:transparent; border:1px solid var(--glass-border); color:#fff; text-align:center;"> %
@@ -1250,6 +1262,9 @@ Development in progress"></textarea>
             
             const file = document.getElementById('testVideo').files[0];
             if (file) formData.append('video', file);
+            
+            const videoUrlVal = document.getElementById('testVideoUrl') ? document.getElementById('testVideoUrl').value.trim() : '';
+            if (videoUrlVal) formData.append('videoUrl', videoUrlVal);
 
             const token = localStorage.getItem('orbitAdminToken');
             const res = await fetch('/api/admin/testimonials', {

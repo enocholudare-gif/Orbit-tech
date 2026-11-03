@@ -6,6 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orbit Tech | Smart Digital Solutions & Automation</title>
 
+    <!-- Favicon & PWA App Icons -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FFD700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Orbit Tech">
+
     <!-- SEO Meta Tags -->
     <meta name="description"
         content="Orbit Tech is a professional tech company specializing in Web Development, AI Automation, Graphic Design, ERP Softwares, and Social Media Management.">
@@ -28,8 +37,12 @@
       "name": "Orbit Tech",
       "image": "home.jpg",
       "description": "Professional tech company specializing in Web Development, AI Automation, Branding, and Social Media Management.",
-      "telephone": "+2348106932689",
-      "email": "hello@orbittech.com.ng",
+      "telephone": "+2347010765268",
+      "email": "orbitnewsblog@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "Nigeria"
+      },
       "founder": {
         "@type": "Person",
         "name": "Oludare Enoch"
@@ -57,7 +70,7 @@
     </button>
 
     <!-- Floating WhatsApp Button -->
-    <a href="https://wa.me/2348106932689" class="floating-whatsapp" target="_blank" aria-label="Chat on WhatsApp">
+    <a href="https://wa.me/+2347010765268" class="floating-whatsapp" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
         <i class="fab fa-whatsapp"></i>
     </a>
 
@@ -107,7 +120,7 @@
                 <a href="#home">Home</a>
                 <a href="#about">About</a>
                 <a href="#services">Services</a>
-                <a href="#projects">Projects</a>
+                <a href="portfolio.html">Projects</a>
                 <a href="#faq">FAQ</a>
                 <a href="#contact">Contact</a>
                 <a href="client-login.html" style="color: var(--color-gold);"><i class="fas fa-lock"></i> Client
@@ -133,7 +146,7 @@
             <a href="#home">Home</a>
             <a href="#about">About</a>
             <a href="#services">Services</a>
-            <a href="#projects">Projects</a>
+            <a href="portfolio.html">Projects</a>
             <a href="#blog">Tech Insights</a>
             <a href="#faq">FAQ</a>
             <a href="#contact">Contact Us</a>
@@ -151,7 +164,7 @@
                 <p>We are a tech company that provides solutions with tech expertise. Empowering forward-thinking businesses with cutting-edge web development, sophisticated AI automation, and premium tech workflows tailored for your exponential growth.</p>
                 <div class="hero-buttons">
                     <a href="#quote" class="btn btn-primary pulse">Get a Quote</a>
-                    <a href="#projects" class="btn btn-outline">View Our Work</a>
+                    <a href="portfolio.html" class="btn btn-outline">View Our Work</a>
                 </div>
             </div>
             <div class="hero-graphic" data-animate="fade-left">
@@ -166,15 +179,20 @@
         <div class="container">
             <div class="section-header text-center" data-animate="fade-up">
                 <h2>Our <span class="text-gold">Projects</span></h2>
-                <p>Explore selected work delivered by Orbit Tech. Click any live link to view the project.</p>
+                <p>Explore selected work delivered by Orbit Tech across web development, cloud platforms, and branding.</p>
+                <div class="mt-4" style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <button id="btnViewHomeProjects" class="btn btn-primary">
+                        <i class="fas fa-eye"></i> View Projects
+                    </button>
+                    <a href="portfolio.html" class="btn btn-outline">
+                        View All Projects <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
             </div>
 
-            <div class="portfolio-page-grid" id="homePortfolioGrid" data-animate="fade-up">
-                <p class="text-center text-muted" style="grid-column: 1 / -1;">Loading projects...</p>
-            </div>
-
-            <div class="text-center mt-4" data-animate="fade-up">
-                <a href="portfolio.html" class="btn btn-outline">View All Projects <i class="fas fa-arrow-right"></i></a>
+            <!-- Initially hidden; only shows when user clicks 'View Projects' -->
+            <div class="portfolio-page-grid" id="homePortfolioGrid" style="display: none; margin-top: 30px;">
+                <p class="text-center text-muted" style="grid-column: 1 / -1;"><i class="fas fa-spinner fa-spin"></i> Loading projects...</p>
             </div>
         </div>
     </section>
@@ -234,35 +252,6 @@
                         <li><i class="fas fa-check-circle text-gold"></i> <strong>24/7 Support:</strong> Unwavering
                             commitment to client success.</li>
                     </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- M. MEET THE CEO SECTION (NEW) -->
-    <section id="ceo" class="ceo section bg-darker">
-        <div class="container">
-            <div class="ceo-wrapper glass-card" data-animate="fade-up">
-                <div class="ceo-grid">
-                    <div class="ceo-image">
-                        <!-- Replace src with actual CEO picture -->
-                        <img src="ceo.png" alt="Oludare Enoch - CEO" class="rounded-avatar shadow-gold"
-                            onerror="this.src='https://placehold.co/300x300/1a1a1a/FFD700?text=CEO';">
-                    </div>
-                    <div class="ceo-info">
-                        <h2>Meet Our <span class="text-gold">CEO</span></h2>
-                        <h3>Oludare Enoch</h3>
-                        <p class="designation text-muted">Founder & Lead Tech Visionary</p>
-                        <p class="ceo-bio">With a passion for digital innovation and scalable tech structures, Oludare
-                            Enoch founded Orbit Tech to bridge the gap between creative design and sophisticated backend
-                            engineering. From automation pipelines to high-converting user interfaces, Enoch drives the
-                            company's primary mission: transforming business struggles into digital success stories.</p>
-
-                        <a href="https://linkedin.com/in/oludare-enoch-3a5982326?utm_source=share_via&utm_content=profile&utm_medium=member_android"
-                            target="_blank" class="btn btn-outline linkedin-btn mt-4">
-                            <i class="fab fa-linkedin"></i> Connect on LinkedIn
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -338,16 +327,15 @@
                 <p>Select your desired service to instantly see estimated pricing.</p>
             </div>
 
-            <div class="calculator-wrapper glass-card mx-auto" style="max-width: 800px; padding: 2rem;"
+            <div class="calculator-wrapper glass-card" style="max-width: 780px; padding: 2.5rem; margin: 0 auto;"
                 data-animate="fade-up">
                 <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
                     <div class="currency-toggle"
                         style="background: rgba(255,255,255,0.05); padding: 5px; border-radius: 30px; border: 1px solid var(--glass-border); display: inline-flex;">
                         <button id="btnNGN" class="btn active-currency"
-                            style="padding: 5px 15px; border-radius: 20px; background: var(--color-gold); color: #000; border: none; font-weight: bold; cursor: pointer;">NGN
-                            (₦)</button>
+                            style="padding: 6px 18px; border-radius: 20px; background: var(--color-gold); color: #000; border: none; font-weight: bold; cursor: pointer;">NGN (₦)</button>
                         <button id="btnUSD" class="btn"
-                            style="padding: 5px 15px; border-radius: 20px; background: transparent; color: var(--color-text-main); border: none; font-weight: bold; cursor: pointer;">USD/button>
+                            style="padding: 6px 18px; border-radius: 20px; background: transparent; color: var(--color-text-main); border: none; font-weight: bold; cursor: pointer;">USD ($)</button>
                     </div>
                 </div>
 
@@ -660,24 +648,23 @@
                 <div class="contact-card glass-card text-center" data-animate="fade-right">
                     <div class="icon-box mx-auto"><i class="fas fa-map-marker-alt"></i></div>
                     <h3>Headquarters</h3>
-                    <p class="text-muted">Ado-Ekiti, Nigeria</p>
-                    <p>Operating Globally fully Remote</p>
+                    <p class="text-gold" style="font-weight: 600;">Headquarters Nigeria</p>
+                    <p class="text-muted">Serving Global & Local Clients</p>
                 </div>
 
                 <div class="contact-card glass-card text-center" data-animate="fade-up" data-delay="100">
                     <div class="icon-box mx-auto"><i class="fas fa-phone-alt"></i></div>
-                    <h3>Give Us a Call</h3>
-                    <p class="text-muted">Mon - Sun, 24 hours service</p>
-                    <a href="tel:+2348106932689" class="text-gold" style="font-weight: 600; font-size: 1.1rem;">+234 810
-                        693 2689</a>
+                    <h3>Phone & WhatsApp</h3>
+                    <p class="text-muted">24/7 Rapid Response</p>
+                    <a href="https://wa.me/+2347010765268" target="_blank" rel="noopener noreferrer" class="text-gold" style="font-weight: 600; font-size: 1.1rem;">+234 701 076 5268</a>
                 </div>
 
                 <div class="contact-card glass-card text-center" data-animate="fade-left" data-delay="200">
                     <div class="icon-box mx-auto"><i class="fas fa-envelope"></i></div>
                     <h3>Send an Email</h3>
-                    <p class="text-muted">Typically replies under 24hrs</p>
-                    <a href="mailto:hello@orbittech.com.ng" class="text-gold"
-                        style="font-weight: 600; font-size: 1.1rem;">hello@orbittech.com.ng</a>
+                    <p class="text-muted">Official Inquiries & Notifications</p>
+                    <a href="mailto:orbitnewsblog@gmail.com" class="text-gold"
+                        style="font-weight: 600; font-size: 1.1rem;">orbitnewsblog@gmail.com</a>
                 </div>
             </div>
         </div>
@@ -714,14 +701,16 @@
                         <label for="service">Service Needed</label>
                         <select id="service" name="service" required>
                             <option value="">Select a service...</option>
-                            <option value="web">Web Development</option>
-                            <option value="automation">AI & Automation</option>
-                            <option value="erp">ERP Softwares</option>
-                            <option value="social">Social Media Management</option>
-                            <option value="graphics">Graphics Design</option>
-                            <option value="marketing">Digital Marketing</option>
-                            <option value="branding">Branding</option>
-                            <option value="other">Other Consultations</option>
+                            <option value="Web & Software Development">Web Development (from ₦80K)</option>
+                            <option value="Page Setup">Page Setup (from ₦50K)</option>
+                            <option value="Social Media Management">Social Media Management (from ₦80K)</option>
+                            <option value="ERP Softwares">ERP Softwares (from ₦250K)</option>
+                            <option value="Graphics Design">Graphics Design (from ₦8K)</option>
+                            <option value="AI & Automation">AI & Automation (from ₦75K)</option>
+                            <option value="Mobile App Development">Mobile App Development (from ₦250K)</option>
+                            <option value="Digital Marketing">Digital Marketing (from ₦60K)</option>
+                            <option value="Branding">Branding (from ₦40K)</option>
+                            <option value="Tech Consultation">Tech Consultation (from ₦50K)</option>
                         </select>
                     </div>
 
@@ -756,23 +745,53 @@
         </div>
     </div>
 
+    <!-- MEET THE CEO MODAL -->
+    <div class="ceo-modal-overlay" id="ceoModal" style="display: none;">
+        <div class="ceo-modal-content glass-card">
+            <button class="ceo-modal-close" id="closeCeoModal" aria-label="Close CEO Modal"><i class="fas fa-times"></i></button>
+            <div class="ceo-grid">
+                <div class="ceo-image">
+                    <img src="ceo.png" alt="Oludare Enoch - CEO" class="rounded-avatar shadow-gold"
+                        onerror="this.src='https://placehold.co/300x300/1a1a1a/FFD700?text=CEO';">
+                </div>
+                <div class="ceo-info">
+                    <h2>Meet Our <span class="text-gold">CEO</span></h2>
+                    <h3 style="font-size: 1.8rem; margin: 8px 0;">Oludare Enoch</h3>
+                    <p class="designation text-gold" style="font-weight: 600; margin-bottom: 15px;">Founder & Lead Tech Visionary</p>
+                    <p class="ceo-bio text-muted" style="line-height: 1.8; margin-bottom: 20px;">
+                        With a passion for digital innovation and scalable tech structures, Oludare Enoch founded Orbit Tech to bridge the gap between creative design and sophisticated backend engineering. From automation pipelines to high-converting user interfaces, Enoch drives the company's primary mission: transforming business struggles into digital success stories.
+                    </p>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <a href="https://linkedin.com/in/oludare-enoch-3a5982326?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+                            target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                            <i class="fab fa-linkedin"></i> Connect on LinkedIn
+                        </a>
+                        <a href="https://wa.me/+2347010765268" target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+                            <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+                        </a>
+                        <a href="https://www.upwork.com/freelancers/~01afa95ce278481982" target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+                            <i class="fas fa-briefcase"></i> Upwork Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 11. FOOTER -->
     <footer class="footer">
         <div class="container footer-top">
             <div class="footer-brand">
                 <a href="#" class="logo-text text-gold">Orbit Tech</a>
-                <p>We build smart, high-converting digital solutions for modern businesses looking to scale their impact
-                    online.</p>
+                <p>We build smart, high-converting digital solutions for modern businesses looking to scale their impact online.</p>
                 <div class="social-links">
-                    <a href="https://linkedin.com/in/oludare-enoch" target="_blank" aria-label="LinkedIn"><i
-                            class="fab fa-linkedin-in"></i></a>
-                    <a href="https://x.com/Hol_enoch" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.instagram.com/or_bit_tech?igsh=bXYOenh5MjJxdzFk" aria-label="Instagram"><i
-                            class="fab fa-instagram"></i></a>
-                    <a href="https://wa.me/2348106932689" aria-label="WhatsApp" target="_blank"><i
-                            class="fab fa-whatsapp"></i></a>
-                    <a href="https://facebook.com/share/18FWWZP33o/" aria-label="Facebook"><i
-                            class="fab fa-facebook"></i></a>
+                    <a href="https://www.upwork.com/freelancers/~01afa95ce278481982" target="_blank" rel="noopener noreferrer" aria-label="Upwork Profile"><i class="fas fa-briefcase"></i></a>
+                    <a href="https://www.facebook.com/people/Enoch-A-Oludare/61590213167526/#" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.tiktok.com/@orbit_tech?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://wa.me/+2347010765268" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://linkedin.com/in/oludare-enoch-3a5982326?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://x.com/Hol_enoch" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/or_bit_tech?igsh=bXYOenh5MjJxdzFk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
 
@@ -782,7 +801,9 @@
                     <li><a href="#home">Home</a></li>
                     <li><a href="#about">About Us</a></li>
                     <li><a href="#services">Our Services</a></li>
-                    <li><a href="#ceo">Meet the CEO</a></li>
+                    <li><a href="portfolio.html">Our Projects</a></li>
+                    <li><a href="javascript:void(0)" id="footerMeetCeoBtn" class="text-gold" style="font-weight: 600;"><i class="fas fa-user-tie"></i> Meet the CEO</a></li>
+                    <li><a href="admin.html" class="text-gold" style="font-weight: 600;"><i class="fas fa-user-shield"></i> Admin Portal</a></li>
                     <li><a href="#faq">FAQ</a></li>
                 </ul>
             </div>
@@ -790,23 +811,22 @@
             <div class="footer-links-group">
                 <h3>Services</h3>
                 <ul>
-                    <li><a href="#">Web Development</a></li>
-                    <li><a href="#">Mobile App Development</a></li>
-                    <li><a href="#">AI Automation</a></li>
-                    <li><a href="#">ERP Softwares</a></li>
-                    <li><a href="#">Digital Marketing</a></li>
-                    <li><a href="#">Page Setup</a></li>
+                    <li><a href="#calculator">Web Development (from ₦80K)</a></li>
+                    <li><a href="#calculator">Page Setup (from ₦50K)</a></li>
+                    <li><a href="#calculator">Social Media (from ₦80K)</a></li>
+                    <li><a href="#calculator">ERP Softwares (from ₦250K)</a></li>
+                    <li><a href="#calculator">Graphics Design (from ₦8K)</a></li>
+                    <li><a href="#calculator">AI & Automation (from ₦75K)</a></li>
                 </ul>
             </div>
 
             <div class="footer-contact">
                 <h3>Contact Us</h3>
                 <ul>
-                    <li><i class="fas fa-map-marker-alt text-gold"></i> Lagos, Nigeria</li>
-                    <li><a href="mailto:hello@orbittech.com.ng"><i class="fas fa-envelope text-gold"></i>
-                            hello@orbittech.com.ng</a></li>
-                    <li><a href="tel:+2348106932689"><i class="fas fa-phone-alt text-gold"></i> +234 810 693 2689</a>
-                    </li>
+                    <li><i class="fas fa-map-marker-alt text-gold"></i> Headquarters Nigeria</li>
+                    <li><a href="mailto:orbitnewsblog@gmail.com"><i class="fas fa-envelope text-gold"></i> orbitnewsblog@gmail.com</a></li>
+                    <li><a href="https://wa.me/+2347010765268" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp text-gold"></i> +234 701 076 5268</a></li>
+                    <li><a href="https://www.upwork.com/freelancers/~01afa95ce278481982" target="_blank" rel="noopener noreferrer"><i class="fas fa-briefcase text-gold"></i> Hire us on Upwork</a></li>
                 </ul>
             </div>
         </div>
@@ -815,6 +835,8 @@
             <div class="container footer-bottom-flex">
                 <p>&copy; 2026 Orbit Tech. All rights reserved.</p>
                 <div class="legal-links">
+                    <a href="admin.html">Admin Portal</a>
+                    <a href="client-login.html">Client Portal</a>
                     <a href="#">Privacy Policy</a>
                     <a href="#">Terms of Service</a>
                 </div>

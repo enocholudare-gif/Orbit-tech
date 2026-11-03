@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orbit Tech | Our Portfolio</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FFD700">
     <meta name="description" content="View our recent projects across Website Development, Graphic Design, Social Media, and Branding at Orbit Tech.">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -129,15 +133,35 @@
                 <a href="index.html#contact">Contact</a>
             </nav>
             <div class="nav-actions">
+                <a href="index.html#quote" class="btn btn-primary btn-sm">Get a Quote</a>
+                <button class="mobile-toggle" id="mobileToggle" aria-label="Open Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-
         </div>
     </header>
 
+    <!-- Mobile Drawer -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <span class="logo-text text-gold">Orbit Tech</span>
+            <button class="mobile-close" id="mobileClose"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="mobile-links">
+            <a href="index.html#home">Home</a>
+            <a href="index.html#about">About</a>
+            <a href="index.html#services">Services</a>
+            <a href="portfolio.html" style="color: var(--color-gold);">Projects</a>
+            <a href="index.html#faq">FAQ</a>
+            <a href="index.html#contact">Contact</a>
+            <a href="client-login.html" style="color: var(--color-gold);"><i class="fas fa-lock"></i> Client Portal</a>
+        </div>
+    </div>
+
     <div class="portfolio-header section">
         <div class="container">
-            <h1 data-animate="fade-up">Our <span class="text-gold">Creative Engineering</span></h1>
-            <p class="text-muted" data-animate="fade-up">Browse through some of our hand-picked case studies.</p>
+            <h1>Our <span class="text-gold">Creative Engineering</span></h1>
+            <p class="text-muted">Browse through some of our hand-picked case studies.</p>
         </div>
     </div>
 
@@ -145,7 +169,7 @@
     <section class="section pt-0">
         <div class="container">
             <!-- Filter Menu -->
-            <div class="filter-menu" data-animate="fade-up">
+            <div class="filter-menu">
                 <button class="filter-btn active" data-filter="all">All Projects</button>
                 <button class="filter-btn" data-filter="Website Development">Web Development</button>
                 <button class="filter-btn" data-filter="Graphic Design">Graphic Design</button>
@@ -154,7 +178,7 @@
             </div>
 
             <!-- Grid -->
-            <div class="portfolio-page-grid" id="mainPortfolioGrid" data-animate="fade-up">
+            <div class="portfolio-page-grid" id="mainPortfolioGrid">
                 <p class="text-muted text-center" style="grid-column: 1 / -1;">Loading portfolio projects...</p>
             </div>
         </div>
@@ -165,10 +189,38 @@
             <div class="footer-brand">
                 <a href="index.html" class="logo-text text-gold">Orbit Tech</a>
                 <p>We build smart, high-converting digital solutions for modern businesses looking to scale their impact online.</p>
+                <div class="social-links mt-3">
+                    <a href="https://www.upwork.com/freelancers/~01afa95ce278481982" target="_blank" rel="noopener noreferrer" aria-label="Upwork Profile"><i class="fas fa-briefcase"></i></a>
+                    <a href="https://www.facebook.com/people/Enoch-A-Oludare/61590213167526/#" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.tiktok.com/@orbit_tech?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://wa.me/+2347010765268" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://linkedin.com/in/oludare-enoch-3a5982326?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-links-group">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html#home">Home</a></li>
+                    <li><a href="index.html#about">About Us</a></li>
+                    <li><a href="index.html#services">Our Services</a></li>
+                    <li><a href="portfolio.html" style="color:var(--color-gold);">Projects</a></li>
+                    <li><a href="admin.html" class="text-gold"><i class="fas fa-user-shield"></i> Admin Portal</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h3>Headquarters</h3>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt text-gold"></i> Headquarters Nigeria</li>
+                    <li><a href="mailto:orbitnewsblog@gmail.com"><i class="fas fa-envelope text-gold"></i> orbitnewsblog@gmail.com</a></li>
+                    <li><a href="https://wa.me/+2347010765268" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp text-gold"></i> +234 701 076 5268</a></li>
+                </ul>
             </div>
         </div>
         <div class="footer-bottom text-center">
-            <p>&copy; 2026 Orbit Tech. All Rights Reserved.</p>
+            <p>&copy; 2026 Orbit Tech. All Rights Reserved. | <a href="admin.html" style="color:var(--color-gold);">Admin Portal</a></p>
         </div>
     </footer>
 
@@ -206,22 +258,23 @@
 
             grid.innerHTML = filtered.map(project => {
                 const image = project.imageUrl || project.image || 'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project';
-                const link = project.link || project.projectLink || project.url || '';
+                const link = project.liveUrl || project.link || project.projectLink || project.url || '';
+                const caseStudyUrl = project.id ? `case-study.html?id=${encodeURIComponent(project.id)}` : '';
                 const challenge = project.problem ? '<div><strong>The Challenge</strong><span>' + project.problem + '</span></div>' : '';
                 const solution = project.solution ? '<div><strong>Our Solution</strong><span>' + project.solution + '</span></div>' : '';
                 const result = project.result ? '<div><strong>The Result</strong><span>' + project.result + '</span></div>' : '';
 
-                return '<article class="portfolio-card glass-card hover-lift" data-category="' + project.category + '">' +
-                    '<span class="project-category-tag">' + project.category + '</span>' +
+                return '<article class="portfolio-card glass-card hover-lift" data-category="' + (project.category || 'General') + '">' +
+                    '<span class="project-category-tag">' + (project.category || 'Project') + '</span>' +
                     (project.featured ? '<span class="project-featured-tag">Featured</span>' : '') +
-                    '<img src="' + image + '" alt="' + project.title + '" class="portfolio-card-img">' +
+                    '<img src="' + image + '" alt="' + (project.title || 'Project') + '" class="portfolio-card-img" onerror="this.src=\'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project\';">' +
                     '<div class="portfolio-card-body">' +
-                        '<h3>' + project.title + '</h3>' +
+                        '<h3>' + (project.title || 'Untitled Project') + '</h3>' +
                         '<p class="text-muted">' + (project.description || 'A recent project delivered by Orbit Tech.') + '</p>' +
                         ((challenge || solution || result) ? '<div class="portfolio-case-study">' + challenge + solution + result + '</div>' : '') +
                         '<div class="portfolio-card-actions">' +
                             (link ? '<a href="' + link + '" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Visit Project <i class="fas fa-external-link-alt"></i></a>' : '') +
-                            '<a href="index.html#quote" class="btn btn-outline">Start Similar Project</a>' +
+                            (caseStudyUrl ? '<a href="' + caseStudyUrl + '" class="btn btn-outline">Read Case Study</a>' : '<a href="index.html#quote" class="btn btn-outline">Start Similar Project</a>') +
                         '</div>' +
                     '</div>' +
                 '</article>';
@@ -234,6 +287,22 @@
                 renderProjects(e.target.getAttribute('data-filter'));
             });
         });
+
+        const mobileToggle = document.getElementById('mobileToggle');
+        const mobileClose = document.getElementById('mobileClose');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileToggle && mobileMenu) {
+            mobileToggle.addEventListener('click', () => {
+                mobileMenu.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+        if (mobileClose && mobileMenu) {
+            mobileClose.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+                document.body.style.overflow = '';
+            });
+        }
 
         fetchAndRenderProjects();
     </script>

@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orbit Tech | Case Study</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FFD700">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -151,10 +155,35 @@
             <div class="footer-brand">
                 <a href="index.html" class="logo-text text-gold">Orbit Tech</a>
                 <p>We build smart, high-converting digital solutions for modern businesses looking to scale their impact online.</p>
+                <div class="social-links mt-3">
+                    <a href="https://www.upwork.com/freelancers/~01afa95ce278481982" target="_blank" rel="noopener noreferrer" aria-label="Upwork Profile"><i class="fas fa-briefcase"></i></a>
+                    <a href="https://www.facebook.com/people/Enoch-A-Oludare/61590213167526/#" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.tiktok.com/@orbit_tech?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://wa.me/+2347010765268" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-links-group">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html#home">Home</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="admin.html" class="text-gold"><i class="fas fa-user-shield"></i> Admin Portal</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h3>Headquarters</h3>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt text-gold"></i> Headquarters Nigeria</li>
+                    <li><a href="mailto:orbitnewsblog@gmail.com"><i class="fas fa-envelope text-gold"></i> orbitnewsblog@gmail.com</a></li>
+                    <li><a href="https://wa.me/+2347010765268" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp text-gold"></i> +234 701 076 5268</a></li>
+                </ul>
             </div>
         </div>
         <div class="footer-bottom text-center">
-            <p>&copy; 2026 Orbit Tech. All Rights Reserved.</p>
+            <p>&copy; 2026 Orbit Tech. All Rights Reserved. | <a href="admin.html" style="color:var(--color-gold);">Admin Portal</a></p>
         </div>
     </footer>
 
@@ -185,7 +214,10 @@
                 document.getElementById('csCategory').innerText = project.category;
                 document.getElementById('csTitle').innerText = project.title;
                 document.getElementById('csDescription').innerText = project.description;
-                document.getElementById('csImage').src = project.image;
+                document.getElementById('csImage').src = project.image || project.imageUrl || 'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project';
+                document.getElementById('csImage').onerror = function() {
+                    this.src = 'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project';
+                };
                 
                 document.getElementById('csProblem').innerText = project.problem || "Information about the project challenge will be available soon. We focus on identifying core business bottlenecks and engineering specific technical solutions to overcome them.";
                 document.getElementById('csSolution').innerText = project.solution || "Our tailored approach involved a comprehensive analysis of the project requirements, followed by the implementation of a high-performance, scalable solution designed for longevity and impact.";
@@ -193,8 +225,9 @@
                 
                 document.getElementById('csDate').innerText = project.timestamp ? new Date(project.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : "Delivered in 2026";
                 document.getElementById('csServices').innerText = project.category;
-                if (project.liveUrl) {
-                    document.getElementById('csLiveLink').href = project.liveUrl;
+                const liveLink = project.liveUrl || project.link || project.projectLink || project.url;
+                if (liveLink) {
+                    document.getElementById('csLiveLink').href = liveLink;
                     document.getElementById('csLiveLinkWrap').style.display = 'block';
                 }
 

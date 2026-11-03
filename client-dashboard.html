@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orbit Tech | Client Dashboard</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FFD700">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -169,11 +173,37 @@
                     '<div class="section-block"><h3>Deliverables</h3><div class="file-list">' + fileHtml + '</div></div>' +
                     '<div class="portal-actions">' +
                         '<a href="index.html#contact" class="btn btn-outline">Contact Orbit Tech</a>' +
-                        '<a href="https://wa.me/2348106932689" target="_blank" class="btn btn-primary">Message on WhatsApp</a>' +
+                        '<a href="https://wa.me/+2347010765268" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><i class="fab fa-whatsapp"></i> Message on WhatsApp</a>' +
+                        (project.status !== 'Cancelled by Client' ? '<button type="button" class="btn btn-outline" style="border-color:#ff4d4d; color:#ff4d4d;" onclick="cancelProject(\'' + project.id + '\', \'' + (project.projectName || 'Project').replace(/'/g, "\\'") + '\')"><i class="fas fa-trash-alt"></i> Cancel Project</button>' : '<span class="status-pill" style="background:rgba(255,77,77,0.15); color:#ff4d4d;"><i class="fas fa-ban"></i> Cancellation Flagged</span>') +
                     '</div>' +
                 '</div>';
             }).join('');
         }
+
+        window.cancelProject = async function(id, name) {
+            if (!confirm(`Are you sure you want to cancel the project "${name}"? Orbit Tech administration will be immediately notified.`)) {
+                return;
+            }
+            try {
+                const token = localStorage.getItem('orbitClientToken');
+                const res = await fetch(`/api/client/projects/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+                if (res.ok) {
+                    alert('Project cancellation requested and flagged in the admin portal.');
+                    fetchDashboardData();
+                } else {
+                    const data = await res.json();
+                    alert(data.error || 'Failed to cancel project');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Connection error while cancelling project.');
+            }
+        };
     </script>
 </body>
 </html>

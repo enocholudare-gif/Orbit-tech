@@ -1,84 +1,85 @@
 {
-  "exchangeRate": 1300,
+  "exchangeRate": 1400,
+  "baseCurrency": "NGN",
   "services": {
     "web-dev": {
       "name": "Web & Software Development",
       "packages": {
-        "basic": 45,
-        "standard": 80,
-        "premium": 150
+        "basic": 80000,
+        "standard": 150000,
+        "premium": 250000
       }
     },
-    "ai-automation": {
-      "name": "AI & Automation",
+    "page-setup": {
+      "name": "Page Setup & Business Verification",
       "packages": {
-        "basic": 50,
-        "standard": 100,
-        "premium": 200
-      }
-    },
-    "graphic-design": {
-      "name": "Graphics Design",
-      "packages": {
-        "basic": 5,
-        "standard": 30,
-        "premium": 50
-      }
-    },
-    "digital-marketing": {
-      "name": "Digital Marketing",
-      "packages": {
-        "basic": 50,
-        "standard": 100,
-        "premium": 250
-      }
-    },
-    "branding": {
-      "name": "Branding",
-      "packages": {
-        "basic": 50,
-        "standard": 100,
-        "premium": 150
-      }
-    },
-    "erp-softwares": {
-      "name": "ERP Softwares",
-      "packages": {
-        "basic": 100,
-        "standard": 250,
-        "premium": 500
+        "basic": 50000,
+        "standard": 90000,
+        "premium": 150000
       }
     },
     "social-media": {
       "name": "Social Media Management",
       "packages": {
-        "basic": 150,
-        "standard": 300,
-        "premium": 700
+        "basic": 80000,
+        "standard": 150000,
+        "premium": 250000
       }
     },
-    "page-setup": {
-      "name": "Page Setup",
+    "erp-softwares": {
+      "name": "ERP Softwares",
       "packages": {
-        "basic": 50,
-        "standard": 100,
-        "premium": 250
+        "basic": 250000,
+        "standard": 450000,
+        "premium": 750000
       }
     },
-    "tech-consultation": {
-      "name": "Tech Consultation",
+    "graphic-design": {
+      "name": "Graphics Design",
       "packages": {
-        "basic": 100,
-        "standard": 250,
-        "premium": 600
+        "basic": 8000,
+        "standard": 20000,
+        "premium": 45000
+      }
+    },
+    "ai-automation": {
+      "name": "AI & Automation",
+      "packages": {
+        "basic": 75000,
+        "standard": 150000,
+        "premium": 300000
       }
     },
     "mobile-app-development": {
       "name": "Mobile App Development",
       "packages": {
-        "basic": 250,
-        "standard": 600,
-        "premium": 1200
+        "basic": 250000,
+        "standard": 500000,
+        "premium": 900000
+      }
+    },
+    "digital-marketing": {
+      "name": "Digital Marketing",
+      "packages": {
+        "basic": 60000,
+        "standard": 120000,
+        "premium": 220000
+      }
+    },
+    "branding": {
+      "name": "Brand Identity & Strategy",
+      "packages": {
+        "basic": 40000,
+        "standard": 80000,
+        "premium": 160000
+      }
+    },
+    "tech-consultation": {
+      "name": "Tech Consultation & Strategy",
+      "packages": {
+        "basic": 50000,
+        "standard": 120000,
+        "premium": 250000
       }
     }
   }

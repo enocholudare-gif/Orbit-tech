@@ -258,49 +258,66 @@ document.addEventListener('DOMContentLoaded', () => {
         loadBlogPosts();
     }
 
-    // 8.5 Fetch Dynamic Portfolio
+    // 8.5 Dynamic Portfolio (Loaded when user clicks "View Projects")
     const homePortfolioGrid = document.getElementById('homePortfolioGrid');
-    if (homePortfolioGrid) {
-        async function loadHomePortfolio() {
-            try {
-                const res = await fetch('/api/projects');
-                const projects = await res.json();
+    const btnViewHomeProjects = document.getElementById('btnViewHomeProjects');
+    let homeProjectsLoaded = false;
 
-                if (!projects.length) {
-                    homePortfolioGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;">Projects will appear here as they are published by the admin.</p>';
-                    return;
-                }
+    async function loadHomePortfolio() {
+        if (!homePortfolioGrid) return;
+        try {
+            homePortfolioGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;"><i class="fas fa-spinner fa-spin"></i> Loading projects...</p>';
+            const res = await fetch('/api/projects');
+            const projects = await res.json();
 
-                const featuredProjects = projects.filter(project => project.featured).slice(0, 4);
-                const visibleProjects = featuredProjects.length ? featuredProjects : projects.slice(0, 6);
-
-                homePortfolioGrid.innerHTML = visibleProjects.map(project => {
-                    const image = project.imageUrl || project.image || 'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project';
-                    const link = project.link || project.projectLink || project.url || '';
-
-                    return '<article class="portfolio-card glass-card hover-lift" data-animate="fade-up">' +
-                        '<span class="project-category-tag">' + project.category + '</span>' +
-                        (project.featured ? '<span class="project-featured-tag">Featured</span>' : '') +
-                        '<img src="' + image + '" alt="' + project.title + '" class="portfolio-card-img">' +
-                        '<div class="portfolio-card-body">' +
-                            '<h3>' + project.title + '</h3>' +
-                            '<p class="text-muted">' + (project.description || 'A recent project delivered by Orbit Tech.') + '</p>' +
-                            '<div class="portfolio-card-actions">' +
-                                (link ? '<a href="' + link + '" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Visit Project <i class="fas fa-external-link-alt"></i></a>' : '') +
-                                '<a href="portfolio.html" class="btn btn-outline">More Details</a>' +
-                            '</div>' +
-                        '</div>' +
-                    '</article>';
-                }).join('');
-
-                const newProjectCards = homePortfolioGrid.querySelectorAll('[data-animate]');
-                newProjectCards.forEach(el => observer.observe(el));
-            } catch (error) {
-                console.error('Error fetching projects:', error);
+            if (!projects.length) {
                 homePortfolioGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;">Projects will appear here as they are published by the admin.</p>';
+                return;
             }
+
+            const featuredProjects = projects.filter(project => project.featured).slice(0, 4);
+            const visibleProjects = featuredProjects.length ? featuredProjects : projects.slice(0, 6);
+
+            homePortfolioGrid.innerHTML = visibleProjects.map(project => {
+                const image = project.imageUrl || project.image || 'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project';
+                const link = project.liveUrl || project.link || project.projectLink || project.url || '';
+                const caseStudyUrl = project.id ? `case-study.html?id=${encodeURIComponent(project.id)}` : 'portfolio.html';
+
+                return '<article class="portfolio-card glass-card hover-lift">' +
+                    '<span class="project-category-tag">' + (project.category || 'Project') + '</span>' +
+                    (project.featured ? '<span class="project-featured-tag">Featured</span>' : '') +
+                    '<img src="' + image + '" alt="' + (project.title || 'Project') + '" class="portfolio-card-img" onerror="this.src=\'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project\';">' +
+                    '<div class="portfolio-card-body">' +
+                        '<h3>' + (project.title || 'Untitled Project') + '</h3>' +
+                        '<p class="text-muted">' + (project.description || 'A recent project delivered by Orbit Tech.') + '</p>' +
+                        '<div class="portfolio-card-actions">' +
+                            (link ? '<a href="' + link + '" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Visit Project <i class="fas fa-external-link-alt"></i></a>' : '') +
+                            '<a href="' + caseStudyUrl + '" class="btn btn-outline">Case Study</a>' +
+                        '</div>' +
+                    '</div>' +
+                '</article>';
+            }).join('');
+
+            homeProjectsLoaded = true;
+        } catch (error) {
+            console.error('Error fetching projects:', error);
+            homePortfolioGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;">Projects will appear here as they are published by the admin.</p>';
         }
-                loadHomePortfolio();
+    }
+
+    if (btnViewHomeProjects && homePortfolioGrid) {
+        btnViewHomeProjects.addEventListener('click', () => {
+            if (homePortfolioGrid.style.display === 'none' || !homePortfolioGrid.style.display) {
+                homePortfolioGrid.style.display = 'grid';
+                btnViewHomeProjects.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Projects';
+                if (!homeProjectsLoaded) {
+                    loadHomePortfolio();
+                }
+            } else {
+                homePortfolioGrid.style.display = 'none';
+                btnViewHomeProjects.innerHTML = '<i class="fas fa-eye"></i> View Projects';
+            }
+        });
     }
 
     // 8.6 Fetch Dynamic Testimonials
@@ -314,20 +331,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (testimonials.length > 0) {
                     const dynamicHtml = testimonials.map((t, index) => {
-                        const delay = index * 100;
-                        const isVideo = t.type === 'video';
+                        const delay = (index % 3) * 100;
+                        const isVideo = t.type === 'video' && t.videoUrl;
+                        const isHiddenInitially = index >= 3;
+                        const isYouTube = isVideo && (t.videoUrl.includes('youtube.com') || t.videoUrl.includes('youtu.be'));
+                        const ytEmbed = isYouTube ? t.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/') : '';
                         
                         return `
-                            <div class="testimonial-card dynamic-review glass-card hover-lift" data-animate="fade-up" style="animation-delay: ${delay}ms; display: none;">
+                            <div class="testimonial-card dynamic-review glass-card hover-lift" data-animate="fade-up" style="animation-delay: ${delay}ms; ${isHiddenInitially ? 'display: none;' : ''}">
                                 ${isVideo ? `
                                     <div class="video-container" style="position:relative; border-radius:12px; overflow:hidden; margin-bottom:1.5rem; background:#000;">
-                                        <video src="${t.videoUrl}" style="width:100%; aspect-ratio:16/9; display: block;" controls></video>
+                                        ${isYouTube ? `
+                                            <iframe src="${ytEmbed}" style="width:100%; aspect-ratio:16/9; border:none;" allowfullscreen></iframe>
+                                        ` : `
+                                            <video src="${t.videoUrl}" style="width:100%; aspect-ratio:16/9; display: block;" controls preload="metadata"></video>
+                                        `}
                                     </div>
                                 ` : ''}
+                                <div style="color: var(--color-gold); margin-bottom: 10px;">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                </div>
                                 <p class="review-text">"${t.text}"</p>
                                 <div class="client-info">
                                     <div class="client-avatar">
-                                        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=random" alt="${t.name}">
+                                        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=1a1a1a&color=FFD700" alt="${t.name}">
                                     </div>
                                     <div>
                                         <h4>${t.name}</h4>
@@ -627,18 +654,19 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 calcOtherServiceGroup.style.display = 'none';
                 
-                // Get base USD price
+                // Get base price (in NGN)
                 const serviceObj = pricingData.services[serviceKey];
                 if (!serviceObj) return;
                 
-                const baseUsd = serviceObj.packages[packageKey];
+                const baseNgn = serviceObj.packages[packageKey];
                 
                 // Format and display
                 if (currentCurrency === 'USD') {
-                    finalString = `USD ${baseUsd.toLocaleString()}`;
+                    const rate = pricingData.exchangeRate || 1400;
+                    const usdPrice = Math.round(baseNgn / rate);
+                    finalString = `$${usdPrice.toLocaleString()} USD`;
                 } else {
-                    const ngnPrice = baseUsd * pricingData.exchangeRate;
-                    finalString = `NGN ${ngnPrice.toLocaleString()}`;
+                    finalString = `₦${baseNgn.toLocaleString()} NGN`;
                 }
             }
             
@@ -697,7 +725,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             const message = `Hello Orbit Tech, I saw the ${packageKey.toUpperCase()} package for ${serviceName} is estimated at ${priceText}. I am very interested, but I would like to negotiate the price and terms. Can we discuss this?`;
-            return `https://wa.me/2348106932689?text=${encodeURIComponent(message)}`;
+            return `https://wa.me/+2347010765268?text=${encodeURIComponent(message)}`;
         };
         
         btnStartProject.addEventListener('click', () => {
@@ -740,6 +768,49 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         initCalculator();
+    }
+
+    // 9. Meet the CEO Modal
+    const footerMeetCeoBtn = document.getElementById('footerMeetCeoBtn');
+    const ceoModal = document.getElementById('ceoModal');
+    const closeCeoModal = document.getElementById('closeCeoModal');
+
+    if (footerMeetCeoBtn && ceoModal) {
+        footerMeetCeoBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            ceoModal.style.display = 'flex';
+            setTimeout(() => ceoModal.classList.add('active'), 10);
+            document.body.style.overflow = 'hidden';
+        });
+    }
+
+    if (closeCeoModal && ceoModal) {
+        closeCeoModal.addEventListener('click', () => {
+            ceoModal.classList.remove('active');
+            setTimeout(() => {
+                ceoModal.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 300);
+        });
+    }
+
+    if (ceoModal) {
+        ceoModal.addEventListener('click', (e) => {
+            if (e.target === ceoModal) {
+                if (closeCeoModal) closeCeoModal.click();
+            }
+        });
+    }
+
+    // 10. Register PWA Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').then(reg => {
+                console.log('Orbit Tech PWA registered:', reg.scope);
+            }).catch(err => {
+                console.log('PWA registration note:', err);
+            });
+        });
     }
 });
 

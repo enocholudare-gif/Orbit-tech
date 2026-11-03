@@ -75,7 +75,7 @@ if (!fs.existsSync(dataFile)) {
             id: '1',
             title: 'The Future of AI in Digital Agencies',
             tag: 'Technology',
-            image: 'assets/blog_1.png',
+            image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
             snippet: 'How artificial intelligence is reshaping frontend paradigms and automation processes globally.',
             timestamp: new Date().toISOString()
         },
@@ -83,7 +83,7 @@ if (!fs.existsSync(dataFile)) {
             id: '2',
             title: 'Why Glassmorphism is Dominating App Design',
             tag: 'Insights',
-            image: 'assets/blog_2.png',
+            image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80',
             snippet: 'Explore the psychological effects of modern UI, depth of field blur effects, and user retention strategies.',
             timestamp: new Date(Date.now() - 86400000).toISOString()
         }
@@ -94,10 +94,26 @@ if (!fs.existsSync(dataFile)) {
 if (!fs.existsSync(projectsFile)) {
     const defaultProjects = [
         {
+            id: 'zamclouds-1',
+            title: 'Zambia Cloud Programmers Web Redesign',
+            category: 'Website Development',
+            image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80',
+            liveUrl: 'https://www.zamclouds.com/',
+            link: 'https://www.zamclouds.com/',
+            description: 'A comprehensive website redesign for Zambia Cloud Programmers, delivering a high-speed, modern platform for tech developers and cloud enthusiasts.',
+            problem: 'The community needed a dynamic, mobile-first web presence to showcase cloud developer initiatives, community workshops, and technical training with high performance.',
+            solution: 'Crafted a responsive, cloud-architected platform featuring sleek dark-mode aesthetics, streamlined registration flows, and clear documentation links.',
+            result: 'Significantly elevated community engagement, increased developer onboarding, and achieved near-instant load speeds.',
+            featured: true,
+            timestamp: new Date().toISOString()
+        },
+        {
             id: '1',
             title: 'Fintech Dashboard Redesign',
             category: 'Website Development',
-            image: 'https://placehold.co/800x500/1a1a1a/FFD700?text=Fintech+Mockup',
+            image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+            liveUrl: 'https://example.com/fintech-dashboard',
+            link: 'https://example.com/fintech-dashboard',
             description: 'A complete overhaul of a legacy financial dashboard enhancing user experience and data visualization.',
             problem: 'The client struggled with high user drop-off due to poor navigation and overly complex statistical tables.',
             solution: 'We simplified the architecture, implemented dark mode aesthetics, and integrated interactive Chart.js graphs.',
@@ -109,7 +125,9 @@ if (!fs.existsSync(projectsFile)) {
             id: '2',
             title: 'E-commerce Brand Identity',
             category: 'Graphic Design',
-            image: 'https://placehold.co/800x500/1a1a1a/FFD700?text=Brand+Identity',
+            image: 'https://images.unsplash.com/photo-1542744094-3a31f272c490?auto=format&fit=crop&w=1200&q=80',
+            liveUrl: '',
+            link: '',
             description: 'Modern branding for a sustainable fashion house.',
             problem: 'The client needed a logo that communicated both luxury and environmental responsibility.',
             solution: 'We created a minimalist organic leaf motif with premium gold accents.',
@@ -165,6 +183,48 @@ app.post('/api/login', (req, res) => {
     return res.status(401).json({ error: 'Invalid credentials' });
 });
 
+const NOTIFICATION_RECIPIENT = process.env.NOTIFICATION_EMAIL || 'orbitnewsblog@gmail.com';
+
+function createTransporter() {
+    const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+    const port = parseInt(process.env.SMTP_PORT || '587', 10);
+    const user = process.env.EMAIL_USER || 'orbitnewsblog@gmail.com';
+    const pass = process.env.EMAIL_PASS || '';
+
+    return nodemailer.createTransport({
+        host,
+        port,
+        secure: port === 465,
+        auth: {
+            user,
+            pass
+        }
+    });
+}
+
+async function sendNotificationEmail({ subject, text, html, replyTo }) {
+    if (!process.env.EMAIL_PASS || process.env.EMAIL_PASS === 'your-google-app-password') {
+        console.log(`[SMTP Queued] Notification for ${NOTIFICATION_RECIPIENT}: "${subject}" (Add EMAIL_PASS to .env for live dispatch)`);
+        return false;
+    }
+    try {
+        const transporter = createTransporter();
+        await transporter.sendMail({
+            from: `"Orbit Tech" <${process.env.EMAIL_USER || 'orbitnewsblog@gmail.com'}>`,
+            to: NOTIFICATION_RECIPIENT,
+            replyTo: replyTo || process.env.EMAIL_USER || 'orbitnewsblog@gmail.com',
+            subject: subject,
+            text: text,
+            html: html || undefined
+        });
+        console.log(`[SMTP Success] Email delivered to ${NOTIFICATION_RECIPIENT}: ${subject}`);
+        return true;
+    } catch (err) {
+        console.error('[SMTP Error] Email delivery failed:', err.message);
+        return false;
+    }
+}
+
 // POST: Contact form endpoint
 app.post('/api/contact', async (req, res) => {
     const { name, email, phone, service, message } = req.body;
@@ -195,45 +255,14 @@ app.post('/api/contact', async (req, res) => {
         return res.status(500).json({ error: 'Failed to save message' });
     }
 
-    const hasEmailConfig = process.env.EMAIL_USER && process.env.EMAIL_PASS;
-    if (!hasEmailConfig) {
-        return res.status(200).json({ success: true, message: 'Request received successfully' });
-    }
+    // Attempt SMTP delivery to orbitnewsblog@gmail.com
+    await sendNotificationEmail({
+        subject: `New Project Inquiry from ${name} (${service || 'General'})`,
+        replyTo: email,
+        text: `You have received a new inquiry on Orbit Tech!\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone || 'N/A'}\nService Needed: ${service || 'General Inquiry'}\n\nMessage:\n${message}\n\nSubmitted at: ${new Date().toLocaleString()}`
+    });
 
-    try {
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false,
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            }
-        });
-
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: process.env.EMAIL_USER,
-            replyTo: email,
-            subject:         `New Quote Request from ${name}`,
-            text:         `Name: ${name}
-Email: ${email}
-Phone: ${phone || 'N/A'}
-Service Needed: ${service || 'N/A'}
-
-Message:
-${message}`
-        };
-
-        await transporter.sendMail(mailOptions);
-        return res.status(200).json({ success: true, message: 'Message sent successfully' });
-    } catch (error) {
-        console.error('Email error:', error);
-        return res.status(200).json({
-            success: true,
-            message: 'Request received successfully. Email delivery is temporarily unavailable.'
-        });
-    }
+    return res.status(200).json({ success: true, message: 'Message sent successfully' });
 });
 
 
@@ -661,12 +690,13 @@ app.delete('/api/posts/:id', requireAuth, (req, res) => {
 
 // GET: Fetch all projects
 app.get('/api/projects', (req, res) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     fs.readFile(projectsFile, 'utf8', (err, data) => {
         if (err) {
             console.error('Error reading projects:', err);
             return res.status(500).json({ error: 'Failed to read projects data' });
         }
-        res.json(JSON.parse(data));
+        res.json(JSON.parse(data || '[]'));
     });
 });
 
@@ -686,6 +716,7 @@ app.post('/api/projects', requireAuth, upload.single('image'), (req, res) => {
         category: req.body.category,
         image: imageUrl,
         liveUrl: req.body.liveUrl || req.body.link || '',
+        link: req.body.liveUrl || req.body.link || '',
         description: req.body.description,
         problem: req.body.problem,
         solution: req.body.solution,
@@ -1034,6 +1065,13 @@ app.post('/api/client/signup', async (req, res) => {
             clients.push(newClient);
             fs.writeFile(clientsFile, JSON.stringify(clients, null, 2), err => {
                 if (err) return res.status(500).json({ error: 'Failed to create account' });
+                
+                // Notify admin via SMTP
+                sendNotificationEmail({
+                    subject: `[New Client Account] ${username} registered on Orbit Tech`,
+                    text: `A new client has created an account on Orbit Tech!\n\nUsername: ${username}\nEmail: ${email || 'N/A'}\nDate: ${new Date().toLocaleString()}\n\nThis client is now listed in the Admin Portal under Client Accounts.`
+                });
+
                 res.status(201).json({ success: true, message: 'Account created successfully' });
             });
         });
@@ -1109,14 +1147,47 @@ app.get('/api/client/dashboard', requireClientAuth, (req, res) => {
     });
 });
 
+// DELETE: Client Cancel/Delete Project
+app.delete('/api/client/projects/:id', requireClientAuth, (req, res) => {
+    const projectId = req.params.id;
+
+    fs.readFile(clientProjectsFile, 'utf8', (err, data) => {
+        if (err) return res.status(500).json({ error: 'Server error' });
+        let projects = JSON.parse(data || '[]');
+        const projectIndex = projects.findIndex(p => p.id === projectId && p.clientId === req.client.id);
+
+        if (projectIndex === -1) {
+            return res.status(404).json({ error: 'Project not found or unauthorized' });
+        }
+
+        const project = projects[projectIndex];
+        project.status = 'Cancelled by Client';
+        project.cancelledAt = new Date().toISOString();
+        project.cancelledByClient = true;
+        project.lastUpdated = new Date().toISOString();
+
+        fs.writeFile(clientProjectsFile, JSON.stringify(projects, null, 2), writeErr => {
+            if (writeErr) return res.status(500).json({ error: 'Failed to update project' });
+
+            // Notify Admin via Email
+            sendNotificationEmail({
+                subject: `[Client Cancellation Alert] ${project.projectName} cancelled by client`,
+                text: `Client "${req.client.username}" has cancelled their project "${project.projectName}" (ID: ${projectId}) from their dashboard on ${new Date().toLocaleString()}.\n\nThis is now flagged in the Admin Portal under Client Projects.`
+            });
+
+            res.json({ success: true, message: 'Project cancelled successfully', project });
+        });
+    });
+});
+
 // ============ AI ASSISTANT ENDPOINT (SIMULATED) ============
 app.post('/api/ask-ai', (req, res) => {
-    const { question } = req.body;
+    const question = req.body.question || req.body.message;
     if (!question) return res.status(400).json({ error: 'No question provided' });
 
     const q = question.toLowerCase();
     
-    // Helper function to match whole words only to prevent partial matches (e.g. "hi" in "graphic")
+    // Helper function to match whole words or key phrases
     const hasWord = (wordsArray) => {
         return wordsArray.some(w => {
             const regex = new RegExp(`\\b${w}\\b`, 'i');
@@ -1126,44 +1197,74 @@ app.post('/api/ask-ai', (req, res) => {
     
     // Simulate AI processing delay
     setTimeout(() => {
-        let answer = "I'm not quite sure about that. Could you please rephrase your question or use the Contact Us section so a human representative can assist you?";
+        let answer = "I'm not quite sure about that. Could you please rephrase your question or reach out via WhatsApp at +234 701 076 5268 or email us at orbitnewsblog@gmail.com?";
 
-        if (hasWord(['ceo', 'founder', 'oludare', 'enoch'])) {
-            answer = "**Oludare Enoch** is the Founder and Lead Tech Visionary (CEO) of Orbit Tech. He founded the agency to bridge the gap between creative design and sophisticated backend engineering.";
+        if (hasWord(['ceo', 'founder', 'oludare', 'enoch', 'boss', 'leader'])) {
+            answer = "**Oludare Enoch** is the Founder & Lead Tech Visionary (CEO) of Orbit Tech. With a passion for digital innovation and scalable tech structures, Enoch founded Orbit Tech to bridge the gap between creative design and sophisticated backend engineering. You can connect with him directly on [LinkedIn](https://linkedin.com/in/oludare-enoch-3a5982326) or via our footer link 'Meet the CEO'.";
         } 
-        else if (hasWord(['graphic', 'graphics', 'design', 'logo', 'branding', 'brand'])) {
-            answer = "Yes! We offer premium **Graphic Design & Branding** services. We create visually arresting designs to capture attention, build trust, and align your brand identity perfectly.";
+        else if (hasWord(['location', 'headquarters', 'headquarter', 'where', 'country', 'office', 'nigeria'])) {
+            answer = "Orbit Tech is proudly based in **Headquarters Nigeria**, delivering world-class digital solutions to innovative businesses locally and worldwide across the UK, US, Zambia, and beyond!";
         }
-        else if (hasWord(['web', 'website', 'develop', 'development', 'app'])) {
-            answer = "Yes! Core to our expertise is **Web Development**. We build custom, scalable, and ultra-fast web applications designed for performance and unparalleled user experiences.";
+        else if (hasWord(['upwork', 'freelance'])) {
+            answer = "You can view Oludare Enoch's verified profile and hire Orbit Tech directly on Upwork here: [Orbit Tech on Upwork](https://www.upwork.com/freelancers/~01afa95ce278481982).";
         }
-        else if (hasWord(['ai', 'automation', 'pabbly', 'zapier', 'bot'])) {
-            answer = "Absolutely. Our **AI & Automation** services use tools like Pabbly and Zapier to eliminate manual tasks, handle CRM data entry, automatic follow-ups, and more, saving you huge amounts of time.";
+        else if (hasWord(['facebook'])) {
+            answer = "Connect with us on Facebook here: [Enoch A. Oludare / Orbit Tech on Facebook](https://www.facebook.com/people/Enoch-A-Oludare/61590213167526/#).";
+        }
+        else if (hasWord(['tiktok'])) {
+            answer = "Follow our latest tech updates and design demos on TikTok: [@orbit_tech on TikTok](https://www.tiktok.com/@orbit_tech?is_from_webapp=1&sender_device=pc).";
+        }
+        else if (hasWord(['whatsapp', 'phone', 'call', 'chat'])) {
+            answer = "You can chat with Orbit Tech directly on WhatsApp at **[+234 701 076 5268](https://wa.me/+2347010765268)** for instant consultations, project negotiations, and rapid support!";
+        }
+        else if (hasWord(['contact', 'email', 'reach', 'touch'])) {
+            answer = "You can reach us directly:\n- **Email:** orbitnewsblog@gmail.com\n- **WhatsApp:** [+234 701 076 5268](https://wa.me/+2347010765268)\n- **Location:** Headquarters Nigeria\n- **Upwork:** [Enoch on Upwork](https://www.upwork.com/freelancers/~01afa95ce278481982)\nOr submit a message through the 'Contact Us' form below!";
+        }
+        else if (hasWord(['app', 'install', 'pwa', 'phone', 'apk', 'mobile app'])) {
+            answer = "Yes! Orbit Tech is a Progressive Web App (PWA). You can install it on your Android or iPhone directly from your browser menu ('Add to Home Screen') and it will launch as a native app with our gold logo icon!";
+        }
+        else if (hasWord(['cost', 'price', 'pricing', 'rate', 'naira', 'dollar', 'estimate', 'estimator', 'how much'])) {
+            answer = "Our service pricing is transparent and flexible (in Naira with automatic USD conversion):\n- **Web Development:** Basic from ₦80K ($57), Standard ₦150K ($107), Premium ₦250K ($179)\n- **Page Setup & Verification:** Basic from ₦50K ($36)\n- **Social Media Management:** Basic from ₦80K ($57)\n- **ERP Softwares:** Basic from ₦250K ($179)\n- **Graphics Design:** Basic from ₦8K ($6)\n- **AI & Automation:** Basic from ₦75K ($54)\n- **Mobile App Development:** Basic from ₦250K ($179)\nUse our **Project Estimator** on the homepage to toggle NGN/USD and get an instant quote!";
+        }
+        else if (hasWord(['graphic', 'graphics', 'design', 'logo', 'flyer', 'banner'])) {
+            answer = "Our **Graphics Design** packages start at **₦8,000 (~$6)** for basic branding elements, up to **₦45,000** for comprehensive identity kits. We craft visually arresting, brand-centric designs that build authority and trust.";
+        }
+        else if (hasWord(['web', 'website', 'develop', 'development', 'software', 'site'])) {
+            answer = "We specialize in **Web & Software Development**! Starting at **₦80,000 (Basic)**, **₦150,000 (Standard)**, and **₦250,000 (Premium)**. We build ultra-fast, modern, responsive websites with interactive features and seamless backend integrations.";
+        }
+        else if (hasWord(['page setup', 'setup', 'verification'])) {
+            answer = "Our **Page Setup** service starts from **₦50,000 (~$36)**. We configure your social & business assets, optimize bio and SEO keywords, and ensure full professional compliance.";
+        }
+        else if (hasWord(['social media', 'social', 'instagram', 'facebook page'])) {
+            answer = "Our **Social Media Management** service starts from **₦80,000 (~$57)**. We handle creative content production, scheduling, analytics, and targeted audience engagement to drive real business growth.";
+        }
+        else if (hasWord(['erp', 'inventory', 'enterprise'])) {
+            answer = "Our **ERP Softwares & System Structuring** starts from **₦250,000 (~$179)**. We organize your business operations, automate workflows, and connect internal databases for complete efficiency.";
+        }
+        else if (hasWord(['ai', 'automation', 'pabbly', 'zapier', 'bot', 'workflow'])) {
+            answer = "Our **AI & Automation** workflows eliminate tedious manual tasks using tools like Pabbly, Zapier, custom AI agents, and CRM syncs. Starting at **₦75,000 (~$54)**.";
         }
         else if (hasWord(['service', 'services', 'offer', 'do you do', 'what do you'])) {
-            answer = "We specialize in several digital services:\n- **Web Development**\n- **AI & Automation**\n- **Graphics Design**\n- **Digital Marketing**\n- **Branding**\n- **ERP Softwares**\n- **Social Media Management**\n- **Tech Consultation**";
+            answer = "Orbit Tech provides full-stack digital transformation services:\n1. **Web & Software Development** (from ₦80K)\n2. **Page Setup & Optimization** (from ₦50K)\n3. **Social Media Management** (from ₦80K)\n4. **ERP Softwares** (from ₦250K)\n5. **Graphics Design & Branding** (from ₦8K)\n6. **AI & Automation Pipelines** (from ₦75K)\n7. **Mobile App Development** (from ₦250K)\n8. **Tech Consultation & IT Strategy** (from ₦50K)";
         } 
-        else if (hasWord(['time', 'long', 'duration', 'months', 'weeks'])) {
-            answer = "On average, a standard professional agency website takes between **2 to 4 weeks** from the initial consultation to final delivery depending on the complexity of the functionality.";
+        else if (hasWord(['sample', 'projects', 'portfolio', 'work', 'zamclouds', 'zambia'])) {
+            answer = "Check out our recent work in the **Projects** section! A featured sample is the **Zambia Cloud Programmers Web Redesign** ([zamclouds.com](https://www.zamclouds.com/)), alongside our Fintech Dashboard and E-commerce Brand systems. You can click 'View Projects' on the homepage or 'View All Projects' for full case studies.";
+        }
+        else if (hasWord(['time', 'timeline', 'long', 'duration', 'weeks'])) {
+            answer = "Most standard web and digital projects take **2 to 4 weeks** from design to deployment. Smaller tasks like graphic design or page setup are completed in **2 to 5 days**.";
         } 
-        else if (hasWord(['cost', 'price', 'budget', 'much', 'pay'])) {
-            answer = "Project costs vary greatly based on scope, technical requirements, and timeline. Please use the **Get a Quote** form to provide details, and we'll send you an official personalized proposal!";
+        else if (hasWord(['portal', 'client', 'account', 'cancel', 'delete', 'dashboard'])) {
+            answer = "Existing clients can access the **Client Portal** to track real-time progress, milestones, and deliverables. Clients can also easily cancel or request project deletion directly from their dashboard at any time.";
         } 
-        else if (hasWord(['contact', 'email', 'phone', 'reach', 'call'])) {
-            answer = "You can reach us multiple ways!\n**Phone / WhatsApp:** +234 810 693 2689\n**Email:** hello@orbittech.com.ng\nWe are based in Ado-Ekiti, Nigeria but operate globally.";
-        } 
-        else if (hasWord(['project', 'status', 'portal', 'dashboard'])) {
-            answer = "If you are an existing client, you can log in to our **Client Portal** using the 'Client Portal' button in the navigation menu to track your project's status in real-time.";
-        } 
-        else if (hasWord(['orbit tech', 'company', 'about'])) {
-            answer = "**Orbit Tech** is an elite digital agency focused on propelling bold ideas into reality. We merge creative design with robust technology to craft digital solutions for forward-thinking businesses.";
+        else if (hasWord(['orbit tech', 'company', 'about', 'revolution'])) {
+            answer = "**Orbit Tech** is your Agent of Revolution! We are a Nigeria-headquartered tech company providing cutting-edge web development, sophisticated AI automation, and premium tech workflows tailored for modern business growth.";
         }
         else if (hasWord(['hello', 'hi', 'hey', 'greetings', 'morning', 'afternoon'])) {
-            answer = "Hello there! I'm the Orbit Tech Virtual Assistant. I can tell you about our services like web development, graphic design, pricing, or our CEO. How can I help you today?";
+            answer = "Hello! I'm the Orbit Tech Virtual Assistant. How can I help you today? You can ask about our services, pricing in Naira/Dollars, CEO Oludare Enoch, portfolio samples, or how to get started!";
         }
 
         return res.json({ answer });
-    }, 1200); // 1.2 second simulated delay
+    }, 800);
 });
 
 // Start Server
