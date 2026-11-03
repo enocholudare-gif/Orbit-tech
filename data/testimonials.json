@@ -1,8 +1,10 @@
 [
   {
     "id": "test-1",
+    "headline": "Handled Peak Logistics Volume Flawlessly",
     "name": "Chinedu Eze",
     "role": "CEO, Nexus Logistics Nigeria",
+    "tag": "Web App & Portal",
     "text": "Enoch and the Orbit Tech team built our shipment tracking and dispatch portal from scratch. What impressed me most was their speed and attention to detail. The backend handles peak volume seamlessly and our clients constantly praise the modern UI.",
     "type": "text",
     "rating": 5,
@@ -10,8 +12,10 @@
   },
   {
     "id": "test-2",
+    "headline": "Blazing Page Speeds & 60% More Registrations",
     "name": "Tinashe Moyo",
     "role": "Head of Community, ZamClouds Hub",
+    "tag": "Cloud Platform Redesign",
     "text": "The Zambia Cloud Programmers web redesign executed by Orbit Tech was nothing short of exceptional. Page speeds became blazing fast, mobile responsiveness is flawless, and developer registrations increased by 60% within our first month of launch.",
     "type": "text",
     "rating": 5,
@@ -19,8 +23,10 @@
   },
   {
     "id": "test-3",
+    "headline": "Elevated Brand Perception & High ROI",
     "name": "Amina Bello",
     "role": "Creative Director, Kulture Wear",
+    "tag": "E-Commerce & Branding",
     "text": "Orbit Tech helped us rebrand our online store with custom UI and checkout automation. The dark-gold aesthetic elevated our brand perception completely. They are responsive, professional, and genuinely care about business ROI.",
     "type": "text",
     "rating": 5,
@@ -28,9 +34,11 @@
   },
   {
     "id": "test-4",
+    "headline": "Robust Fintech Verification & Payment Security",
     "name": "Michael Adeleke",
     "role": "Co-founder, PaySprint Africa",
-    "text": "Watch our founder share how Orbit Tech helped build our merchant verification flows and payment dashboard with top-tier security standards.",
+    "tag": "Fintech Video Case Study",
+    "text": "Watch our co-founder explain how Orbit Tech engineered our merchant verification flows and payment dashboard with banking-grade security and modern responsiveness.",
     "type": "video",
     "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
     "rating": 5,
@@ -38,8 +46,10 @@
   },
   {
     "id": "test-5",
+    "headline": "Patient No-Shows Dropped by Over 40%",
     "name": "Dr. Farouk Al-Mansoor",
-    "role": "Medical Director, Al-Mansoor Specialist Clinics",
+    "role": "Medical Director, Al-Mansoor Clinics",
+    "tag": "HealthTech Automation",
     "text": "Our clinic struggled with patient booking backlogs for months. Orbit Tech deployed a custom scheduling system with automated SMS/email reminders. Patient no-shows dropped by over 40% right away.",
     "type": "text",
     "rating": 5,
@@ -47,8 +57,10 @@
   },
   {
     "id": "test-6",
+    "headline": "Flawless Cloud Migration & Zero Downtime",
     "name": "Sarah Jenkins",
     "role": "Operations Director, Horizon Peak UK",
+    "tag": "Cloud & API Architecture",
     "text": "Working across time zones with Oludare was seamless. Their team handled our cloud migrations and backend API integrations flawlessly. Clear milestones, clean code, and zero downtime.",
     "type": "text",
     "rating": 5,

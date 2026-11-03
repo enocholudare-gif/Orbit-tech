@@ -2056,11 +2056,73 @@ header.scrolled {
 }
 
 /* Testimonial Grid & Multi-Review Layout */
+/* =========================================================================
+   ELEGANT, MODERN CLIENT REVIEWS SECTION
+   ========================================================================= */
+
+.trust-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 215, 0, 0.08);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    color: var(--color-gold);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 30px;
+    margin-bottom: 16px;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #25D366;
+    box-shadow: 0 0 10px #25D366;
+    animation: pulseDot 2s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+.rating-summary-strip {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 15px;
+    padding: 10px 22px;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    font-size: 0.95rem;
+    color: #e2e8f0;
+}
+
+.rating-score {
+    font-weight: 700;
+    color: #fff;
+}
+
+.rating-divider {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.rating-count {
+    color: #a0aec0;
+    font-size: 0.9rem;
+}
+
 .testimonial-grid {
     display: grid !important;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
-    gap: 24px !important;
+    gap: 28px !important;
     align-items: stretch !important;
+    margin-top: 2rem;
 }
 
 @media (min-width: 900px) {
@@ -2069,32 +2131,202 @@ header.scrolled {
     }
 }
 
-.testimonial-card {
+.modern-review-card {
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
     height: 100% !important;
-    border-radius: 20px !important;
-    padding: 30px !important;
+    border-radius: 24px !important;
+    padding: 34px 30px !important;
+    background: linear-gradient(145deg, rgba(16, 20, 36, 0.8) 0%, rgba(10, 13, 24, 0.95) 100%) !important;
+    border: 1px solid rgba(255, 215, 0, 0.18) !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.55), 0 0 20px rgba(255, 215, 0, 0.04) !important;
     opacity: 1 !important;
     transform: none !important;
     visibility: visible !important;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    position: relative;
+    overflow: hidden;
 }
 
-.testimonial-card .client-info {
+.modern-review-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.5), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modern-review-card:hover::before {
+    opacity: 1;
+}
+
+.modern-review-card:hover {
+    transform: translateY(-8px) scale(1.01) !important;
+    border-color: rgba(255, 215, 0, 0.45) !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.75), 0 0 35px rgba(255, 215, 0, 0.18) !important;
+}
+
+.review-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.review-stars-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stars-gold {
+    color: #FFD700;
+    font-size: 0.95rem;
+    letter-spacing: 2px;
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4));
+}
+
+.rating-val {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #fff;
+    margin-left: 2px;
+}
+
+.review-verified-pill {
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: rgba(37, 211, 102, 0.12);
+    color: #25D366;
+    border: 1px solid rgba(37, 211, 102, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.review-verified-pill.video-pill {
+    background: rgba(255, 215, 0, 0.12);
+    color: var(--color-gold);
+    border-color: rgba(255, 215, 0, 0.35);
+}
+
+.review-headline {
+    font-size: 1.22rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.4;
+    margin: 0 0 14px 0;
+    letter-spacing: -0.01em;
+}
+
+.review-body-text {
+    font-size: 1.02rem;
+    line-height: 1.8;
+    color: #cbd5e1;
+    margin-bottom: 24px;
+    font-weight: 400;
+}
+
+.modern-video-frame {
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 18px;
+    border: 1px solid rgba(255, 215, 0, 0.25);
+    background: #000;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.modern-video-frame video, .modern-video-frame iframe {
+    width: 100%;
+    aspect-ratio: 16/9;
+    display: block;
+    object-fit: cover;
+}
+
+.review-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: auto;
+}
+
+.review-author-box {
     display: flex;
     align-items: center;
     gap: 14px;
-    margin-top: auto;
-    padding-top: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.testimonial-card .client-avatar img {
+.author-avatar-img {
     width: 48px;
     height: 48px;
     border-radius: 50%;
     border: 2px solid var(--color-gold);
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+    object-fit: cover;
+}
+
+.author-fullname {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 3px 0;
+}
+
+.author-title-company {
+    font-size: 0.84rem;
+    color: #D4AF37;
+    margin: 0;
+    font-weight: 500;
+}
+
+.review-tag-pill {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .modern-review-card {
+        padding: 24px 20px !important;
+        border-radius: 20px !important;
+    }
+    .review-headline {
+        font-size: 1.12rem;
+    }
+    .review-body-text {
+        font-size: 0.96rem;
+        line-height: 1.7;
+    }
+    .review-card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .rating-summary-strip {
+        flex-direction: column;
+        gap: 6px;
+        padding: 10px 16px;
+        border-radius: 16px;
+    }
+    .rating-divider {
+        display: none;
+    }
 }
 
 /* Floating PWA Banner */

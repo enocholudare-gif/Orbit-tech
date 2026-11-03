@@ -342,32 +342,50 @@ document.addEventListener('DOMContentLoaded', () => {
                         const isHiddenInitially = index >= 4; // Top 4 reviews shown initially!
                         const isYouTube = isVideo && (t.videoUrl.includes('youtube.com') || t.videoUrl.includes('youtu.be'));
                         const ytEmbed = isYouTube ? t.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/') : '';
-                        
+                        const headline = t.headline || (isVideo ? 'Robust Fintech Engineering & Security' : 'Outstanding Results & Dedicated Delivery');
+                        const tag = t.tag || (isVideo ? 'Video Review' : 'Verified Project');
+
                         return `
-                            <div class="testimonial-card dynamic-review glass-card hover-lift" style="opacity: 1 !important; transform: none !important; ${isHiddenInitially ? 'display: none;' : 'display: flex;'}">
+                            <article class="testimonial-card modern-review-card dynamic-review glass-card hover-lift" style="opacity: 1 !important; transform: none !important; ${isHiddenInitially ? 'display: none;' : 'display: flex;'}">
+                                <div class="review-card-header">
+                                    <div class="review-stars-group">
+                                        <div class="stars-gold">
+                                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="rating-val">5.0</span>
+                                    </div>
+                                    <span class="review-verified-pill ${isVideo ? 'video-pill' : ''}">
+                                        <i class="fas ${isVideo ? 'fa-play-circle' : 'fa-check-circle'}"></i> ${isVideo ? 'Video Review' : 'Verified Client'}
+                                    </span>
+                                </div>
+
+                                <h3 class="review-headline">"${headline}"</h3>
+
                                 ${isVideo ? `
-                                    <div class="video-container" style="position:relative; border-radius:12px; overflow:hidden; margin-bottom:1.5rem; background:#000;">
+                                    <div class="modern-video-frame">
                                         ${isYouTube ? `
-                                            <iframe src="${ytEmbed}" style="width:100%; aspect-ratio:16/9; border:none;" allowfullscreen></iframe>
+                                            <iframe src="${ytEmbed}" style="width:100%; aspect-ratio:16/9; border:none; border-radius:14px;" allowfullscreen></iframe>
                                         ` : `
-                                            <video src="${t.videoUrl}" style="width:100%; aspect-ratio:16/9; display: block;" controls preload="metadata"></video>
+                                            <video src="${t.videoUrl}" style="width:100%; aspect-ratio:16/9; display: block; border-radius:14px;" controls preload="metadata" playsinline></video>
                                         `}
                                     </div>
                                 ` : ''}
-                                <div style="color: var(--color-gold); margin-bottom: 10px; font-size: 1.1rem;">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                </div>
-                                <p class="review-text" style="font-size: 1.05rem; line-height: 1.7; color: #ddd; margin-bottom: 1.5rem;">"${t.text}"</p>
-                                <div class="client-info">
-                                    <div class="client-avatar">
-                                        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=1a1a1a&color=FFD700" alt="${t.name}">
+
+                                <p class="review-body-text">"${t.text}"</p>
+
+                                <div class="review-card-footer">
+                                    <div class="review-author-box">
+                                        <div class="author-avatar-wrap">
+                                            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=111420&color=FFD700" alt="${t.name}" class="author-avatar-img">
+                                        </div>
+                                        <div class="author-meta">
+                                            <h4 class="author-fullname">${t.name}</h4>
+                                            <p class="author-title-company">${t.role}</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h4 style="color: #fff; margin-bottom: 2px;">${t.name}</h4>
-                                        <p class="text-gold" style="font-size: 0.85rem; font-weight: 500;">${t.role}</p>
-                                    </div>
+                                    <span class="review-tag-pill">${tag}</span>
                                 </div>
-                            </div>
+                            </article>
                         `;
                     }).join('');
                 }
