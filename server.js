@@ -510,7 +510,8 @@ app.post('/api/send-invoice', requireAuth, async (req, res) => {
             document.moveTo(50, footerTop).lineTo(document.page.width - 50, footerTop).strokeColor('#eeeeee').lineWidth(1).stroke();
             document.fillColor('#777777').fontSize(10).font('Helvetica')
                     .text('Thank you for choosing Orbit Tech.', 50, footerTop + 15, { align: 'center' });
-            document.text('If you have any questions, please contact us directly.', 50, footerTop + 30, { align: 'center' });
+            document.fillColor('#b8860b').fontSize(10).font('Helvetica-Bold')
+                    .text('To pay, please contact us on WhatsApp: +234 701 076 5268 or email: orbitnewsblog@gmail.com', 50, footerTop + 30, { align: 'center' });
         };
         
         generatePdfLayout(doc, invoiceNumber, currentDate, companyRc, clientName, clientEmail, description, amount, dueDate);
@@ -607,7 +608,8 @@ app.post('/api/download-invoice-pdf', requireAuth, async (req, res) => {
             document.moveTo(50, footerTop).lineTo(document.page.width - 50, footerTop).strokeColor('#eeeeee').lineWidth(1).stroke();
             document.fillColor('#777777').fontSize(10).font('Helvetica')
                     .text('Thank you for choosing Orbit Tech.', 50, footerTop + 15, { align: 'center' });
-            document.text('If you have any questions, please contact us directly.', 50, footerTop + 30, { align: 'center' });
+            document.fillColor('#b8860b').fontSize(10).font('Helvetica-Bold')
+                    .text('To pay, please contact us on WhatsApp: +234 701 076 5268 or email: orbitnewsblog@gmail.com', 50, footerTop + 30, { align: 'center' });
         };
         
         generatePdfLayout(doc, invoiceNumber, currentDate, companyRc, clientName, clientEmail, description, amount, dueDate);

@@ -1984,3 +1984,274 @@ header.scrolled {
     color: #000;
 }
 
+/* =========================================================================
+   MODERN VIBRANT VISUALS, GLOWS & ANIMATIONS
+   ========================================================================= */
+
+/* Hero Glow & Vibrant Atmosphere */
+.hero {
+    background: 
+        radial-gradient(circle at 15% 30%, rgba(255, 215, 0, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 85% 70%, rgba(0, 229, 255, 0.08) 0%, transparent 50%),
+        #08090f !important;
+}
+
+.hero-text h1 {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.hero-text h1 .text-gold, .section-header h2 .text-gold {
+    background: linear-gradient(135deg, #FFF6D6 0%, #FFD700 50%, #FFA500 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.3));
+}
+
+/* Glass Card Upgraded Vibrancy */
+.glass-card {
+    background: rgba(14, 18, 30, 0.7) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 215, 0, 0.15) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 215, 0, 0.03) !important;
+    transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+}
+
+.glass-card:hover, .hover-lift:hover {
+    transform: translateY(-6px) scale(1.01) !important;
+    border-color: rgba(255, 215, 0, 0.4) !important;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.18) !important;
+}
+
+/* Sleek Button Glow & Shimmer */
+.btn-primary {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #FFD700 0%, #E6B800 100%) !important;
+    color: #08090e !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.35) !important;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+}
+
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -70%;
+    width: 45%;
+    height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+    transform: rotate(25deg);
+    transition: all 0.75s ease;
+}
+
+.btn-primary:hover::after {
+    left: 135%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.55) !important;
+}
+
+/* Testimonial Grid & Multi-Review Layout */
+.testimonial-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+    gap: 24px !important;
+    align-items: stretch !important;
+}
+
+@media (min-width: 900px) {
+    .testimonial-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+.testimonial-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    border-radius: 20px !important;
+    padding: 30px !important;
+}
+
+.testimonial-card .client-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.testimonial-card .client-avatar img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid var(--color-gold);
+}
+
+/* Floating PWA Banner */
+.pwa-floating-banner {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background: rgba(10, 13, 24, 0.95);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    border-radius: 20px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.2);
+    max-width: 92%;
+    width: 620px;
+    animation: pwaSlideUp 0.5s ease-out;
+}
+
+@keyframes pwaSlideUp {
+    from { transform: translate(-50%, 50px); opacity: 0; }
+    to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.pwa-banner-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.pwa-banner-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+.pwa-banner-text strong {
+    color: #fff;
+    display: block;
+    font-size: 1rem;
+}
+
+.pwa-banner-text p {
+    color: #a0a0b0;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.pwa-banner-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pwa-banner-close {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+    transition: color 0.2s;
+}
+
+.pwa-banner-close:hover {
+    color: #fff;
+}
+
+@media (max-width: 600px) {
+    .pwa-floating-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        bottom: 15px;
+        padding: 14px 18px;
+    }
+    .pwa-banner-actions {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+    .pwa-banner-actions .btn {
+        flex: 1;
+    }
+}
+
+/* PWA Guide Modal */
+.pwa-guide-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(14px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.pwa-guide-content {
+    position: relative;
+    max-width: 480px;
+    width: 100%;
+    padding: 35px 30px;
+    border-radius: 24px !important;
+    background: #0d101d !important;
+    border: 1px solid rgba(255, 215, 0, 0.3) !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 215, 0, 0.2) !important;
+}
+
+.pwa-guide-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    color: #aaa;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pwa-guide-close:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.pwa-step-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.pwa-step-card h4 {
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+}
+
+.pwa-step-card ol {
+    padding-left: 20px;
+    color: #ccc;
+    font-size: 0.95rem;
+    line-height: 1.8;
+}
+
+.pwa-step-card ol strong {
+    color: var(--color-gold);
+}
+
+

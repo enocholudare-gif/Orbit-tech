@@ -128,8 +128,11 @@
             </nav>
 
             <div class="nav-actions">
+                <button id="pwaInstallNavBtn" class="btn btn-outline btn-sm pwa-install-btn" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; font-weight: 600; border-color: var(--color-gold); color: var(--color-gold);">
+                    <i class="fas fa-download"></i> <span>Install App</span>
+                </button>
+                <a href="#quote" class="btn btn-primary btn-sm" style="margin-left: 8px;">Get a Quote</a>
                 <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
-
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
@@ -151,7 +154,8 @@
             <a href="#faq">FAQ</a>
             <a href="#contact">Contact Us</a>
             <a href="client-login.html" style="color: var(--color-gold);"><i class="fas fa-lock"></i> Client Portal</a>
-            <a href="#quote" class="btn btn-primary mt-4">Get a Quote</a>
+            <button id="pwaInstallMobileBtn" class="btn btn-outline" style="width: 100%; margin-top: 10px; border-color: var(--color-gold); color: var(--color-gold);"><i class="fas fa-download"></i> Install Orbit Tech App</button>
+            <a href="#quote" class="btn btn-primary mt-3">Get a Quote</a>
         </nav>
     </div>
 
@@ -472,41 +476,9 @@
                 <p>What our clients say about partnering with Orbit Tech.</p>
             </div>
 
-            <div class="testimonial-grid">
-                <!-- Static Reviews (The original ones) -->
-                <div class="testimonial-card glass-card hover-lift" data-animate="fade-up">
-                    <div class="stars text-gold">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                    </div>
-                    <p class="review-text">"Orbit Tech transformed our entire online presence. Their attention to detail, modern design philosophy, and automation setups saved our team 20 hours a week."</p>
-                    <div class="client-info">
-                        <div class="client-avatar">
-                            <img src="https://ui-avatars.com/api/?name=Sarah+Jenkins&background=random" alt="Client">
-                        </div>
-                        <div>
-                            <h4>Sarah Jenkins</h4>
-                            <p>CEO, TechFlow</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="testimonial-card hidden-review glass-card hover-lift" data-animate="fade-up" style="display: none;">
-                    <div class="stars text-gold">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                    </div>
-                    <p class="review-text">"The development speed and quality was outstanding. They really understood our brand's complex requirements."</p>
-                    <div class="client-info">
-                        <div class="client-avatar">
-                            <img src="https://ui-avatars.com/api/?name=Michael+Chen&background=random" alt="Client">
-                        </div>
-                        <div>
-                            <h4>Adenusi Opeyemi</h4>
-                            <p>Founder, Millennium Logistics app</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Dynamic reviews from admin (videos) will be appended here -->
+            <div class="testimonial-grid" id="testimonialGrid">
+                <!-- Dynamically loaded from /api/testimonials (Top 4 reviews displayed immediately) -->
+                <p class="text-center text-muted" style="grid-column: 1 / -1; padding: 2rem;"><i class="fas fa-spinner fa-spin text-gold"></i> Loading verified client reviews...</p>
             </div>
 
             <div class="text-center mt-5">
@@ -701,16 +673,16 @@
                         <label for="service">Service Needed</label>
                         <select id="service" name="service" required>
                             <option value="">Select a service...</option>
-                            <option value="Web & Software Development">Web Development (from ₦80K)</option>
-                            <option value="Page Setup">Page Setup (from ₦50K)</option>
-                            <option value="Social Media Management">Social Media Management (from ₦80K)</option>
-                            <option value="ERP Softwares">ERP Softwares (from ₦250K)</option>
-                            <option value="Graphics Design">Graphics Design (from ₦8K)</option>
-                            <option value="AI & Automation">AI & Automation (from ₦75K)</option>
-                            <option value="Mobile App Development">Mobile App Development (from ₦250K)</option>
-                            <option value="Digital Marketing">Digital Marketing (from ₦60K)</option>
-                            <option value="Branding">Branding (from ₦40K)</option>
-                            <option value="Tech Consultation">Tech Consultation (from ₦50K)</option>
+                            <option value="Web & Software Development">Web & Software Development</option>
+                            <option value="Page Setup & Optimization">Page Setup & Optimization</option>
+                            <option value="Social Media Management">Social Media Management</option>
+                            <option value="ERP Softwares & Automation">ERP Softwares & Automation</option>
+                            <option value="Graphics Design & Branding">Graphics Design & Branding</option>
+                            <option value="AI & Automation Pipelines">AI & Automation Pipelines</option>
+                            <option value="Mobile App Development">Mobile App Development</option>
+                            <option value="Digital Marketing & Ads">Digital Marketing & Ads</option>
+                            <option value="Brand Identity Design">Brand Identity Design</option>
+                            <option value="Tech Consultation & Strategy">Tech Consultation & Strategy</option>
                         </select>
                     </div>
 
@@ -811,12 +783,12 @@
             <div class="footer-links-group">
                 <h3>Services</h3>
                 <ul>
-                    <li><a href="#calculator">Web Development (from ₦80K)</a></li>
-                    <li><a href="#calculator">Page Setup (from ₦50K)</a></li>
-                    <li><a href="#calculator">Social Media (from ₦80K)</a></li>
-                    <li><a href="#calculator">ERP Softwares (from ₦250K)</a></li>
-                    <li><a href="#calculator">Graphics Design (from ₦8K)</a></li>
-                    <li><a href="#calculator">AI & Automation (from ₦75K)</a></li>
+                    <li><a href="#services">Web & Software Development</a></li>
+                    <li><a href="#services">Page Setup & Optimization</a></li>
+                    <li><a href="#services">Social Media Management</a></li>
+                    <li><a href="#services">ERP Softwares & Automations</a></li>
+                    <li><a href="#services">Graphics Design & Branding</a></li>
+                    <li><a href="#services">AI & Automation Pipelines</a></li>
                 </ul>
             </div>
 
@@ -844,8 +816,56 @@
         </div>
     </footer>
 
+    <!-- PWA INSTALL PROMPT BANNER -->
+    <div id="pwaBanner" class="pwa-floating-banner glass-card" style="display: none;">
+        <div class="pwa-banner-left">
+            <img src="favicon.png" alt="Orbit App" class="pwa-banner-icon">
+            <div class="pwa-banner-text">
+                <strong>Install Orbit Tech Web App</strong>
+                <p>Add to your home screen for instant access & offline speeds</p>
+            </div>
+        </div>
+        <div class="pwa-banner-actions">
+            <button id="pwaBannerInstallBtn" class="btn btn-primary btn-sm"><i class="fas fa-download"></i> Install Now</button>
+            <button id="pwaBannerCloseBtn" class="pwa-banner-close" aria-label="Dismiss banner">&times;</button>
+        </div>
+    </div>
+
+    <!-- PWA INSTALL INSTRUCTIONS MODAL (For iOS / Desktop) -->
+    <div id="pwaGuideModal" class="pwa-guide-modal" style="display: none;">
+        <div class="pwa-guide-content glass-card">
+            <button id="pwaGuideCloseBtn" class="pwa-guide-close">&times;</button>
+            <div class="text-center mb-3">
+                <img src="icon-192.png" alt="Orbit Tech" style="width: 72px; height: 72px; border-radius: 18px; margin: 0 auto 15px auto; box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);">
+                <h3 class="text-gold">Install Orbit Tech App</h3>
+                <p class="text-muted" style="font-size: 0.95rem;">Install this Progressive Web App directly to your device home screen.</p>
+            </div>
+            
+            <div id="pwaIosGuide" class="pwa-step-card" style="display: none;">
+                <h4><i class="fab fa-apple text-gold"></i> On iPhone / iPad (Safari):</h4>
+                <ol>
+                    <li>Tap the <strong>Share</strong> button <i class="fas fa-arrow-up-from-bracket text-gold"></i> in Safari's bottom toolbar.</li>
+                    <li>Scroll down and tap <strong>Add to Home Screen</strong> <i class="far fa-plus-square text-gold"></i>.</li>
+                    <li>Tap <strong>Add</strong> at top right to complete install.</li>
+                </ol>
+            </div>
+
+            <div id="pwaAndroidGuide" class="pwa-step-card">
+                <h4><i class="fab fa-android text-gold"></i> On Android / Chrome:</h4>
+                <ol>
+                    <li>Click <strong>Install App</strong> on the prompt, or open Chrome's <strong>Three Dots ⋮</strong> menu.</li>
+                    <li>Tap <strong>Install App</strong> or <strong>Add to Home Screen</strong>.</li>
+                    <li>Launch Orbit Tech from your app launcher!</li>
+                </ol>
+                <div class="text-center mt-3">
+                    <button id="pwaModalInstallAction" class="btn btn-primary btn-block"><i class="fas fa-download"></i> Install Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
-    <script src="script.js?v=2"></script>
+    <script src="script.js?v=3"></script>
 </body>
 
 </html>

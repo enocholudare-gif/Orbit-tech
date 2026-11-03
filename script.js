@@ -147,8 +147,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (res.ok) {
-                    formStatus.style.color = '#25D366'; // Success Green
-                    formStatus.textContent = 'Thank you! Your request has been received. Our team will contact you shortly.';
+                    const waMsg = encodeURIComponent(`Hello Orbit Tech! I just submitted an inquiry on your website.\n\nName: ${formData.name}\nService: ${formData.service}\nEmail: ${formData.email}\nPhone: ${formData.phone}\nMessage: ${formData.message}`);
+                    const mailtoLink = `mailto:orbitnewsblog@gmail.com?subject=${encodeURIComponent('Project Inquiry from ' + formData.name)}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone}\nService: ${formData.service}\n\nProject Details:\n${formData.message}`)}`;
+
+                    formStatus.style.color = '#25D366';
+                    formStatus.innerHTML = `
+                        <div style="background: rgba(37, 211, 102, 0.1); border: 1px solid #25D366; padding: 16px; border-radius: 12px; margin-top: 15px; text-align: left;">
+                            <strong style="color: #25D366; display: block; font-size: 1.05rem; margin-bottom: 6px;"><i class="fas fa-check-circle"></i> Request Received Successfully!</strong>
+                            <p style="margin: 0 0 10px 0; color: #e0e0e0; font-size: 0.95rem;">Our team is reviewing your project. To ensure instant delivery to our direct inbox, you can also send a 1-click email or chat with us on WhatsApp:</p>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <a href="${mailtoLink}" class="btn btn-sm btn-outline" style="border-color: var(--color-gold); color: var(--color-gold);"><i class="fas fa-envelope"></i> Open in Email (orbitnewsblog@gmail.com)</a>
+                                <a href="https://wa.me/+2347010765268?text=${waMsg}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>
+                            </div>
+                        </div>
+                    `;
                     quoteForm.reset();
                 } else {
                     const errorData = await res.json();
@@ -162,11 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } finally {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
-                
-                // Remove message after 5 seconds
-                setTimeout(() => {
-                    formStatus.textContent = '';
-                }, 5000);
             }
         });
     }
@@ -320,20 +327,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 8.6 Fetch Dynamic Testimonials
+    // 8.6 Fetch Dynamic Testimonials (Shows up to 4 reviews initially)
     const testimonialGrid = document.querySelector('.testimonial-grid');
     if (testimonialGrid) {
         async function loadTestimonials() {
             try {
-                const res = await fetch('/api/testimonials');
+                const res = await fetch('/api/testimonials', { cache: 'no-store' });
                 if (!res.ok) throw new Error('API down');
                 const testimonials = await res.json();
                 
                 if (testimonials.length > 0) {
-                    const dynamicHtml = testimonials.map((t, index) => {
-                        const delay = (index % 3) * 100;
+                    testimonialGrid.innerHTML = testimonials.map((t, index) => {
+                        const delay = (index % 4) * 100;
                         const isVideo = t.type === 'video' && t.videoUrl;
-                        const isHiddenInitially = index >= 3;
+                        const isHiddenInitially = index >= 4; // Exactly 4 reviews shown initially!
                         const isYouTube = isVideo && (t.videoUrl.includes('youtube.com') || t.videoUrl.includes('youtu.be'));
                         const ytEmbed = isYouTube ? t.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/') : '';
                         
@@ -348,45 +355,53 @@ document.addEventListener('DOMContentLoaded', () => {
                                         `}
                                     </div>
                                 ` : ''}
-                                <div style="color: var(--color-gold); margin-bottom: 10px;">
+                                <div style="color: var(--color-gold); margin-bottom: 10px; font-size: 1.1rem;">
                                     <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <p class="review-text">"${t.text}"</p>
+                                <p class="review-text" style="font-size: 1.05rem; line-height: 1.7; color: #ddd; margin-bottom: 1.5rem;">"${t.text}"</p>
                                 <div class="client-info">
                                     <div class="client-avatar">
                                         <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=1a1a1a&color=FFD700" alt="${t.name}">
                                     </div>
                                     <div>
-                                        <h4>${t.name}</h4>
-                                        <p>${t.role}</p>
+                                        <h4 style="color: #fff; margin-bottom: 2px;">${t.name}</h4>
+                                        <p class="text-gold" style="font-size: 0.85rem; font-weight: 500;">${t.role}</p>
                                     </div>
                                 </div>
                             </div>
                         `;
                     }).join('');
                     
-                    testimonialGrid.insertAdjacentHTML('beforeend', dynamicHtml);
+                    // Observe dynamic review cards for scroll animations
+                    if (window.scrollObserver) {
+                        testimonialGrid.querySelectorAll('[data-animate]').forEach(el => window.scrollObserver.observe(el));
+                    }
+                } else {
+                    testimonialGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1 / -1;">No client reviews found.</p>';
                 }
 
-                // Add Show More Logic (Moved outside if testimonials check)
+                // Add Show More Logic
                 const viewAllBtn = document.getElementById('viewAllReviews');
                 if (viewAllBtn) {
-                    viewAllBtn.addEventListener('click', () => {
-                        const hiddenReviews = document.querySelectorAll('.dynamic-review, .hidden-review');
-                        if (hiddenReviews.length > 0) {
+                    if (testimonials.length <= 4) {
+                        viewAllBtn.style.display = 'none';
+                    } else {
+                        viewAllBtn.style.display = 'inline-block';
+                        viewAllBtn.innerHTML = 'View All Reviews (' + testimonials.length + ') <i class="fas fa-chevron-down"></i>';
+                        viewAllBtn.onclick = () => {
+                            const hiddenReviews = testimonialGrid.querySelectorAll('.dynamic-review');
                             hiddenReviews.forEach(r => {
                                 r.style.display = 'block';
                                 r.classList.add('fade-in-visible');
                             });
                             viewAllBtn.style.display = 'none';
-                        } else {
-                            alert('No more reviews to show at the moment.');
-                        }
-                    });
+                        };
+                    }
                 }
 
             } catch (err) {
                 console.error("Error fetching testimonials:", err);
+                testimonialGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1 / -1;">Could not load client reviews at this moment.</p>';
             }
         }
         loadTestimonials();
@@ -609,10 +624,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const calcOtherServiceGroup = document.getElementById('calcOtherServiceGroup');
         const calcOtherServiceInput = document.getElementById('calcOtherService');
         
-        // Fetch pricing from backend
+        // Fetch pricing from backend (no-cache for instant dynamic sync from admin)
         async function initCalculator() {
             try {
-                const res = await fetch('/api/pricing');
+                const res = await fetch('/api/pricing', { cache: 'no-store' });
                 if (res.ok) {
                     pricingData = await res.json();
                     
@@ -810,6 +825,104 @@ document.addEventListener('DOMContentLoaded', () => {
             }).catch(err => {
                 console.log('PWA registration note:', err);
             });
+        });
+    }
+
+    // 11. PWA Install Experience (Navbar Button, Mobile Button, Banner & Guide)
+    let deferredPrompt = null;
+    const pwaNavBtn = document.getElementById('pwaInstallNavBtn');
+    const pwaMobileBtn = document.getElementById('pwaInstallMobileBtn');
+    const pwaBanner = document.getElementById('pwaBanner');
+    const pwaBannerInstallBtn = document.getElementById('pwaBannerInstallBtn');
+    const pwaBannerCloseBtn = document.getElementById('pwaBannerCloseBtn');
+    const pwaGuideModal = document.getElementById('pwaGuideModal');
+    const pwaGuideCloseBtn = document.getElementById('pwaGuideCloseBtn');
+    const pwaIosGuide = document.getElementById('pwaIosGuide');
+    const pwaAndroidGuide = document.getElementById('pwaAndroidGuide');
+    const pwaModalInstallAction = document.getElementById('pwaModalInstallAction');
+
+    const isIos = () => {
+        const ua = window.navigator.userAgent.toLowerCase();
+        return /iphone|ipad|ipod/.test(ua);
+    };
+
+    const isStandalone = () => {
+        return (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone === true);
+    };
+
+    if (!isStandalone()) {
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (pwaNavBtn) pwaNavBtn.style.display = 'inline-flex';
+            if (pwaMobileBtn) pwaMobileBtn.style.display = 'block';
+            if (pwaBanner && !sessionStorage.getItem('pwaDismissed')) {
+                pwaBanner.style.display = 'flex';
+            }
+        });
+
+        // Always show the install button in navigation so user clearly sees the install feature
+        if (pwaNavBtn) pwaNavBtn.style.display = 'inline-flex';
+        if (pwaMobileBtn) pwaMobileBtn.style.display = 'block';
+
+        // Display floating banner after 3 seconds if not previously dismissed
+        setTimeout(() => {
+            if (pwaBanner && !sessionStorage.getItem('pwaDismissed') && !isStandalone()) {
+                pwaBanner.style.display = 'flex';
+            }
+        }, 3000);
+    } else {
+        if (pwaNavBtn) pwaNavBtn.style.display = 'none';
+        if (pwaMobileBtn) pwaMobileBtn.style.display = 'none';
+        if (pwaBanner) pwaBanner.style.display = 'none';
+    }
+
+    const triggerPwaInstall = async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const choiceResult = await deferredPrompt.userChoice;
+            console.log('PWA install choice:', choiceResult.outcome);
+            deferredPrompt = null;
+            if (pwaBanner) pwaBanner.style.display = 'none';
+            if (pwaGuideModal) pwaGuideModal.style.display = 'none';
+        } else if (isIos()) {
+            if (pwaGuideModal && pwaIosGuide && pwaAndroidGuide) {
+                pwaIosGuide.style.display = 'block';
+                pwaAndroidGuide.style.display = 'none';
+                pwaGuideModal.style.display = 'flex';
+            }
+        } else {
+            if (pwaGuideModal && pwaIosGuide && pwaAndroidGuide) {
+                pwaIosGuide.style.display = 'none';
+                pwaAndroidGuide.style.display = 'block';
+                pwaGuideModal.style.display = 'flex';
+            }
+        }
+    };
+
+    if (pwaNavBtn) pwaNavBtn.addEventListener('click', triggerPwaInstall);
+    if (pwaMobileBtn) pwaMobileBtn.addEventListener('click', triggerPwaInstall);
+    if (pwaBannerInstallBtn) pwaBannerInstallBtn.addEventListener('click', triggerPwaInstall);
+    if (pwaModalInstallAction) pwaModalInstallAction.addEventListener('click', triggerPwaInstall);
+
+    if (pwaBannerCloseBtn && pwaBanner) {
+        pwaBannerCloseBtn.addEventListener('click', () => {
+            pwaBanner.style.display = 'none';
+            sessionStorage.setItem('pwaDismissed', 'true');
+        });
+    }
+
+    if (pwaGuideCloseBtn && pwaGuideModal) {
+        pwaGuideCloseBtn.addEventListener('click', () => {
+            pwaGuideModal.style.display = 'none';
+        });
+    }
+
+    if (pwaGuideModal) {
+        pwaGuideModal.addEventListener('click', (e) => {
+            if (e.target === pwaGuideModal) {
+                pwaGuideModal.style.display = 'none';
+            }
         });
     }
 });

@@ -260,9 +260,7 @@
                 const image = project.imageUrl || project.image || 'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project';
                 const link = project.liveUrl || project.link || project.projectLink || project.url || '';
                 const caseStudyUrl = project.id ? `case-study.html?id=${encodeURIComponent(project.id)}` : '';
-                const challenge = project.problem ? '<div><strong>The Challenge</strong><span>' + project.problem + '</span></div>' : '';
-                const solution = project.solution ? '<div><strong>Our Solution</strong><span>' + project.solution + '</span></div>' : '';
-                const result = project.result ? '<div><strong>The Result</strong><span>' + project.result + '</span></div>' : '';
+                const shortDesc = project.description || 'A high-impact digital project engineered by Orbit Tech.';
 
                 return '<article class="portfolio-card glass-card hover-lift" data-category="' + (project.category || 'General') + '">' +
                     '<span class="project-category-tag">' + (project.category || 'Project') + '</span>' +
@@ -270,11 +268,10 @@
                     '<img src="' + image + '" alt="' + (project.title || 'Project') + '" class="portfolio-card-img" onerror="this.src=\'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project\';">' +
                     '<div class="portfolio-card-body">' +
                         '<h3>' + (project.title || 'Untitled Project') + '</h3>' +
-                        '<p class="text-muted">' + (project.description || 'A recent project delivered by Orbit Tech.') + '</p>' +
-                        ((challenge || solution || result) ? '<div class="portfolio-case-study">' + challenge + solution + result + '</div>' : '') +
+                        '<p class="text-muted" style="margin-bottom: 1.2rem; line-height: 1.6;">' + shortDesc + '</p>' +
                         '<div class="portfolio-card-actions">' +
-                            (link ? '<a href="' + link + '" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Visit Project <i class="fas fa-external-link-alt"></i></a>' : '') +
-                            (caseStudyUrl ? '<a href="' + caseStudyUrl + '" class="btn btn-outline">Read Case Study</a>' : '<a href="index.html#quote" class="btn btn-outline">Start Similar Project</a>') +
+                            (link ? '<a href="' + link + '" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">Visit Project <i class="fas fa-external-link-alt"></i></a>' : '') +
+                            (caseStudyUrl ? '<a href="' + caseStudyUrl + '" class="btn btn-outline btn-sm">Read Case Study <i class="fas fa-arrow-right"></i></a>' : '<a href="index.html#quote" class="btn btn-outline btn-sm">Start Project</a>') +
                         '</div>' +
                     '</div>' +
                 '</article>';

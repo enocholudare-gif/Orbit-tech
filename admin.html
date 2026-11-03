@@ -42,6 +42,8 @@
         .view-section { display: none; }
         .view-section.active { display: block; }
         .nav-link-btn { cursor: pointer; }
+        .admin-layout { display: none !important; }
+        .admin-layout.authorized { display: flex !important; }
     </style>
 </head>
 <body class="bg-darker text-main">
@@ -663,13 +665,37 @@ Development in progress"></textarea>
         const loginForm = document.getElementById('loginForm');
         const loginStatus = document.getElementById('loginStatus');
 
-        const checkAuth = () => {
+        const adminLayout = document.querySelector('.admin-layout');
+
+        const checkAuth = async () => {
             const token = localStorage.getItem('orbitAdminToken');
-            if (token) {
+            if (!token) {
+                if (adminLayout) adminLayout.classList.remove('authorized');
+                loginOverlay.classList.add('active');
+                return;
+            }
+
+            try {
+                // Verify token authenticity with backend
+                const res = await fetch('/api/admin/messages', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.status === 401 || res.status === 403) {
+                    localStorage.removeItem('orbitAdminToken');
+                    if (adminLayout) adminLayout.classList.remove('authorized');
+                    loginOverlay.classList.add('active');
+                    return;
+                }
+
+                if (adminLayout) adminLayout.classList.add('authorized');
                 loginOverlay.classList.remove('active');
                 initDashboard();
-            } else {
-                loginOverlay.classList.add('active');
+            } catch (err) {
+                // Offline fallback if token exists
+                if (adminLayout) adminLayout.classList.add('authorized');
+                loginOverlay.classList.remove('active');
+                initDashboard();
             }
         };
 
@@ -689,11 +715,11 @@ Development in progress"></textarea>
                     const data = await res.json();
                     localStorage.setItem('orbitAdminToken', data.token);
                     loginStatus.textContent = 'Success! Entering dashboard...';
-                    // Trigger checkAuth immediately but with a tiny delay for visual feedback
                     setTimeout(() => {
+                        if (adminLayout) adminLayout.classList.add('authorized');
                         loginOverlay.classList.remove('active');
                         initDashboard();
-                    }, 800);
+                    }, 500);
                 } else {
                     loginStatus.textContent = 'Invalid credentials. Please try again.';
                 }
@@ -1236,8 +1262,9 @@ Development in progress"></textarea>
                             </div>
                         </div>
                         <div class="footer">
-                            <p>This is a verified document from Orbit Tech. Please make payments to the provided company accounts.</p>
-                            <p>Orbit Tech | Lagos & Ekiti, Nigeria | hello@orbittech.com.ng | +234 810 693 2689</p>
+                            <p style="font-weight: 700; color: #1a1a1a; margin-bottom: 5px;">Payment Notice:</p>
+                            <p style="color: #b8860b; font-weight: 600;">To complete payment, please contact us directly on WhatsApp at +234 701 076 5268 or email orbitnewsblog@gmail.com.</p>
+                            <p style="margin-top: 10px; color: #888;">Orbit Tech | Headquarters Nigeria | orbitnewsblog@gmail.com | +234 701 076 5268</p>
                         </div>
                     </div>
                 </body>
@@ -1354,15 +1381,15 @@ Development in progress"></textarea>
                     card.innerHTML = `
                         <h4 class="text-gold mb-3">${service.name}</h4>
                         <div class="admin-form-group">
-                            <label>Basic (USD)</label>
+                            <label>Basic (NGN ₦)</label>
                             <input type="number" id="price-${key}-basic" class="admin-input" value="${Number(packages.basic || 0)}" min="0">
                         </div>
                         <div class="admin-form-group">
-                            <label>Standard (USD)</label>
+                            <label>Standard (NGN ₦)</label>
                             <input type="number" id="price-${key}-standard" class="admin-input" value="${Number(packages.standard || 0)}" min="0">
                         </div>
                         <div class="admin-form-group">
-                            <label>Premium (USD)</label>
+                            <label>Premium (NGN ₦)</label>
                             <input type="number" id="price-${key}-premium" class="admin-input" value="${Number(packages.premium || 0)}" min="0">
                         </div>
                     `;
@@ -1452,39 +1479,64 @@ Development in progress"></textarea>
         document.getElementById('billingForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const status = document.getElementById('billingStatus');
-            status.textContent = 'Processing...';
+            status.textContent = 'Opening your email client...';
 
             const type = billingType.value;
+            const clientName = document.getElementById('billClientName').value;
+            const clientEmail = document.getElementById('billClientEmail').value;
+            const amount = document.getElementById('billAmount').value;
+            const desc = type === 'proposal'
+                ? (document.getElementById('billProjTitle').value || 'Service Proposal')
+                : (document.getElementById('billDesc').value || 'Service Invoice');
+            const details = type === 'proposal'
+                ? document.getElementById('billProjScope').value
+                : `Payment Due Date: ${document.getElementById('billDueDate').value || 'Upon Receipt'}`;
+
+            // Build mailto redirect
+            const subject = encodeURIComponent(`${type === 'proposal' ? 'Project Proposal' : 'Official Invoice'}: ${desc} - Orbit Tech`);
+            const body = encodeURIComponent(
+                `Dear ${clientName},\n\n` +
+                `Thank you for choosing Orbit Tech. Below are your official ${type} details:\n\n` +
+                `Item / Scope: ${desc}\n` +
+                `Details: ${details}\n` +
+                `Total Amount: ${amount}\n\n` +
+                `PAYMENT INSTRUCTIONS:\n` +
+                `To complete payment or confirm bank transfer, please contact us directly on WhatsApp at +234 701 076 5268 or reply to this email (orbitnewsblog@gmail.com).\n\n` +
+                `Warm regards,\n` +
+                `Orbit Tech Finance & Accounts\n` +
+                `Headquarters Nigeria | WhatsApp: +234 701 076 5268`
+            );
+
+            // Redirect to email client
+            const mailtoUrl = `mailto:${encodeURIComponent(clientEmail)}?subject=${subject}&body=${body}`;
+            window.location.href = mailtoUrl;
+
+            // Also send through backend if configured
             const url = type === 'proposal' ? '/api/send-proposal' : '/api/send-invoice';
-            
             const data = {
                 companyRc: document.getElementById('companyRc').value,
-                clientName: document.getElementById('billClientName').value,
-                clientEmail: document.getElementById('billClientEmail').value,
-                budget: document.getElementById('billAmount').value,
-                amount: document.getElementById('billAmount').value // for invoice
+                clientName,
+                clientEmail,
+                budget: amount,
+                amount
             };
-
             if (type === 'proposal') {
-                data.projectTitle = document.getElementById('billProjTitle').value;
-                data.projectScope = document.getElementById('billProjScope').value;
+                data.projectTitle = desc;
+                data.projectScope = details;
             } else {
-                data.description = document.getElementById('billDesc').value;
+                data.description = desc;
                 data.dueDate = document.getElementById('billDueDate').value;
             }
 
-            const res = await apiFetch(url, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-
-            if (res.ok) {
-                status.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} sent successfully!`;
-                e.target.reset();
-                setTimeout(() => status.textContent = '', 4000);
-            } else {
-                status.textContent = 'Failed to send. Check server logs.';
+            try {
+                await apiFetch(url, { method: 'POST', body: JSON.stringify(data) });
+            } catch (err) {
+                console.log('Background dispatch attempted');
             }
+
+            status.style.color = '#25D366';
+            status.textContent = `Redirected to email client for ${clientEmail}!`;
+            setTimeout(() => status.textContent = '', 5000);
         });
 
         // --- HELPERS ---
