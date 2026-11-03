@@ -327,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 8.6 Fetch Dynamic Testimonials (Shows up to 4 reviews initially)
+    // 8.6 Fetch Dynamic Testimonials (Shows 4 reviews initially, syncs from admin)
     const testimonialGrid = document.querySelector('.testimonial-grid');
     if (testimonialGrid) {
         async function loadTestimonials() {
@@ -336,16 +336,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!res.ok) throw new Error('API down');
                 const testimonials = await res.json();
                 
-                if (testimonials.length > 0) {
+                if (testimonials && testimonials.length > 0) {
                     testimonialGrid.innerHTML = testimonials.map((t, index) => {
-                        const delay = (index % 4) * 100;
                         const isVideo = t.type === 'video' && t.videoUrl;
-                        const isHiddenInitially = index >= 4; // Exactly 4 reviews shown initially!
+                        const isHiddenInitially = index >= 4; // Top 4 reviews shown initially!
                         const isYouTube = isVideo && (t.videoUrl.includes('youtube.com') || t.videoUrl.includes('youtu.be'));
                         const ytEmbed = isYouTube ? t.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/') : '';
                         
                         return `
-                            <div class="testimonial-card dynamic-review glass-card hover-lift" data-animate="fade-up" style="animation-delay: ${delay}ms; ${isHiddenInitially ? 'display: none;' : ''}">
+                            <div class="testimonial-card dynamic-review glass-card hover-lift" style="opacity: 1 !important; transform: none !important; ${isHiddenInitially ? 'display: none;' : 'display: flex;'}">
                                 ${isVideo ? `
                                     <div class="video-container" style="position:relative; border-radius:12px; overflow:hidden; margin-bottom:1.5rem; background:#000;">
                                         ${isYouTube ? `
@@ -371,28 +370,22 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         `;
                     }).join('');
-                    
-                    // Observe dynamic review cards for scroll animations
-                    if (window.scrollObserver) {
-                        testimonialGrid.querySelectorAll('[data-animate]').forEach(el => window.scrollObserver.observe(el));
-                    }
-                } else {
-                    testimonialGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1 / -1;">No client reviews found.</p>';
                 }
 
                 // Add Show More Logic
                 const viewAllBtn = document.getElementById('viewAllReviews');
                 if (viewAllBtn) {
-                    if (testimonials.length <= 4) {
+                    const hiddenReviews = testimonialGrid.querySelectorAll('.dynamic-review[style*="display: none"]');
+                    if (hiddenReviews.length === 0) {
                         viewAllBtn.style.display = 'none';
                     } else {
                         viewAllBtn.style.display = 'inline-block';
-                        viewAllBtn.innerHTML = 'View All Reviews (' + testimonials.length + ') <i class="fas fa-chevron-down"></i>';
+                        viewAllBtn.innerHTML = 'View All Reviews (' + (testimonials ? testimonials.length : 6) + ') <i class="fas fa-chevron-down"></i>';
                         viewAllBtn.onclick = () => {
-                            const hiddenReviews = testimonialGrid.querySelectorAll('.dynamic-review');
-                            hiddenReviews.forEach(r => {
-                                r.style.display = 'block';
-                                r.classList.add('fade-in-visible');
+                            const hiddenList = testimonialGrid.querySelectorAll('.dynamic-review');
+                            hiddenList.forEach(r => {
+                                r.style.display = 'flex';
+                                r.style.opacity = '1';
                             });
                             viewAllBtn.style.display = 'none';
                         };
@@ -400,8 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
             } catch (err) {
-                console.error("Error fetching testimonials:", err);
-                testimonialGrid.innerHTML = '<p class="text-center text-muted" style="grid-column: 1 / -1;">Could not load client reviews at this moment.</p>';
+                console.log("Using pre-rendered testimonials fallback:", err);
             }
         }
         loadTestimonials();

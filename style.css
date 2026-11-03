@@ -2070,12 +2070,15 @@ header.scrolled {
 }
 
 .testimonial-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    height: 100% !important;
     border-radius: 20px !important;
     padding: 30px !important;
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
 }
 
 .testimonial-card .client-info {
