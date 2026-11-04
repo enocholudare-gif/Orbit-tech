@@ -38,9 +38,11 @@
     "name": "Michael Adeleke",
     "role": "Co-founder, PaySprint Africa",
     "tag": "Fintech Video Case Study",
-    "text": "Watch our co-founder explain how Orbit Tech engineered our merchant verification flows and payment dashboard with banking-grade security and modern responsiveness.",
+    "text": "Watch our client review detailing how Orbit Tech engineered our merchant verification flows and payment dashboard with top-tier security standards.",
     "type": "video",
-    "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "videoUrl": "revv-video.mp4",
+    "poster": "revv.jpg",
+    "avatar": "revv.jpg",
     "rating": 5,
     "timestamp": "2026-10-30T11:00:00.000Z"
   },

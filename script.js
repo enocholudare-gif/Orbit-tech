@@ -366,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         ${isYouTube ? `
                                             <iframe src="${ytEmbed}" style="width:100%; aspect-ratio:16/9; border:none; border-radius:14px;" allowfullscreen></iframe>
                                         ` : `
-                                            <video src="${t.videoUrl}" style="width:100%; aspect-ratio:16/9; display: block; border-radius:14px;" controls preload="metadata" playsinline></video>
+                                            <video src="${t.videoUrl || 'revv-video.mp4'}" poster="${t.poster || 'revv.jpg'}" style="width:100%; aspect-ratio:16/9; display: block; border-radius:14px; object-fit: cover;" controls preload="metadata" playsinline></video>
                                         `}
                                     </div>
                                 ` : ''}
@@ -376,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="review-card-footer">
                                     <div class="review-author-box">
                                         <div class="author-avatar-wrap">
-                                            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=111420&color=FFD700" alt="${t.name}" class="author-avatar-img">
+                                            <img src="${t.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=111420&color=FFD700`}" alt="${t.name}" class="author-avatar-img">
                                         </div>
                                         <div class="author-meta">
                                             <h4 class="author-fullname">${t.name}</h4>

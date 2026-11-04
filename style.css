@@ -418,6 +418,31 @@ header.scrolled {
     overflow: hidden;
 }
 
+.hero-video-bg-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.hero-bg-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.38;
+    filter: brightness(0.85) contrast(1.15) saturate(1.2);
+}
+
+.hero-video-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 35% 35%, rgba(8, 9, 15, 0.6) 0%, rgba(5, 6, 10, 0.92) 85%);
+}
+
 .hero-bg-overlay {
     position: absolute;
     top: -50%;
@@ -425,7 +450,7 @@ header.scrolled {
     width: 200%;
     height: 200%;
     background: radial-gradient(circle at center, rgba(212, 175, 55, 0.08) 0%, transparent 50%);
-    z-index: -1;
+    z-index: 1;
     animation: rotateBg 30s linear infinite;
 }
 
@@ -438,6 +463,44 @@ header.scrolled {
     grid-template-columns: 1fr 1fr;
     gap: 3rem;
     align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+/* About Section Video Background */
+.about {
+    position: relative;
+    overflow: hidden;
+}
+
+.about-video-bg-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.about-bg-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.28;
+    filter: brightness(0.8) contrast(1.2);
+}
+
+.about-video-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(8, 9, 15, 0.95) 0%, rgba(13, 17, 30, 0.8) 50%, rgba(8, 9, 15, 0.95) 100%);
+}
+
+.about-wrapper {
+    position: relative;
+    z-index: 2;
 }
 
 .hero-text h1 {
