@@ -1,5 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
     
+    // 0. Ensure Hero and About Us Video Backgrounds Autoplay Seamlessly
+    const bgVideos = document.querySelectorAll('.hero-bg-video, .about-bg-video');
+    bgVideos.forEach(vid => {
+        vid.muted = true;
+        vid.defaultMuted = true;
+        vid.playsInline = true;
+        vid.setAttribute('muted', '');
+        vid.setAttribute('playsinline', '');
+        vid.setAttribute('webkit-playsinline', '');
+        
+        const tryPlay = () => {
+            const p = vid.play();
+            if (p !== undefined) {
+                p.catch(() => {
+                    // Retry on first interaction if browser blocked strict autoplay
+                    const onUserAction = () => {
+                        vid.play();
+                        ['click', 'touchstart', 'scroll'].forEach(evt => window.removeEventListener(evt, onUserAction));
+                    };
+                    ['click', 'touchstart', 'scroll'].forEach(evt => window.addEventListener(evt, onUserAction, { passive: true, once: true }));
+                });
+            }
+        };
+        tryPlay();
+    });
+
     // 1. Mobile Menu Toggle
     const mobileToggle = document.getElementById('mobileToggle');
     const mobileClose = document.getElementById('mobileClose');
@@ -327,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 8.6 Fetch Dynamic Testimonials (Shows 4 reviews initially, syncs from admin)
+    // 8.6 Fetch Dynamic Testimonials (Executive Spotlight + 3-Column Grid)
     const testimonialGrid = document.querySelector('.testimonial-grid');
     if (testimonialGrid) {
         async function loadTestimonials() {
@@ -337,79 +363,106 @@ document.addEventListener('DOMContentLoaded', () => {
                 const testimonials = await res.json();
                 
                 if (testimonials && testimonials.length > 0) {
-                    testimonialGrid.innerHTML = testimonials.map((t, index) => {
-                        const isVideo = t.type === 'video' && t.videoUrl;
-                        const isHiddenInitially = index >= 4; // Top 4 reviews shown initially!
-                        const isYouTube = isVideo && (t.videoUrl.includes('youtube.com') || t.videoUrl.includes('youtu.be'));
-                        const ytEmbed = isYouTube ? t.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/') : '';
-                        const headline = t.headline || (isVideo ? 'Robust Fintech Engineering & Security' : 'Outstanding Results & Dedicated Delivery');
-                        const tag = t.tag || (isVideo ? 'Video Review' : 'Verified Project');
+                    const videoReview = testimonials.find(t => t.type === 'video' && t.videoUrl);
+                    const textReviews = testimonials.filter(t => t.type !== 'video' || !t.videoUrl);
 
-                        return `
-                            <article class="testimonial-card modern-review-card dynamic-review glass-card hover-lift" style="opacity: 1 !important; transform: none !important; ${isHiddenInitially ? 'display: none;' : 'display: flex;'}">
-                                <div class="review-card-header">
-                                    <div class="review-stars-group">
-                                        <div class="stars-gold">
-                                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                        </div>
-                                        <span class="rating-val">5.0</span>
-                                    </div>
-                                    <span class="review-verified-pill ${isVideo ? 'video-pill' : ''}">
-                                        <i class="fas ${isVideo ? 'fa-play-circle' : 'fa-check-circle'}"></i> ${isVideo ? 'Video Review' : 'Verified Client'}
-                                    </span>
+                    // 1. Populate Spotlight Video Review
+                    const spotlightContainer = document.getElementById('videoSpotlightContainer');
+                    if (spotlightContainer && videoReview) {
+                        const isYouTube = videoReview.videoUrl.includes('youtube.com') || videoReview.videoUrl.includes('youtu.be');
+                        const ytEmbed = isYouTube ? videoReview.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/') : '';
+                        const vidHeadline = videoReview.headline || 'Robust Fintech Verification & Payment Security';
+
+                        spotlightContainer.innerHTML = `
+                            <div class="spotlight-video-col">
+                                <div class="spotlight-video-frame">
+                                    ${isYouTube ? `
+                                        <iframe src="${ytEmbed}" style="width:100%; aspect-ratio:16/9; border:none;" allowfullscreen></iframe>
+                                    ` : `
+                                        <video id="featuredReviewVideo" src="${videoReview.videoUrl || 'revv-video.mp4'}" poster="${videoReview.poster || 'revv.jpg'}" controls preload="metadata" playsinline></video>
+                                    `}
+                                    <div class="spotlight-play-badge"><i class="fas fa-play-circle"></i> Client Video Review</div>
                                 </div>
-
-                                <h3 class="review-headline">"${headline}"</h3>
-
-                                ${isVideo ? `
-                                    <div class="modern-video-frame">
-                                        ${isYouTube ? `
-                                            <iframe src="${ytEmbed}" style="width:100%; aspect-ratio:16/9; border:none; border-radius:14px;" allowfullscreen></iframe>
-                                        ` : `
-                                            <video src="${t.videoUrl || 'revv-video.mp4'}" poster="${t.poster || 'revv.jpg'}" style="width:100%; aspect-ratio:16/9; display: block; border-radius:14px; object-fit: cover;" controls preload="metadata" playsinline></video>
-                                        `}
-                                    </div>
-                                ` : ''}
-
-                                <p class="review-body-text">"${t.text}"</p>
-
-                                <div class="review-card-footer">
-                                    <div class="review-author-box">
-                                        <div class="author-avatar-wrap">
-                                            <img src="${t.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=111420&color=FFD700`}" alt="${t.name}" class="author-avatar-img">
-                                        </div>
-                                        <div class="author-meta">
-                                            <h4 class="author-fullname">${t.name}</h4>
-                                            <p class="author-title-company">${t.role}</p>
-                                        </div>
-                                    </div>
-                                    <span class="review-tag-pill">${tag}</span>
+                            </div>
+                            <div class="spotlight-details-col">
+                                <div class="spotlight-meta-top">
+                                    <div class="stars-gold"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                                    <span class="spotlight-verified"><i class="fas fa-shield-alt text-gold"></i> Verified Executive Review</span>
                                 </div>
-                            </article>
+                                <h3 class="spotlight-quote-title">"${vidHeadline}"</h3>
+                                <p class="spotlight-quote-text">
+                                    "${videoReview.text}"
+                                </p>
+                                <div class="spotlight-author-footer">
+                                    <div class="spotlight-author-info">
+                                        <img src="${videoReview.avatar || videoReview.poster || 'revv.jpg'}" alt="${videoReview.name}" class="spotlight-avatar-img">
+                                        <div>
+                                            <h4 class="spotlight-author-name">${videoReview.name}</h4>
+                                            <p class="spotlight-author-role">${videoReview.role}</p>
+                                        </div>
+                                    </div>
+                                    <span class="spotlight-tag">${videoReview.tag || 'Fintech Infrastructure'}</span>
+                                </div>
+                            </div>
                         `;
-                    }).join('');
-                }
+                    }
 
-                // Add Show More Logic
-                const viewAllBtn = document.getElementById('viewAllReviews');
-                if (viewAllBtn) {
-                    const hiddenReviews = testimonialGrid.querySelectorAll('.dynamic-review[style*="display: none"]');
-                    if (hiddenReviews.length === 0) {
-                        viewAllBtn.style.display = 'none';
-                    } else {
-                        viewAllBtn.style.display = 'inline-block';
-                        viewAllBtn.innerHTML = 'View All Reviews (' + (testimonials ? testimonials.length : 6) + ') <i class="fas fa-chevron-down"></i>';
-                        viewAllBtn.onclick = () => {
-                            const hiddenList = testimonialGrid.querySelectorAll('.dynamic-review');
-                            hiddenList.forEach(r => {
-                                r.style.display = 'flex';
-                                r.style.opacity = '1';
-                            });
+                    // 2. Populate Symmetrical 3-Column Testimonial Grid
+                    if (textReviews.length > 0) {
+                        testimonialGrid.innerHTML = textReviews.map((t, index) => {
+                            const isHidden = index >= 3; // Initial 3 cards fit clean 1-row desktop grid
+                            return `
+                                <article class="testimonial-card modern-review-card dynamic-review glass-card hover-lift" style="${isHidden ? 'display: none;' : 'display: flex;'}">
+                                    <div class="review-card-header">
+                                        <div class="review-stars-group">
+                                            <div class="stars-gold">
+                                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                            </div>
+                                            <span class="rating-val">5.0</span>
+                                        </div>
+                                        <span class="review-verified-pill"><i class="fas fa-check-circle"></i> Verified Client</span>
+                                    </div>
+
+                                    <h3 class="review-headline">"${t.headline || 'Outstanding Results & Dedicated Delivery'}"</h3>
+
+                                    <p class="review-body-text">"${t.text}"</p>
+
+                                    <div class="review-card-footer">
+                                        <div class="review-author-box">
+                                            <div class="author-avatar-wrap">
+                                                <img src="${t.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=111420&color=FFD700`}" alt="${t.name}" class="author-avatar-img">
+                                            </div>
+                                            <div class="author-meta">
+                                                <h4 class="author-fullname">${t.name}</h4>
+                                                <p class="author-title-company">${t.role}</p>
+                                            </div>
+                                        </div>
+                                        <span class="review-tag-pill">${t.tag || 'Verified Project'}</span>
+                                    </div>
+                                </article>
+                            `;
+                        }).join('');
+                    }
+
+                    // 3. Add Show More Logic
+                    const viewAllBtn = document.getElementById('viewAllReviews');
+                    if (viewAllBtn) {
+                        const hiddenReviews = testimonialGrid.querySelectorAll('.dynamic-review[style*="display: none"]');
+                        if (hiddenReviews.length === 0) {
                             viewAllBtn.style.display = 'none';
-                        };
+                        } else {
+                            viewAllBtn.style.display = 'inline-block';
+                            viewAllBtn.innerHTML = `View More Reviews (${textReviews.length}) <i class="fas fa-chevron-down"></i>`;
+                            viewAllBtn.onclick = () => {
+                                const allCards = testimonialGrid.querySelectorAll('.dynamic-review');
+                                allCards.forEach(r => {
+                                    r.style.display = 'flex';
+                                });
+                                viewAllBtn.style.display = 'none';
+                            };
+                        }
                     }
                 }
-
             } catch (err) {
                 console.log("Using pre-rendered testimonials fallback:", err);
             }
