@@ -40,81 +40,6 @@
             color: #1a1a1a;
             font-weight: 600;
         }
-        .portfolio-page-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-        .project-category-tag {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: var(--color-gold);
-            color: #1a1a1a;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            z-index: 10;
-        }
-        .project-featured-tag {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #ff4d4d;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            z-index: 10;
-        }
-        .portfolio-card-actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 18px;
-            align-items: center;
-        }
-        .portfolio-card {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
-        .portfolio-card-img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            display: block;
-        }
-        .portfolio-card-body {
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-        .portfolio-card-body p {
-            margin-top: 12px;
-        }
-        .portfolio-case-study {
-            margin-top: 18px;
-            display: grid;
-            gap: 12px;
-        }
-        .portfolio-case-study div {
-            padding: 14px;
-            border: 1px solid rgba(255, 215, 0, 0.15);
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.02);
-        }
-        .portfolio-case-study strong {
-            display: block;
-            margin-bottom: 6px;
-            color: var(--color-gold);
-        }
     </style>
 </head>
 <body class="bg-darker text-main">
@@ -213,9 +138,9 @@
             <div class="footer-contact">
                 <h3>Headquarters</h3>
                 <ul>
-                    <li><i class="fas fa-map-marker-alt text-gold"></i> Headquarters Nigeria</li>
-                    <li><a href="mailto:orbitnewsblog@gmail.com"><i class="fas fa-envelope text-gold"></i> orbitnewsblog@gmail.com</a></li>
-                    <li><a href="https://wa.me/+2347010765268" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp text-gold"></i> +234 701 076 5268</a></li>
+                    <li><i class="fas fa-map-marker-alt text-gold"></i> <span>Headquarters Nigeria</span></li>
+                    <li><a href="mailto:orbitnewsblog@gmail.com"><i class="fas fa-envelope text-gold"></i> <span>orbitnewsblog@gmail.com</span></a></li>
+                    <li><a href="https://wa.me/+2347010765268" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp text-gold"></i> <span>+234 701 076 5268</span></a></li>
                 </ul>
             </div>
         </div>
@@ -258,19 +183,31 @@
 
             grid.innerHTML = filtered.map(project => {
                 const image = project.imageUrl || project.image || 'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project';
-                const link = project.liveUrl || project.link || project.projectLink || project.url || '';
+                let rawLink = (project.liveUrl || project.link || project.projectLink || project.url || '').trim();
+                let cleanLink = '';
+                if (rawLink) {
+                    cleanLink = /^https?:\/\//i.test(rawLink) ? rawLink : 'https://' + rawLink;
+                }
                 const caseStudyUrl = project.id ? `case-study.html?id=${encodeURIComponent(project.id)}` : '';
                 const shortDesc = project.description || 'A high-impact digital project engineered by Orbit Tech.';
+                const category = project.category || 'Website Development';
+                const title = project.title || 'Untitled Project';
 
-                return '<article class="portfolio-card glass-card hover-lift" data-category="' + (project.category || 'General') + '">' +
-                    '<span class="project-category-tag">' + (project.category || 'Project') + '</span>' +
-                    (project.featured ? '<span class="project-featured-tag">Featured</span>' : '') +
-                    '<img src="' + image + '" alt="' + (project.title || 'Project') + '" class="portfolio-card-img" onerror="this.src=\'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project\';">' +
+                return '<article class="portfolio-card glass-card hover-lift" data-category="' + category + '">' +
+                    '<div class="portfolio-card-header">' +
+                        '<div class="portfolio-card-tags">' +
+                            '<span class="project-category-tag">' + category + '</span>' +
+                            (project.featured ? '<span class="project-featured-tag"><i class="fas fa-star"></i> Featured</span>' : '') +
+                        '</div>' +
+                        '<h3 class="portfolio-card-title">' + title + '</h3>' +
+                    '</div>' +
+                    '<div class="portfolio-card-media">' +
+                        '<img src="' + image + '" alt="' + title + '" class="portfolio-card-img" loading="lazy" onerror="this.src=\'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project\';">' +
+                    '</div>' +
                     '<div class="portfolio-card-body">' +
-                        '<h3>' + (project.title || 'Untitled Project') + '</h3>' +
-                        '<p class="text-muted" style="margin-bottom: 1.2rem; line-height: 1.6;">' + shortDesc + '</p>' +
+                        '<p class="portfolio-card-desc">' + shortDesc + '</p>' +
                         '<div class="portfolio-card-actions">' +
-                            (link ? '<a href="' + link + '" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">Visit Project <i class="fas fa-external-link-alt"></i></a>' : '') +
+                            (cleanLink ? '<a href="' + cleanLink + '" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm portfolio-live-btn">Visit Website <i class="fas fa-external-link-alt"></i></a>' : '') +
                             (caseStudyUrl ? '<a href="' + caseStudyUrl + '" class="btn btn-outline btn-sm">Read Case Study <i class="fas fa-arrow-right"></i></a>' : '<a href="index.html#quote" class="btn btn-outline btn-sm">Start Project</a>') +
                         '</div>' +
                     '</div>' +

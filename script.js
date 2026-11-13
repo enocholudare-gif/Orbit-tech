@@ -158,12 +158,24 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
 
             const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: (document.getElementById('phone').value || '').trim() || 'N/A',
                 service: document.getElementById('service').value,
-                message: document.getElementById('message').value
+                message: document.getElementById('message').value.trim()
             };
+
+            // Instant local inbox record
+            try {
+                const localInquiries = JSON.parse(localStorage.getItem('orbit_inbox_messages') || '[]');
+                localInquiries.unshift({
+                    id: Date.now().toString(),
+                    ...formData,
+                    timestamp: new Date().toISOString(),
+                    read: false
+                });
+                localStorage.setItem('orbit_inbox_messages', JSON.stringify(localInquiries.slice(0, 100)));
+            } catch (e) {}
 
             try {
                 const res = await fetch('/api/contact', {
@@ -313,19 +325,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
             homePortfolioGrid.innerHTML = visibleProjects.map(project => {
                 const image = project.imageUrl || project.image || 'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project';
-                const link = project.liveUrl || project.link || project.projectLink || project.url || '';
+                let rawLink = (project.liveUrl || project.link || project.projectLink || project.url || '').trim();
+                let cleanLink = '';
+                if (rawLink) {
+                    cleanLink = /^https?:\/\//i.test(rawLink) ? rawLink : 'https://' + rawLink;
+                }
                 const caseStudyUrl = project.id ? `case-study.html?id=${encodeURIComponent(project.id)}` : 'portfolio.html';
+                const shortDesc = project.description || 'A high-impact digital project engineered by Orbit Tech.';
+                const category = project.category || 'Website Development';
+                const title = project.title || 'Untitled Project';
 
-                return '<article class="portfolio-card glass-card hover-lift">' +
-                    '<span class="project-category-tag">' + (project.category || 'Project') + '</span>' +
-                    (project.featured ? '<span class="project-featured-tag">Featured</span>' : '') +
-                    '<img src="' + image + '" alt="' + (project.title || 'Project') + '" class="portfolio-card-img" onerror="this.src=\'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project\';">' +
+                return '<article class="portfolio-card glass-card hover-lift" data-category="' + category + '">' +
+                    '<div class="portfolio-card-header">' +
+                        '<div class="portfolio-card-tags">' +
+                            '<span class="project-category-tag">' + category + '</span>' +
+                            (project.featured ? '<span class="project-featured-tag"><i class="fas fa-star"></i> Featured</span>' : '') +
+                        '</div>' +
+                        '<h3 class="portfolio-card-title">' + title + '</h3>' +
+                    '</div>' +
+                    '<div class="portfolio-card-media">' +
+                        '<img src="' + image + '" alt="' + title + '" class="portfolio-card-img" loading="lazy" onerror="this.src=\'https://placehold.co/800x500/111111/FFD700?text=Orbit+Tech+Project\';">' +
+                    '</div>' +
                     '<div class="portfolio-card-body">' +
-                        '<h3>' + (project.title || 'Untitled Project') + '</h3>' +
-                        '<p class="text-muted">' + (project.description || 'A recent project delivered by Orbit Tech.') + '</p>' +
+                        '<p class="portfolio-card-desc">' + shortDesc + '</p>' +
                         '<div class="portfolio-card-actions">' +
-                            (link ? '<a href="' + link + '" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Visit Project <i class="fas fa-external-link-alt"></i></a>' : '') +
-                            '<a href="' + caseStudyUrl + '" class="btn btn-outline">Case Study</a>' +
+                            (cleanLink ? '<a href="' + cleanLink + '" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm portfolio-live-btn">Visit Website <i class="fas fa-external-link-alt"></i></a>' : '') +
+                            '<a href="' + caseStudyUrl + '" class="btn btn-outline btn-sm">Case Study <i class="fas fa-arrow-right"></i></a>' +
                         '</div>' +
                     '</div>' +
                 '</article>';
@@ -353,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 8.6 Fetch Dynamic Testimonials (Executive Spotlight + 3-Column Grid)
+    // 8.6 Fetch Dynamic Testimonials (Pure Client Reviews - No Video)
     const testimonialGrid = document.querySelector('.testimonial-grid');
     if (testimonialGrid) {
         async function loadTestimonials() {
@@ -363,88 +388,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 const testimonials = await res.json();
                 
                 if (testimonials && testimonials.length > 0) {
-                    const videoReview = testimonials.find(t => t.type === 'video' && t.videoUrl);
-                    const textReviews = testimonials.filter(t => t.type !== 'video' || !t.videoUrl);
+                    // Render all testimonials as pure, elegant review cards (No video player)
+                    testimonialGrid.innerHTML = testimonials.map((t, index) => {
+                        const isHidden = index >= 4; // Top 4 reviews shown initially on homepage!
+                        const headline = t.headline || 'Outstanding Results & Dedicated Delivery';
+                        const avatarSrc = t.avatar || (t.id === 'test-4' ? 'revv.jpg' : `https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=111420&color=FFD700`);
 
-                    // 1. Populate Spotlight Video Review
-                    const spotlightContainer = document.getElementById('videoSpotlightContainer');
-                    if (spotlightContainer && videoReview) {
-                        const isYouTube = videoReview.videoUrl.includes('youtube.com') || videoReview.videoUrl.includes('youtu.be');
-                        const ytEmbed = isYouTube ? videoReview.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/') : '';
-                        const vidHeadline = videoReview.headline || 'Robust Fintech Verification & Payment Security';
+                        return `
+                            <article class="testimonial-card modern-review-card dynamic-review glass-card hover-lift" style="${isHidden ? 'display: none;' : 'display: flex;'}">
+                                <div class="review-card-header">
+                                    <div class="review-stars-group">
+                                        <div class="stars-gold">
+                                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="rating-val">5.0</span>
+                                    </div>
+                                    <span class="review-verified-pill"><i class="fas fa-check-circle"></i> Verified Client</span>
+                                </div>
 
-                        spotlightContainer.innerHTML = `
-                            <div class="spotlight-video-col">
-                                <div class="spotlight-video-frame">
-                                    ${isYouTube ? `
-                                        <iframe src="${ytEmbed}" style="width:100%; aspect-ratio:16/9; border:none;" allowfullscreen></iframe>
-                                    ` : `
-                                        <video id="featuredReviewVideo" src="${videoReview.videoUrl || 'revv-video.mp4'}" poster="${videoReview.poster || 'revv.jpg'}" controls preload="metadata" playsinline></video>
-                                    `}
-                                    <div class="spotlight-play-badge"><i class="fas fa-play-circle"></i> Client Video Review</div>
-                                </div>
-                            </div>
-                            <div class="spotlight-details-col">
-                                <div class="spotlight-meta-top">
-                                    <div class="stars-gold"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                                    <span class="spotlight-verified"><i class="fas fa-shield-alt text-gold"></i> Verified Executive Review</span>
-                                </div>
-                                <h3 class="spotlight-quote-title">"${vidHeadline}"</h3>
-                                <p class="spotlight-quote-text">
-                                    "${videoReview.text}"
-                                </p>
-                                <div class="spotlight-author-footer">
-                                    <div class="spotlight-author-info">
-                                        <img src="${videoReview.avatar || videoReview.poster || 'revv.jpg'}" alt="${videoReview.name}" class="spotlight-avatar-img">
-                                        <div>
-                                            <h4 class="spotlight-author-name">${videoReview.name}</h4>
-                                            <p class="spotlight-author-role">${videoReview.role}</p>
+                                <h3 class="review-headline">"${headline}"</h3>
+
+                                <p class="review-body-text">"${t.text}"</p>
+
+                                <div class="review-card-footer">
+                                    <div class="review-author-box">
+                                        <div class="author-avatar-wrap">
+                                            <img src="${avatarSrc}" alt="${t.name}" class="author-avatar-img">
+                                        </div>
+                                        <div class="author-meta">
+                                            <h4 class="author-fullname">${t.name}</h4>
+                                            <p class="author-title-company">${t.role}</p>
                                         </div>
                                     </div>
-                                    <span class="spotlight-tag">${videoReview.tag || 'Fintech Infrastructure'}</span>
+                                    <span class="review-tag-pill">${t.tag || 'Verified Client'}</span>
                                 </div>
-                            </div>
+                            </article>
                         `;
-                    }
+                    }).join('');
 
-                    // 2. Populate Symmetrical 3-Column Testimonial Grid
-                    if (textReviews.length > 0) {
-                        testimonialGrid.innerHTML = textReviews.map((t, index) => {
-                            const isHidden = index >= 3; // Initial 3 cards fit clean 1-row desktop grid
-                            return `
-                                <article class="testimonial-card modern-review-card dynamic-review glass-card hover-lift" style="${isHidden ? 'display: none;' : 'display: flex;'}">
-                                    <div class="review-card-header">
-                                        <div class="review-stars-group">
-                                            <div class="stars-gold">
-                                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                            </div>
-                                            <span class="rating-val">5.0</span>
-                                        </div>
-                                        <span class="review-verified-pill"><i class="fas fa-check-circle"></i> Verified Client</span>
-                                    </div>
-
-                                    <h3 class="review-headline">"${t.headline || 'Outstanding Results & Dedicated Delivery'}"</h3>
-
-                                    <p class="review-body-text">"${t.text}"</p>
-
-                                    <div class="review-card-footer">
-                                        <div class="review-author-box">
-                                            <div class="author-avatar-wrap">
-                                                <img src="${t.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=111420&color=FFD700`}" alt="${t.name}" class="author-avatar-img">
-                                            </div>
-                                            <div class="author-meta">
-                                                <h4 class="author-fullname">${t.name}</h4>
-                                                <p class="author-title-company">${t.role}</p>
-                                            </div>
-                                        </div>
-                                        <span class="review-tag-pill">${t.tag || 'Verified Project'}</span>
-                                    </div>
-                                </article>
-                            `;
-                        }).join('');
-                    }
-
-                    // 3. Add Show More Logic
+                    // Show More Logic
                     const viewAllBtn = document.getElementById('viewAllReviews');
                     if (viewAllBtn) {
                         const hiddenReviews = testimonialGrid.querySelectorAll('.dynamic-review[style*="display: none"]');
@@ -452,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             viewAllBtn.style.display = 'none';
                         } else {
                             viewAllBtn.style.display = 'inline-block';
-                            viewAllBtn.innerHTML = `View More Reviews (${textReviews.length}) <i class="fas fa-chevron-down"></i>`;
+                            viewAllBtn.innerHTML = `View More Reviews (${testimonials.length}) <i class="fas fa-chevron-down"></i>`;
                             viewAllBtn.onclick = () => {
                                 const allCards = testimonialGrid.querySelectorAll('.dynamic-review');
                                 allCards.forEach(r => {

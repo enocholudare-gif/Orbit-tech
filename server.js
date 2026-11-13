@@ -126,9 +126,9 @@ if (!fs.existsSync(projectsFile)) {
             title: 'E-commerce Brand Identity',
             category: 'Graphic Design',
             image: 'https://images.unsplash.com/photo-1542744094-3a31f272c490?auto=format&fit=crop&w=1200&q=80',
-            liveUrl: '',
-            link: '',
-            description: 'Modern branding for a sustainable fashion house.',
+            liveUrl: 'https://www.behance.net/gallery/ecommerce-branding',
+            link: 'https://www.behance.net/gallery/ecommerce-branding',
+            description: 'Modern branding and visual identity system engineered for a sustainable luxury fashion house.',
             problem: 'The client needed a logo that communicated both luxury and environmental responsibility.',
             solution: 'We created a minimalist organic leaf motif with premium gold accents.',
             result: 'The brand successfully launched with 10k pre-orders in the first week.',
@@ -1247,7 +1247,7 @@ app.post('/api/ask-ai', (req, res) => {
             answer = "Our **AI & Automation** workflows eliminate tedious manual tasks using tools like Pabbly, Zapier, custom AI agents, and CRM syncs. Starting at **₦75,000 (~$54)**.";
         }
         else if (hasWord(['service', 'services', 'offer', 'do you do', 'what do you'])) {
-            answer = "Orbit Tech provides full-stack digital transformation services:\n1. **Web & Software Development** (from ₦80K)\n2. **Page Setup & Optimization** (from ₦50K)\n3. **Social Media Management** (from ₦80K)\n4. **ERP Softwares** (from ₦250K)\n5. **Graphics Design & Branding** (from ₦8K)\n6. **AI & Automation Pipelines** (from ₦75K)\n7. **Mobile App Development** (from ₦250K)\n8. **Tech Consultation & IT Strategy** (from ₦50K)";
+            answer = "Orbit Tech provides full-stack digital transformation services:\n1. **Web & Software Development**\n2. **Page Setup & Optimization**\n3. **Social Media Management**\n4. **ERP Softwares**\n5. **Graphics Design & Branding**\n6. **AI & Automation Pipelines**\n7. **Mobile App Development**\n8. **Tech Consultation & IT Strategy**";
         } 
         else if (hasWord(['sample', 'projects', 'portfolio', 'work', 'zamclouds', 'zambia'])) {
             answer = "Check out our recent work in the **Projects** section! A featured sample is the **Zambia Cloud Programmers Web Redesign** ([zamclouds.com](https://www.zamclouds.com/)), alongside our Fintech Dashboard and E-commerce Brand systems. You can click 'View Projects' on the homepage or 'View All Projects' for full case studies.";
